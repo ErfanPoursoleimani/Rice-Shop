@@ -4,10 +4,13 @@ import classnames from 'classnames'
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { PiShoppingBagFill } from "react-icons/pi";
+import { useState } from 'react';
+import Shoppingcart from './Shoppingcart';
+import HamburgerNavBar from './HamburgerNavBar';
 
 
 
-const NavBar = () => {
+const NavBar = ({addedToCartProducts} : {addedToCartProducts: {id: number, label: string, price: string, count: number}[]}) => {
   const { status, data: session } = useSession()
   const currentPath = usePathname()
 
@@ -17,11 +20,24 @@ const NavBar = () => {
     {id: 2, label: "محصولات", href: '/#products'},
     {id: 1, label: "خانه", href: '/#'},
   ]
+
+  const [shoppingcartDisplay, setShoppingcartDisplay] = useState('none')
+  const handleShoppingcartDisplay = () => {
+    shoppingcartDisplay === 'none' ? 
+    setShoppingcartDisplay('block') :
+    setShoppingcartDisplay('none')
+
+  }
   
-
-
+  const [hamburgerNavBarDisplay, setHamburgerNavBarDisplay] = useState('none')
+  const handleHamburgerNavBarDisplay = () => {
+    hamburgerNavBarDisplay === 'none' ? 
+    setHamburgerNavBarDisplay('block') :
+    setHamburgerNavBarDisplay('none')
+  }
 
   return (
+    <>
     <nav className='fixed bg-[#00000081] w-[100%] top-0 h-20 z-1000 backdrop-blur-sm flex justify-between p-5 items-center'>
       <div className='flex space-x-10'>
         {status === 'authenticated' &&
@@ -48,14 +64,21 @@ const NavBar = () => {
           )}
       </ul>
       <div className='flex space-x-6 items-center h-full'>
-        <Link className='nav-animation' href='/ecommerce/shoppingcart'><PiShoppingBagFill size='25px' color='white' /></Link>
-        <div className='nav-animation md:hidden space-y-1'>
+        <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay}><PiShoppingBagFill size='25px' color='white' /></div>
+        <div className='nav-animation md:hidden space-y-1' onClick={handleHamburgerNavBarDisplay}>
           <span className="block h-0.75 w-7 bg-white"></span>
           <span className="block h-0.75 w-7 bg-white"></span>
           <span className="block h-0.75 w-7 bg-white"></span>
         </div>
       </div>
     </nav>
+    <div style={{display: shoppingcartDisplay}}>
+      <Shoppingcart addedToCartProducts={addedToCartProducts}/>
+    </div>
+    <div style={{display: hamburgerNavBarDisplay}}>
+      <HamburgerNavBar />
+    </div>
+    </>
   )
 }
 

@@ -1,8 +1,9 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 :root {
   --text: white;
-  --background: rgb(34, 30, 30);
+  --background: rgb(30, 34, 31);
   --foreground: rgba(0, 0, 0, 0.514);
   scroll-behavior: smooth;
 }
@@ -12,6 +13,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 .nav-animation {
   animation: nav-animation 1s ease forwards;
   transition: 2s ease;
@@ -19,8 +21,24 @@ body {
 
 @keyframes nav-animation {
   0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hamburger-nav-animation {
+  animation: hamburger-nav-animation 0.25s ease forwards;
+  transition: 0.25s ease;
+}
+
+@keyframes hamburger-nav-animation {
+  0% {
       opacity: 0;
-      transform: translateY(-50px);
+      transform: translateY(-500px);
   }
   100% {
       opacity: 1;

@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from "./auth/Provider";
 import NavBar from "./NavBar";
 import { Theme } from "@radix-ui/themes";
+import { prisma } from "@/prisma/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,11 +36,13 @@ export const metadata: Metadata = {
   description: "rice shop",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const addedToCartProducts = await prisma.addedToCartProduct.findMany()
   return (
     <html lang="en">
       <body
@@ -48,12 +51,10 @@ export default function RootLayout({
       >
         <AuthProvider>
           <Theme>
-          <div className="">
-            <NavBar />
-          </div>
-          <main>
-            {children}
-          </main>
+              <NavBar addedToCartProducts={addedToCartProducts} />
+            <main>
+              {children}
+            </main>
           </Theme>
         </AuthProvider>
       </body>

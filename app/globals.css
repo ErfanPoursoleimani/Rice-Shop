@@ -3,8 +3,8 @@
 
 :root {
   --text: white;
-  --background: rgb(30, 34, 31);
-  --foreground: rgba(0, 0, 0, 0.514);
+  --background: rgb(3, 27, 0);
+  --foreground: rgba(0, 0, 0, 0.555);
   scroll-behavior: smooth;
 }
 

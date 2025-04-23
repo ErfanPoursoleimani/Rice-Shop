@@ -28,8 +28,8 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay} : {addedToCa
       handleDelete(item.id)
     } else {  
       await axios.patch('/api/addedToCartProducts/' + item.id, {id: item.id, label: item.label, price: item.price, count: item.count - 1})
-      router.refresh()
     }
+    router.refresh()
   }
   const [orderPageDisplay, setOrderPageDisplay] = useState('none')
   const handleOrderPageDisplay = () => {
@@ -60,8 +60,8 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay} : {addedToCa
                   </li>
                 </ul>
                 <div className="flex justify-center items-center gap-2">
-                  <button className="bg-red-900 mt-3 p-2 rounded-[3px] cursor-pointer" onClick={() => handleDelete(item.id)}>حذف از سبد</button>
-                  <div className='mt-3 flex gap-4 p-3 bg-green-600 rounded-[3px]'>
+                  <button className="bg-[#ff0c0c5d] mt-3 p-2 rounded-[3px] cursor-pointer" onClick={() => handleDelete(item.id)}>حذف از سبد</button>
+                  <div className='mt-3 flex gap-4 p-3 bg-[#105200da] rounded-[3px]'>
                     <FaMinus className='cursor-pointer' onClick={() => handleDecreaseCount(item)}/>
                     <FaPlus className='cursor-pointer' onClick={() => handleIncreaseCount(item)}/>
                   </div>
@@ -72,7 +72,7 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay} : {addedToCa
         <button style={addedToCartProducts.length === 0 ? {display: 'none'} : {}} className="mt-20 p-2 bg-[#105200da] rounded-[5px] cursor-pointer" onClick={handleOrderPageDisplay}>ادامه خرید</button>
       </div>
       <div style={{display: orderPageDisplay}}>
-        <OrderPage setOrderPageDisplay={setOrderPageDisplay}/>
+        <OrderPage addedToCartProducts={addedToCartProducts} setOrderPageDisplay={setOrderPageDisplay}/>
       </div>
     </div>
   )

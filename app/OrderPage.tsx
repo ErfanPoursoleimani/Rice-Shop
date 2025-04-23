@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation'
-import { FaArrowRight } from "react-icons/fa6";
+import { FaArrowRight  } from "react-icons/fa6";
 import React from 'react'
 
 
 
-const OrderPage = ({setOrderPageDisplay}: {setOrderPageDisplay: Function}) => {
+const OrderPage = ({addedToCartProducts, setOrderPageDisplay}: {addedToCartProducts: {id: number, label: string, price: string, count: number}[], setOrderPageDisplay: Function}) => {
 
     const handleDisplay = () => {
         setOrderPageDisplay('none')
@@ -14,7 +14,30 @@ const OrderPage = ({setOrderPageDisplay}: {setOrderPageDisplay: Function}) => {
       <div className="mb-15 cursor-pointer text-xl">
         <FaArrowRight onClick={handleDisplay}/>
       </div>
-      <h1>وارد کردن اطلاعات سفارش</h1>
+      <div className='flex flex-col gap-10 items-center'>
+          <h1 className='text-[1.25rem]'>محصولات سفارش داده شده</h1>
+          <div>
+            {addedToCartProducts.map((item) => (
+              <div key={item.id} className="flex flex-col items-end gap-4">
+                <ul className="flex flex-col items-end gap-2">
+                  <li className="flex gap-1">
+                    <h1>{item.label}</h1>
+                    <p className="text-[#ffffff71]">: نام محصول</p>
+                  </li>
+                  <li className="flex gap-1">
+                    <h1>{parseInt(item.price) * item.count} تومان</h1>
+                    <p className="text-[#ffffff71]">: قیمت</p>
+                  </li>
+                  <li className="flex gap-1">
+                    <h1>{item.count}</h1>
+                    <p className="text-[#ffffff71]">: کیلوگرم</p>
+                  </li>
+                </ul>
+              </div>
+            ))}
+          </div>
+        <h1 className='text-[1.25rem]'>وارد کردن اطلاعات سفارش</h1>
+      </div>
     </div>
   )
 }

@@ -37,7 +37,7 @@ const NavBar = ({addedToCartProducts} : {addedToCartProducts: {id: number, label
 
   return (
     <>
-    <nav className='fixed bg-[#00000081] w-[100%] top-0 h-20 z-100 backdrop-blur-sm flex justify-between p-5 items-center'>
+    <nav className='fixed bg-[#00000081] w-[100%] top-0 h-20 z-100 backdrop-blur-3xl flex justify-between p-5 items-center'>
       <div className='flex space-x-10'>
         {status === 'authenticated' &&
           <div className='space-x-3 nav-animation flex items-center text-white'>

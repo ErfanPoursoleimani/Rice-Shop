@@ -21,10 +21,13 @@ interface Props {
 const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: Props) => {
 
   const router = useRouter()
+
+  
   const [manageProductButtonDisplay, setManageProductButtonDisplay] = useState(addedToCartProduct === null ? "none" : "block")
   const [addToCartButtonDisplay, setAddToCartButtonDisplay] = useState(addedToCartProduct !== null ? "none" : "block")
   const [productCount, setProductCount] = useState(addedToCartProduct !== null ? addedToCartProduct.count : 1)
-
+  
+  
   const [isAdding, setIsAdding] = useState(false)
   const handleAddToCart = async() => {
     setIsAdding(true)
@@ -34,7 +37,7 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
     router.refresh()
     setIsAdding(false)
   }
-
+  
   const handleIncreaseCount = async() => {
     setProductCount(productCount + 1)
     if(addedToCartProduct !== null) {
@@ -42,7 +45,7 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
       router.refresh()
     }
   }
-
+  
   const handleDecreaseCount = async() => {
     productCount !== 1 ? setProductCount(productCount - 1) : null
     if(addedToCartProduct !== null) {
@@ -50,21 +53,20 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
       router.refresh()
     }
   }
-
+  
   
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = async() => {
-      setIsDeleting(true)
-      await axios.delete('/api/addedToCartProducts/' + id)
-      setAddToCartButtonDisplay("block")
-      setManageProductButtonDisplay('none')
-      router.refresh()
-      setProductCount(1)
-      setIsDeleting(false)
+    setIsDeleting(true)
+    await axios.delete('/api/addedToCartProducts/' + id)
+    setAddToCartButtonDisplay("block")
+    setManageProductButtonDisplay('none')
+    router.refresh()
+    setProductCount(1)
+    setIsDeleting(false)
   }
 
   
-
   return (
     <div className="space-y-3 py-10 px-7 relative overflow-clip flex justify-center items-center gap-2 rounded-[10px]">
       <div className='absolute w-full h-[350px] bg-[var(--foreground)] z-2'></div>
@@ -72,7 +74,7 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
       <div className='z-3'>
         <h2 className="text-2xl">{label}</h2>
         <p className="mt-6">قیمت هر کیلو {price} تومان</p>
-        <p className="text-[#ffffffb7] text-[14px] mt-4">{description}</p>
+        <p className="text-[var(--sub-text)] text-[14px] mt-4">{description}</p>
         <div className='flex flex-col items-end'>
           <div className={classnames({'bg-[#ffffff86]' : addedToCartProduct !== null, 'bg-[#105200da]' : addedToCartProduct === null, 'mt-7 p-3 rounded-xl inline-flex items-center gap-4': true})}>
             <div className='flex gap-3'>

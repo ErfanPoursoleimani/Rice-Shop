@@ -37,9 +37,9 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay} : {addedToCa
   }
   return (
     <div>
-      <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] border-t-2 border-[#2f863b9a] backdrop-blur-sm bg-[#00000081] flex flex-col items-end'>
-        <div className="mb-15 cursor-pointer text-xl">
-          <FaArrowRight onClick={handleDisplay}/>
+      <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] border-t-1 border-[#000] backdrop-blur-3xl bg-[#00000081] flex flex-col items-end'>
+        <div className="mb-15 cursor-pointer text-xl bg-[var(--foreground)] p-2 rounded-full" onClick={handleDisplay}>
+          <FaArrowRight />
         </div>
         <div className="flex gap-10 flex-wrap w-full justify-center">
           {addedToCartProducts.length === 0 ? <p>سبد خرید خالی است</p> :

@@ -9,6 +9,5 @@ import NextAuth from "next-auth"
 // 2. Wrapped middleware option
 const { auth } = NextAuth(authConfig)
 export default auth(async function middleware(req: NextRequest) {
-  // Your custom middleware logic goes here
-})
 
+})

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { PiShoppingBagFill } from "react-icons/pi";
 import { useState } from 'react';
 import Shoppingcart from './Shoppingcart';
+import Image from 'next/image';
 import HamburgerNavBar from './HamburgerNavBar';
 
 
@@ -41,7 +42,7 @@ const NavBar = ({addedToCartProducts} : {addedToCartProducts: {id: number, label
       <div className='flex space-x-10'>
         {status === 'authenticated' &&
           <div className='space-x-3 nav-animation flex items-center text-white'>
-            <Link href='/user'><img className='rounded-full' width={40} height={40} src={session.user?.image!} alt="user's avatar"></img></Link>
+            <Link href='/user'><Image className='rounded-full' width={40} height={40} src={session.user?.image!} alt="user's avatar"></Image></Link>
             <Link href={'/api/auth/signout'}>خروج</Link>
           </div>}
         {status === 'unauthenticated' && <Link className='nav-animation text-white' href={'/api/auth/signin'}>وارد شوید</Link>}

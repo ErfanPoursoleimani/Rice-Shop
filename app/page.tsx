@@ -7,7 +7,6 @@ import type3 from '@/public/type3.jpg'
 import { ProductCard } from "./components";
 import { prisma } from "@/prisma/client";
 
-
 const products = [
   {id: 3,
    href: '/products',
@@ -34,7 +33,7 @@ const HomePage = () => {
   return (
     <>
       <div className="text-end">
-        <div className="relative min-h-[100vh] bg-[url(@/public/ricefield1.jpg)] bg-cover">
+        <div className="relative min-h-[100vh] bg-[var(--background)] bg-cover">
           <div className="absolute top-0 h-full w-full bg-[var(--foreground)]"></div>
           <div className="p-10 absolute top-[20%] md:right-[10%]">
             <h1 className="text-3xl mb-9">برنج پورسلیمانی</h1>
@@ -58,7 +57,9 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <div className="p-15 flex justify-center items-center bg-[var(--background)]"></div>
+        <div className="p-15 flex justify-center items-center bg-[var(--background)]">
+          
+        </div>
       </div>
     </>
   )

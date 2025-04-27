@@ -5,9 +5,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "./globals.css";
-import AuthProvider from "./auth/Provider";
-import NavBar from "./NavBar";
-import { Theme } from "@radix-ui/themes";
+import { NavBar  } from "./components";
 import { prisma } from "@/prisma/client";
 
 const geistSans = Geist({
@@ -40,27 +38,23 @@ export const metadata: Metadata = {
   description: "rice shop",
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({children,}: Readonly<{children: React.ReactNode}>) {
 
   const addedToCartProducts = await prisma.addedToCartProduct.findMany()
+  const users = await prisma.user.findMany()
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
-        <AuthProvider>
-          <Theme>
-              <NavBar addedToCartProducts={addedToCartProducts} />
-            <main>
-              {children}
-            </main>
-          </Theme>
-        </AuthProvider>
+        <div>
+          <NavBar addedToCartProducts={addedToCartProducts} users={users}/>
+        </div>
+        <main>
+          {children}
+        </main>
       </body>
     </html>
   );

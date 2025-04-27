@@ -4,7 +4,7 @@ import Image from "next/image";
 import type1 from '@/public/type1.jpg'
 import type2 from '@/public/type2.jpg'
 import type3 from '@/public/type3.jpg'
-import { ProductCard } from "./components";
+import { ProductCard } from "../components";
 import { prisma } from "@/prisma/client";
 
 const products = [
@@ -29,7 +29,7 @@ const products = [
 ]
 
 
-const HomePage = async() => {
+const HomePage = () => {
   return (
     <>
       <div className="text-end">

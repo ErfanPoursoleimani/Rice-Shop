@@ -48,7 +48,7 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
   
   const handleDecreaseCount = async() => {
     productCount !== 1 ? setProductCount(productCount - 1) : null
-    if(addedToCartProduct !== null) {
+    if(addedToCartProduct !== null && addedToCartProduct.count !== 1) {
       await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: price, count: productCount - 1})
       router.refresh()
     }

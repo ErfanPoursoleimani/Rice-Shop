@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     })
     if(addedToCartProduct)
         return NextResponse.json({error: "Product already exists"}, {status: 400})
-    const newUser = await prisma.addedToCartProduct.create({
+    const newAddedToCartProduct = await prisma.addedToCartProduct.create({
         data: {
             id: body.id,
             label: body.label,
@@ -31,5 +31,5 @@ export async function POST(request: NextRequest) {
             count: body.count,
         }
     })
-    return NextResponse.json(newUser, {status: 201})
+    return NextResponse.json(newAddedToCartProduct, {status: 201})
 }

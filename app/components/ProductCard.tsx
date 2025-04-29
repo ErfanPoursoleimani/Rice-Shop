@@ -13,7 +13,7 @@ interface Props {
   label: string,
   description: string,
   price: string,
-  addedToCartProduct: { id: number; label: string; price: string; count: number }
+  addedToCartProduct: { id: number; label: string; price: string; count: number },
 }
 
 
@@ -22,6 +22,22 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
 
   const router = useRouter()
 
+  useEffect(() => {
+    if(addedToCartProduct === null){
+      addedToCartProduct = {id: -1, label: "", price: "", count: 0}
+    }
+  }, [addedToCartProduct])
+  
+  useEffect(() => {
+    if(addedToCartProduct.id === -1){
+      setAddToCartButtonDisplay('block')
+      setManageProductButtonDisplay('none')
+    } else if(addedToCartProduct.id !== -1){
+      setAddToCartButtonDisplay('none')
+      setManageProductButtonDisplay('block')
+    }
+    setProductCount(addedToCartProduct.count === 0 ? 1 : (addedToCartProduct.count))
+  }, [addedToCartProduct, addedToCartProduct])
   
   const [manageProductButtonDisplay, setManageProductButtonDisplay] = useState(addedToCartProduct === null ? "none" : "block")
   const [addToCartButtonDisplay, setAddToCartButtonDisplay] = useState(addedToCartProduct !== null ? "none" : "block")
@@ -59,8 +75,6 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
   const handleDelete = async() => {
     setIsDeleting(true)
     await axios.delete('/api/addedToCartProducts/' + id)
-    setAddToCartButtonDisplay("block")
-    setManageProductButtonDisplay('none')
     router.refresh()
     setProductCount(1)
     setIsDeleting(false)
@@ -68,7 +82,7 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
 
   
   return (
-    <div className="space-y-3 py-10 px-7 relative overflow-clip flex justify-center items-center gap-2 rounded-[10px]">
+    <div className="space-y-3 py-10 px-7 hover:scale-103 transition-all relative overflow-clip flex justify-center items-center gap-2 rounded-[10px]">
       <div className='absolute w-full h-[350px] bg-[var(--foreground)] z-2'></div>
       {img}
       <div className='z-3'>

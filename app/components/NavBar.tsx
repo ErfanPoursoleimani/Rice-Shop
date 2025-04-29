@@ -19,12 +19,18 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
     {id: 2, label: "محصولات", href: '/#products'},
     {id: 1, label: "خانه", href: '/#'},
   ]
+  const adminLinks = [
+    {id: 3, label: "محصولات", href: '/#'},
+    {id: 2, label: "سفارشات", href: '/#'},
+    {id: 1, label: "خانه", href: '/#'},
+  ]
 
   const [shoppingcartDisplay, setShoppingcartDisplay] = useState('none')
   const handleShoppingcartDisplay = () => {
     shoppingcartDisplay === 'none' ? 
     setShoppingcartDisplay('block') :
     setShoppingcartDisplay('none')
+    setSignInDisplay('none')
   }
   
   const [hamburgerNavBarDisplay, setHamburgerNavBarDisplay] = useState('none')
@@ -39,6 +45,7 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
     signInDisplay === 'none' ? 
     setSignInDisplay('block') :
     setSignInDisplay('none') 
+    setShoppingcartDisplay('none')
   }
 
   const [loginInfoDisplay, setLoginInfoDisplay] = useState('none')
@@ -60,22 +67,37 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
         </div>
       </div> }
       <ul className='hidden md:flex space-x-6'>
-          {links.map(link =>
-            <li className='nav-animation' key={link.id}>
-              <Link
-                className={classnames({
-                  'text-gray-400': currentPath === link.href,
-                  'text-white': currentPath !== link.href,
-                  'hover:text-gray-200 transition-colors': true
-                })}
-                href={link.href}>
-                {link.label}
-              </Link>
-            </li>
-          )}
+        {currentPath === '/09165736231/admin' ?
+          adminLinks.map(link =>
+          <li className='nav-animation' key={link.id}>
+            <Link
+              className={classnames({
+                'text-gray-400': currentPath === link.href,
+                'text-white': currentPath !== link.href,
+                'hover:text-gray-200 transition-colors': true
+              })}
+              href={link.href}>
+              {link.label}
+            </Link>
+          </li>) :
+          links.map(link =>
+          <li className='nav-animation' key={link.id}>
+            <Link
+              className={classnames({
+                'text-gray-400': currentPath === link.href,
+                'text-white': currentPath !== link.href,
+                'hover:text-gray-200 transition-colors': true
+              })}
+              href={link.href}>
+              {link.label}
+            </Link>
+          </li>
+        )}
       </ul>
       <div className='flex space-x-6 items-center h-full'>
-        <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay}><PiShoppingBagFill size='25px' color='white' /></div>
+        <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay} style={{display: currentPath === '/09165736231/admin' ? 'none' : 'block'}}>
+          <PiShoppingBagFill size='25px' color='white' />
+        </div>
         <div className='nav-animation md:hidden space-y-1' onClick={handleHamburgerNavBarDisplay}>
           <span className="block h-0.75 w-7 bg-white"></span>
           <span className="block h-0.75 w-7 bg-white"></span>

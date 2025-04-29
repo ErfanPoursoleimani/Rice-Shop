@@ -30,19 +30,14 @@ const SignInPage = ({users, setSignInDisplay}: Props) => {
 
     const onSubmit = handleSubmit( async(data) => {
       try {
+
         let t = 0
         for (let i = 0; i < users.length; i++) {
           users[i].phoneNumber === data.phoneNumber ? t++ : null
         }
-        console.log(data, t)
-        if(t !== 0) {
-          setSignInDisplay('none')
-          router.push('/' + data.phoneNumber)
-        } else {
-          await axios.post('/api/users', data)
-          setSignInDisplay('none')
-          router.push('/' + data.phoneNumber)
-        }
+        t === 0 ? await axios.post('/api/users', data) : null
+        data.phoneNumber === '09165736231' ? router.push('/' + data.phoneNumber + '/admin') : router.push('/' + data.phoneNumber)
+        setSignInDisplay('none')
         router.refresh()
       } catch (error) {
         setError('An unexpected error occurred.')

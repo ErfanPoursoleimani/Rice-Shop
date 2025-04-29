@@ -30,6 +30,7 @@ const products = [
 
 
 const HomePage = async() => {
+
   return (
     <>
       <div className="text-end">
@@ -37,7 +38,7 @@ const HomePage = async() => {
           <div className="absolute top-0 h-full w-full bg-[var(--foreground)]"></div>
           <div className="p-10 absolute top-[20%] md:right-[10%]">
             <h1 className="text-3xl mb-9">برنج پورسلیمانی</h1>
-            <ul className="space-y-6 text-[var(--sub-text)] text-[3vw] md:text-xl">
+            <ul className="space-y-6 text-[var(--sub-text)] text-[2.5vw] md:text-[20px]">
               <li>عطر بی‌نظیر: با هر پخت، بوی خوش شالیزارهای شمال را در خانه‌تان احساس کنید</li>
               <li>طعم استثنایی: هر دانه طارمی، لطیف و خوشمزه است، لذت هر لقمه با این برنج کامل می‌شود</li>
               <li>کیفیت عالی: از بهترین مزارع ما، مستقیم به سفره‌ی شما. تازه و سالم، همانطور که باید باشد</li>

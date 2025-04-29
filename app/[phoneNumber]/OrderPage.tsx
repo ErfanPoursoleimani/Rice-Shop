@@ -45,7 +45,7 @@ const OrderPage = ({addedToCartProducts, setOrderPageDisplay, phoneNumber}: {add
   })
 
   return (
-    <div className='hamburger-nav-animation overflow-scroll fixed top-0 p-12 z-101 w-[100vw] h-[100vh] backdrop-blur-3xl bg-[#0000003b] flex flex-col items-center'>
+    <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-101 w-[100vw] h-[calc(100vh-80px)] backdrop-blur-3xl bg-[#0000003b] flex flex-col items-center'>
       <div className="sticky top-0 mb-15 cursor-pointer text-xl bg-[var(--foreground)] p-2 rounded-full self-end">
         <FaArrowRight color="white" onClick={handleDisplay}/>
       </div>

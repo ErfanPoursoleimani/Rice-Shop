@@ -36,7 +36,7 @@ const SignInPage = ({users, setSignInDisplay}: Props) => {
           users[i].phoneNumber === data.phoneNumber ? t++ : null
         }
         t === 0 ? await axios.post('/api/users', data) : null
-        data.phoneNumber === '09165736231' ? router.push('/' + data.phoneNumber + '/admin') : router.push('/' + data.phoneNumber)
+        data.phoneNumber === '09165736231' ? router.push('/admin/' + data.phoneNumber) : router.push('/' + data.phoneNumber)
         setSignInDisplay('none')
         router.refresh()
       } catch (error) {
@@ -48,11 +48,11 @@ const SignInPage = ({users, setSignInDisplay}: Props) => {
       setSignInDisplay('none')
     }
   return (
-    <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] border-t-1 border-[#000] backdrop-blur-3xl bg-[#00000081] flex flex-col items-center justify-center'>
+    <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] border-t-1 border-[#000] bg-[var(--background)] flex flex-col items-center justify-center'>
       <div className="mb-15 cursor-pointer text-xl bg-[var(--foreground)] p-2 rounded-full self-end" onClick={handleDisplay}>
         <FaArrowRight />
       </div>
-      <Box className="bg-white rounded-2xl flex flex-col items-center gap-5" p={3}
+      <Box className="flex flex-col items-center gap-5" p={3}
       component="form"
       sx={{ '& .MuiTextField-root': {width: '25ch'}}}
       noValidate

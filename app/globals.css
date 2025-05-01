@@ -2,10 +2,11 @@
 @plugin "daisyui";
 
 :root {
-  --text: white;
+  --icons: #000000;
+  --text: rgb(255, 255, 255);
   --sub-text: rgba(255, 255, 255, 0.637);
-  --background: rgb(0, 0, 0);
-  --foreground: rgba(0, 0, 0, 0.568);
+  --background: rgb(255, 255, 255);
+  --foreground: rgba(5, 5, 5, 0.363);
   --red-button: #7c0000;
   --green-button: #105200da;
   scroll-behavior: smooth;

@@ -13,12 +13,13 @@ interface Props {
   label: string,
   description: string,
   price: string,
+  theme: string,
   addedToCartProduct: { id: number; label: string; price: string; count: number },
 }
 
 
 
-const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: Props) => {
+const ProductCard =  ({id, img, label, description, price, theme, addedToCartProduct}: Props) => {
 
   const router = useRouter()
 
@@ -79,10 +80,9 @@ const ProductCard =  ({id, img, label, description, price, addedToCartProduct}: 
     setProductCount(1)
     setIsDeleting(false)
   }
-
   
   return (
-    <div className="space-y-3 py-10 px-7 hover:scale-103 transition-all relative overflow-clip flex justify-center items-center gap-2 rounded-[10px]">
+    <div className={`border-2 ${theme} space-y-3 py-10 px-7 hover:scale-103 transition-all relative overflow-clip flex justify-center items-center gap-2 rounded-[10px]`}>
       <div className='absolute w-full h-[350px] bg-[var(--foreground)] z-2'></div>
       {img}
       <div className='z-3'>

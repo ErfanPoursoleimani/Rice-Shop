@@ -13,19 +13,22 @@ const products = [
    img: <Image className="rounded-[4px] absolute w-70 h-90 z-1" src={type3} width={1000} alt="product"></Image>,
    label: "برنج کشت دوم",
    description: "تجربه بهترین کشت برنج",
-   price: "170000"},
+   price: "170000",
+   theme: "border-red-500"},
   {id: 1,
    href: '/products',
    img: <Image className="rounded-[4px] absolute w-70 h-90 z-1" src={type1} width={1000} alt="product"></Image>,
    label: "برنج طارم فجر",
    description: "بهترین کیفیت از مزارع شمال",
-   price: "140000"},
+   price: "140000",
+   theme: "border-[#f56200]"},
   {id: 2,
    href: '/products',
    img: <Image className="rounded-[4px] absolute w-70 h-90 z-1" src={type2} width={1000} alt="product"></Image>,
    label: "برنج طارم عطری",
    description: "عطری عالی را تجربه کنید",
-   price: "120000"},
+   price: "120000",
+   theme: "border-green-500"},
 ]
 
 
@@ -53,7 +56,7 @@ const HomePage = async() => {
           <div className="flex justify-center flex-wrap gap-9 w-full">
             {products.map(async(product) => (
               <div key={product.id}>
-                <ProductCard id={product.id} img={product.img} label={product.label} description={product.description} price={product.price} addedToCartProduct={(await prisma.addedToCartProduct.findUnique({where : {id: product.id}}))!}/>
+                <ProductCard id={product.id} img={product.img} label={product.label} description={product.description} price={product.price} theme={product.theme} addedToCartProduct={(await prisma.addedToCartProduct.findUnique({where : {id: product.id}}))!}/>
               </div>
             ))}
           </div>

@@ -19,15 +19,15 @@ const HamburgerNavBar = () => {
         {id: 1, label: "خانه", href: '/#'},
       ]
     return (
-    <ul className='hamburger-nav-animation md:hidden border-t-2 border-black fixed top-[80px] flex flex-col justify-evenly items-center z-100 w-[100vw] h-[300px] backdrop-blur-lg bg-[#00000081] text-end space-x-6'>
-        {currentPath === '/09165736231/admin' ?
+    <ul className='hamburger-nav-animation md:hidden fixed top-[80px] flex flex-col justify-evenly items-center z-100 w-[100vw] h-[300px] backdrop-blur-lg bg-[var(--light-foreground)] text-end space-x-6'>
+        {currentPath === '/admin/09165736231' ?
           adminLinks.map(link =>
           <li className='nav-animation' key={link.id}>
             <Link
               className={classnames({
-                'text-gray-400': currentPath === link.href,
-                'text-white': currentPath !== link.href,
-                'hover:text-gray-200 transition-colors': true
+                'text-[#00624a]': currentPath === link.href,
+                'text-[var(--dark-text)]': currentPath !== link.href,
+                'hover:text-[#00624a] transition-colors': true
               })}
               href={link.href}>
               {link.label}
@@ -37,9 +37,9 @@ const HamburgerNavBar = () => {
           <li className='nav-animation' key={link.id}>
             <Link
               className={classnames({
-                'text-gray-400': currentPath === link.href,
-                'text-white': currentPath !== link.href,
-                'hover:text-gray-200 transition-colors': true
+                'text-[#00624a]': currentPath === link.href,
+                'text-[var(--dark-text)]': currentPath !== link.href,
+                'hover:text-[#00624a] transition-colors': true
               })}
               href={link.href}>
               {link.label}

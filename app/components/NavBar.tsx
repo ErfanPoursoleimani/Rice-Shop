@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { HamburgerNavBar, Shoppingcart } from '.';
 import SignInPage from '../SignIn';
 import { Status } from '@prisma/client';
-
+import Avatar from '@mui/material/Avatar';
 
 const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartProducts: {id: number, label: string, price: string, count: number}[], users: {phoneNumber: string, status: Status}[], phoneNumber?: string, user?: {phoneNumber: string, status: Status}}) => {
 
@@ -56,14 +56,17 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
   }
   return (
     <>
-    <nav className='fixed w-[100%] text-[var(--icons)] bg-[var(--background)] top-0 h-20 z-102 flex justify-between p-5 items-center'>
+    <nav className='fixed w-[100%] text-[var(--dark-text)] bg-[var(--background)] top-0 h-20 z-102 flex justify-between p-5 items-center'>
       {phoneNumber === undefined ?
         <h1 className='cursor-pointer' onClick={handleSignInDisplay}>وارد شوید</h1> :
-        <div className='flex flex-col self-start gap-8 pt-2'>
-          <h1 onClick={handleLoginInfoDisplay} className='cursor-pointer'>خوش آمدید</h1>
-          <div style={{display: loginInfoDisplay}} className='bg-[var(--foreground)] p-4 rounded-xl space-y-4 text-center '>
+        <div className='flex flex-col self-start gap-3 pt-2'>
+          <div className='flex items-center gap-4'>
+            <Avatar onClick={handleLoginInfoDisplay} alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+            <h1 className='cursor-pointer'>خوش آمدید</h1>
+          </div>
+          <div style={{display: loginInfoDisplay}} className='bg-[var(--foreground)] border-black p-4 rounded-xl space-y-4 text-center '>
             <p>{phoneNumber}</p>
-            <Link href={'/'} className='p-2 bg-[var(--red-button)] rounded-xl'>خروج از حساب</Link>
+            <Link href={'/'} className='p-2 bg-[var(--red-button)] text-[var(--light-text)] rounded-xl'>خروج از حساب</Link>
           </div>
         </div> }
       <ul className='hidden md:flex space-x-6'>
@@ -82,7 +85,7 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
         )}
       </ul>
       <div className='flex space-x-6 items-center h-full'>
-        <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay} style={{display: currentPath === '/09165736231/admin' ? 'none' : 'block'}}>
+        <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay} style={{display: currentPath === '/admin/09165736231' ? 'none' : 'block'}}>
           <PiShoppingBagFill size='25px' color='var(--icons)' />
         </div>
         <div className='nav-animation md:hidden space-y-1' onClick={handleHamburgerNavBarDisplay}>

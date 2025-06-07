@@ -1,12 +1,14 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 :root {
   --icons: #000000;
-  --text: rgb(255, 255, 255);
-  --sub-text: rgba(255, 255, 255, 0.637);
+  --dark-text: rgb(1, 1, 1);
+  --sub-dark-text: rgba(0, 0, 0, 0.637);
+  --light-text: rgb(255, 255, 255);
+  --sub-light-text: rgba(255, 255, 255, 0.637);
   --background: rgb(255, 255, 255);
   --foreground: rgba(5, 5, 5, 0.363);
+  --light-foreground: rgba(255, 255, 255, 0.363);
   --red-button: #7c0000;
   --green-button: #105200da;
   scroll-behavior: smooth;
@@ -45,5 +47,18 @@ body {
   100% {
       opacity: 1;
       transform: translateY(0);
+  }
+}
+
+.productCard-animation {
+  animation: productCard-animation 10s linear infinite;
+}
+
+@keyframes productCard-animation {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360);
   }
 }

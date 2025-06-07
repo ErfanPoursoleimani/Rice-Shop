@@ -18,9 +18,9 @@ const HamburgerNavBar = ({phoneNumber}: {phoneNumber: string}) => {
             <li className='nav-animation' key={link.id}>
                 <Link
                     className={classnames({
-                        'text-gray-900': currentPath === link.href,
-                        'text-white': currentPath !== link.href,
-                        'hover:text-gray-200 transition-colors': true
+                        'text-[#00624a]': currentPath === link.href,
+                        'text-[var(--dark-text)]': currentPath !== link.href,
+                        'hover:text-[#00624a] transition-colors': true
                     })}
                     href={link.href}>
                     {link.label}

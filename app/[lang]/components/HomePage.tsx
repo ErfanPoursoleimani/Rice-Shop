@@ -4,7 +4,7 @@ import Image from "next/image";
 import type1 from '@/public/type1.jpg'
 import type2 from '@/public/type2.jpg'
 import type3 from '@/public/type3.jpg'
-import { ProductCard } from "../components";
+import { ProductCard } from ".";
 import { prisma } from "@/prisma/client";
 
 const products = [
@@ -56,7 +56,7 @@ const HomePage = async() => {
           <div className="flex gap-9 overflow-x-auto">
             {products.map(async(product) => (
               <div key={product.id}>
-                <ProductCard id={product.id} img={product.img} label={product.label} description={product.description} price={product.price} theme={product.theme} addedToCartProduct={(await prisma.addedToCartProduct.findUnique({where : {id: product.id}}))}/>
+                <ProductCard id={product.id} img={product.img} label={product.label} description={product.description} price={product.price} theme={product.theme} addedToCartProduct={(await prisma.addedToCartProduct.findUnique({where : {id: product.id}}))!}/>
               </div>
             ))}
           </div>

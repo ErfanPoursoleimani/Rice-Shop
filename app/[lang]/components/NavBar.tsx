@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import { usePathname } from 'next/navigation';
 import { PiShoppingBagFill } from "react-icons/pi";
 import { useState } from 'react';
-import { HamburgerNavBar, Shoppingcart } from '.';
+import { HamburgerNavBar, Shoppingcart, LoginInfo } from '.';
 import SignInPage from '../SignIn';
 import { Status } from '@prisma/client';
 import Avatar from '@mui/material/Avatar';
@@ -59,15 +59,8 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
     <nav className='fixed w-[100%] text-[var(--dark-text)] bg-[var(--background)] top-0 h-20 z-102 flex justify-between p-5 items-center'>
       {phoneNumber === undefined ?
         <h1 className='cursor-pointer' onClick={handleSignInDisplay}>وارد شوید</h1> :
-        <div className='flex flex-col self-start gap-3 pt-2'>
-          <div className='flex items-center gap-4'>
-            <Avatar onClick={handleLoginInfoDisplay} alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-            <h1 className='cursor-pointer'>خوش آمدید</h1>
-          </div>
-          <div style={{display: loginInfoDisplay}} className='bg-[var(--foreground)] border-black p-4 rounded-xl space-y-4 text-center '>
-            <p>{phoneNumber}</p>
-            <Link href={'/'} className='p-2 bg-[var(--red-button)] text-[var(--light-text)] rounded-xl'>خروج از حساب</Link>
-          </div>
+        <div className='flex items-center gap-4'>
+          <Avatar onClick={handleLoginInfoDisplay} alt="Travis Howard" src="/static/images/avatar/2.jpg" />
         </div> }
       <ul className='hidden md:flex space-x-6'>
         {(currentPath === '/09165736231/admin' ? adminLinks : links).map(link =>
@@ -85,6 +78,7 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
         )}
       </ul>
       <div className='flex space-x-6 items-center h-full'>
+        <Link href={currentPath + 'f'}>FA</Link>
         <div className='nav-animation cursor-pointer' onClick={handleShoppingcartDisplay} style={{display: currentPath === '/admin/09165736231' ? 'none' : 'block'}}>
           <PiShoppingBagFill size='25px' color='var(--icons)' />
         </div>
@@ -100,6 +94,9 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user} : {addedToCartPr
     </div>
     <div style={{display: hamburgerNavBarDisplay}}>
       <HamburgerNavBar />
+    </div>
+    <div style={{display: loginInfoDisplay}}>
+      <LoginInfo phoneNumber={phoneNumber!}/>
     </div>
     <div style={{display: signInDisplay}}>
       <SignInPage users={users} setSignInDisplay={setSignInDisplay}/>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 :root {
   --icons: #000000;
@@ -34,6 +35,38 @@ body {
   }
 }
 
+.right-to-left-animation {
+  animation: right-to-left-animation 1s ease forwards;
+  transition: 2s ease;
+}
+
+@keyframes right-to-left-animation {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.left-to-right-animation {
+  animation: left-to-right-animation 1s ease forwards;
+  transition: 2s ease;
+}
+
+@keyframes left-to-right-animation {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .hamburger-nav-animation {
   animation: hamburger-nav-animation 0.25s ease forwards;
   transition: 0.25s ease;
@@ -42,10 +75,28 @@ body {
 @keyframes hamburger-nav-animation {
   0% {
       opacity: 0;
-      transform: translateY(-500px);
+      transform: translateX(250px);
   }
   100% {
       opacity: 1;
+      transform: translateX(0);
+  }
+}
+
+.loginInfo-animation {
+  animation: loginInfo-animation 0.25s ease forwards;
+  transition: 0.25s ease;
+}
+
+@keyframes loginInfo-animation {
+  0% {
+      opacity: 0;
+      transform: translateX(-950px);
+      transform: translateY(-350px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateX(0);
       transform: translateY(0);
   }
 }

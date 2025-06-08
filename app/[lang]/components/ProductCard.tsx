@@ -83,9 +83,9 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
   
   return (
     <div className='relative mt-2 mb-2'>
-      <div className='absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-xl overflow-clip bg-black'>
-        {/* <div className='productCard-animation absolute top-[50%] left-[50%] rotate-z-360 -translate-x-[50%] -translate-y-[50%] w-200 h-35 bg-[#ffffff]'></div> */}
-      </div>
+      {/* <div className='absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-xl overflow-clip bg-[#565656]'>
+        <div className='productCard-animation absolute top-[50%] left-[50%] rotate-z-360 -translate-x-[50%] -translate-y-[50%] w-200 h-35 bg-[#ffffff]'></div>
+      </div> */}
       <div className={`text-[var(--light-text)] space-y-3 py-10 px-7 relative flex justify-center items-center gap-2 rounded-[10px] overflow-clip`}>
         <div className='absolute w-full h-[500px] bg-[var(--foreground)] z-2'></div>
         {img}
@@ -94,7 +94,7 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
           <p className="mt-6">قیمت هر کیلو {price} تومان</p>
           <p className="text-[var(--sub-light-text)] text-[14px] mt-4">{description}</p>
           <div className='flex flex-col items-end'>
-            <div className={classnames({'bg-[#ffffff86]' : addedToCartProduct !== null, 'bg-[#105200da]' : addedToCartProduct === null, 'mt-7 p-3 rounded-xl inline-flex items-center gap-4': true})}>
+            <div className={classnames({'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null, 'mt-7 p-3 rounded-xl inline-flex items-center gap-4': true})}>
               <div className='flex gap-3'>
                 <p>کیلوگرم</p>
                 {productCount}
@@ -105,11 +105,11 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
                 <FaPlus className='cursor-pointer' onClick={handleIncreaseCount}/>
               </div>
             </div>
-            <button style={{display: addToCartButtonDisplay}} className='mt-3 bg-[#105200da] p-3 rounded-xl' onClick={handleAddToCart}>
+            <button style={{display: addToCartButtonDisplay}} className='mt-3 bg-[#000000da] text-[var(--light-text)] p-3 rounded-xl' onClick={handleAddToCart}>
               {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
               <p className='text-b'>افزودن به سبد خرید</p>}
             </button>
-            <button style={{display: manageProductButtonDisplay}} disabled={isDeleting} className='mt-3 p-3 bg-[#ffffff86] rounded-xl' onClick={handleDelete}>
+            <button style={{display: manageProductButtonDisplay}} disabled={isDeleting} className='mt-3 p-3 bg-[#ffffff] text-[var(--dark-text)] rounded-xl' onClick={handleDelete}>
               {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
               <div className='flex justify-center items-center space-x-3'>
                 <p className='text-b'>در سبد خرید</p>

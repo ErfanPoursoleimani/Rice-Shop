@@ -2,12 +2,13 @@ import { prisma } from "@/prisma/client";
 import { NavBar } from "../components";
 import Link from "next/link";
 
-export default async function RootLayout({children, params: {phoneNumber}}: {children: React.ReactNode, params: {phoneNumber: string}}) {
+export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{phoneNumber: string}>}) {
+  const resolvedParams = await params
   const addedToCartProducts = await prisma.addedToCartProduct.findMany()
   const users = await prisma.user.findMany()
   const user = await prisma.user.findUnique({
     where: {
-        phoneNumber: phoneNumber
+        phoneNumber: resolvedParams.phoneNumber
     }
   })
   if(user === null){
@@ -24,10 +25,11 @@ export default async function RootLayout({children, params: {phoneNumber}}: {chi
   } else {
   return (
       <>
-        <NavBar addedToCartProducts={addedToCartProducts} users={users} phoneNumber={phoneNumber} user={user}/>
+        <NavBar addedToCartProducts={addedToCartProducts} users={users} phoneNumber={resolvedParams.phoneNumber} user={user}/>
         <main>
           {children}
         </main>
       </>
   );}
 }
+

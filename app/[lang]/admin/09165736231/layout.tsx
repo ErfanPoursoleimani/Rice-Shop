@@ -1,7 +1,7 @@
 import { prisma } from "@/prisma/client";
-import { NavBar } from "@/app/components";
+import { NavBar } from "@/app/[lang]/components";
 
-export default async function RootLayout({children, params: {phoneNumber}}: {children: React.ReactNode, params: {phoneNumber: string}}) {
+export default async function RootLayout({children}: {children: React.ReactNode}) {
   const addedToCartProducts = await prisma.addedToCartProduct.findMany()
   const users = await prisma.user.findMany()
 

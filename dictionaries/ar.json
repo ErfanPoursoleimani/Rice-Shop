@@ -1,0 +1,36 @@
+{
+    "links": {
+        "about": "About Us",
+        "contact": "Contact",
+        "products": "Products",
+        "home": "Home",
+        "orders": "Orders",
+        "users": "Users"
+    },
+    "account": {
+        "login": "ورود به حساب",
+        "logout": "خروج",
+        "profile": "اطلاعات حساب",
+        "history": "تاریخچه خرید"
+    },
+    "content": {
+        "logo": "برنج پورسلیمانی",
+        "seeOurProducts": "دیدن محصولات",
+        "continue": "Continue"
+    },
+    "product":{
+        "addToCart": "افزودن به سبد خرید",
+        "deleteFromCart": "حذف از سبد",
+        "price": "Pris",
+        "perkg": "per kg",
+        "currency": "€",
+        "label": "Titel",
+        "massUnit": "Kg",
+        "products": {
+            "برنج_کشت_دوم": "Reis der zweiten Ernte",
+            "برنج_قهوه_ای": "Brauner Reis",
+            "برنج_طارم_عطری": "Tarom Atri Reis",
+            "برنج_طارم_فجر": "Tarom Fajr Reis"
+        }
+    }
+}

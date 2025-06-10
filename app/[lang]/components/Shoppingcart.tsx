@@ -1,16 +1,21 @@
 'use client'
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 import OrderPage from "../[phoneNumber]/OrderPage";
+import classNames from "classnames";
+import { IsLTR } from "./index";
 
 
 
 const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay, setSignInDisplay, phoneNumber} : {addedToCartProducts: {id: number, label: string, price: string, count: number}[], setShoppingcartDisplay: Function, setSignInDisplay: Function, phoneNumber: string}) => {
   const router = useRouter()
+
+  const { lang } = useParams()
+
   const handleDisplay = () => {
     setShoppingcartDisplay('none')
   }
@@ -44,7 +49,7 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay, setSignInDis
 
   return (
     <div>
-      <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-101 w-[100vw] h-[calc(100vh-80px)] backdrop-blur-3xl bg-[var(--light-foreground)] flex flex-col items-end'>
+      <div className={classNames({'left-to-right-animation': !(lang === 'fa' || lang === 'ar'), "right-to-left-animation": (lang === 'fa' || lang === 'ar') ,'overflow-scroll fixed top-[80px] p-12 z-101 w-[100vw] h-[calc(100vh-80px)] backdrop-blur-3xl bg-[var(--light-foreground)] flex flex-col items-end': true})}>
         <div className="mb-15 cursor-pointer text-xl bg-[var(--foreground)] text-[var(--light-text)] p-2 rounded-full" onClick={handleDisplay}>
           <FaArrowRight />
         </div>

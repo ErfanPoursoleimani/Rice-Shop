@@ -3,12 +3,11 @@ import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 
  
-let locales = ['en', 'fr', 'de', 'fa', 'ar']
+let locales = ['en', 'de', 'fa', 'ar']
  
 // Get the preferred locale
 function getLocale(request: NextRequest) { 
     let headers = { 'accept-language': request.headers.get('accept-language')! }
-    console.log(request.headers)
     let languages = new Negotiator({ headers }).languages()
     let defaultLocale = 'en'
     return match(languages, locales, defaultLocale);

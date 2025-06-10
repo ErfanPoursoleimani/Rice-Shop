@@ -6,20 +6,25 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation';
 import { FaRegTrashCan } from 'react-icons/fa6'
 import classnames from 'classnames'
+import Image from "next/image";
 
 interface Props {
   id: number,
-  img: ReactElement,
+  img: number,
   label: string,
   description: string,
-  price: string,
-  theme: string,
+  productPrice: string,
   addedToCartProduct: { id: number; label: string; price: string; count: number },
+  dict: {product: {deleteFromCart: string,perkg: string, addToCart: string, price: string, currency: string, label: string, massUnit: string, products: {برنج_کشت_دوم: string,برنج_قهوه_ای: string,برنج_طارم_عطری: string,برنج_طارم_فجر: string}}, content: {logo: string, seeOurProducts: string}},
+  lang: string
 }
 
 
 
-const ProductCard =  ({id, img, label, description, price, theme, addedToCartProduct}: Props) => {
+const ProductCard =  ({id, img, label, description, productPrice, addedToCartProduct, dict, lang}: Props) => {
+
+  const { deleteFromCart, addToCart , price , currency , massUnit, perkg } = dict.product
+  const { products } = dict.product
 
   const router = useRouter()
 
@@ -48,7 +53,7 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
   const [isAdding, setIsAdding] = useState(false)
   const handleAddToCart = async() => {
     setIsAdding(true)
-    await axios.post('/api/addedToCartProducts', {id: id, label: label, price: price, count: productCount})
+    await axios.post('/api/addedToCartProducts', {id: id, label: label, price: productPrice, count: productCount})
     setAddToCartButtonDisplay('none')
     setManageProductButtonDisplay('block')
     router.refresh()
@@ -58,7 +63,7 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
   const handleIncreaseCount = async() => {
     setProductCount(productCount + 1)
     if(addedToCartProduct !== null) {
-      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: price, count: productCount + 1})
+      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: productPrice, count: productCount + 1})
       router.refresh()
     }
   }
@@ -66,7 +71,7 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
   const handleDecreaseCount = async() => {
     productCount !== 1 ? setProductCount(productCount - 1) : null
     if(addedToCartProduct !== null && addedToCartProduct.count !== 1) {
-      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: price, count: productCount - 1})
+      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: productPrice, count: productCount - 1})
       router.refresh()
     }
   }
@@ -82,41 +87,58 @@ const ProductCard =  ({id, img, label, description, price, theme, addedToCartPro
   }
   
   return (
-    <div className='relative mt-2 mb-2'>
-      {/* <div className='absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-xl overflow-clip bg-[#565656]'>
-        <div className='productCard-animation absolute top-[50%] left-[50%] rotate-z-360 -translate-x-[50%] -translate-y-[50%] w-200 h-35 bg-[#ffffff]'></div>
-      </div> */}
-      <div className={`text-[var(--light-text)] space-y-3 py-10 px-7 relative flex justify-center items-center gap-2 rounded-[10px] overflow-clip`}>
-        <div className='absolute w-full h-[500px] bg-[var(--foreground)] z-2'></div>
-        {img}
-        <div className='z-3'>
-          <h2 className="text-2xl">{label}</h2>
-          <p className="mt-6">قیمت هر کیلو {price} تومان</p>
-          <p className="text-[var(--sub-light-text)] text-[14px] mt-4">{description}</p>
-          <div className='flex flex-col items-end'>
-            <div className={classnames({'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null, 'mt-7 p-3 rounded-xl inline-flex items-center gap-4': true})}>
-              <div className='flex gap-3'>
-                <p>کیلوگرم</p>
-                {productCount}
-              </div>
-              <p>|</p>
-              <div className='flex gap-4'>
-                <FaMinus className='cursor-pointer' onClick={handleDecreaseCount}/>
-                <FaPlus className='cursor-pointer' onClick={handleIncreaseCount}/>
-              </div>
-            </div>
-            <button style={{display: addToCartButtonDisplay}} className='mt-3 bg-[#000000da] text-[var(--light-text)] p-3 rounded-xl' onClick={handleAddToCart}>
+    <div className={`w-67 h-80 text-[var(--light-text)] space-y-3 py-20 pb-10 px-5 relative flex justify-center items-center gap-2 rounded-[50px] overflow-clip`}>
+      <div className='absolute w-full h-[500px] bg-[var(--foreground)] z-2'></div>
+      {img}
+      <Image className="rounded-[4px] absolute w-70 h-95 z-1" src={"https://picsum.photos/200/300"} width={1000} height={1000} alt="product"></Image>
+      <div className='z-3 w-full h-full flex flex-col justify-between items-center'>
+        <h2 className="text-[25px]">{products[label as keyof typeof products]}</h2>
+        <div className={classnames({'text-left': !(lang === 'fa' || lang === 'ar'), 'text-right': lang === 'fa' || lang === 'ar'  , 'w-full': true})}>
+          <p className={classnames({'ml-2': !(lang === 'fa' || lang === 'ar'), 'mr-3': lang === 'fa' || lang === 'ar'})}>
+            {price} {productPrice} {currency} <span className='text-[var(--sub-light-text)] text-[13px]'>({perkg})</span>
+          </p>
+          <div className={classnames({'text-[15px]': lang === 'de'})}>
+            <button style={{display: addToCartButtonDisplay}} className='mt-2 bg-[#000000] text-[var(--light-text)] p-3 rounded-xl w-full' onClick={handleAddToCart}>
               {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
-              <p className='text-b'>افزودن به سبد خرید</p>}
+              <p>{addToCart}</p>}
             </button>
-            <button style={{display: manageProductButtonDisplay}} disabled={isDeleting} className='mt-3 p-3 bg-[#ffffff] text-[var(--dark-text)] rounded-xl' onClick={handleDelete}>
+            <button style={{display: manageProductButtonDisplay}} disabled={isDeleting} className=' mt-2 p-3 bg-[#ffffff] text-[var(--dark-text)] rounded-xl w-full' onClick={handleDelete}>
               {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
               <div className='flex justify-center items-center space-x-3'>
-                <p className='text-b'>در سبد خرید</p>
+                <p>{deleteFromCart}</p>
                 <FaRegTrashCan className='cursor-pointer text-red-600'/>
               </div>}
             </button>
           </div>
+        </div>
+      </div>
+
+      <div 
+      className={classnames({'absolute bottom-0 z-2 left-[50%] -translate-x-[50%] flex justify-between items-center': true})}>
+
+        <div
+        className={classnames({
+        'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 
+        'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null,
+        'p-2 rounded-full': true})}>
+
+          <FaMinus className='cursor-pointer' onClick={handleDecreaseCount}/>
+        </div>
+        {!(lang === 'fa' || lang === 'ar') ?
+        <div className='flex gap-1 p-3 text-[var(--light-text) '>
+          {productCount * 10}
+          <p>{massUnit}</p>
+        </div>:
+        <div className='flex gap-3 p-3 text-[var(--light-text)]'>
+          <p>{massUnit}</p>
+            {productCount * 10}
+        </div>}
+        <div
+        className={classnames({
+        'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 
+        'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null,
+        'p-2 rounded-full': true})}>
+          <FaPlus className='cursor-pointer' onClick={handleIncreaseCount}/>
         </div>
       </div>
     </div>

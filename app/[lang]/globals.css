@@ -19,12 +19,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.nav-animation {
-  animation: nav-animation 1s ease forwards;
+.top-to-down-animation {
+  animation: top-to-down-animation 0.25s ease forwards;
   transition: 2s ease;
 }
 
-@keyframes nav-animation {
+@keyframes top-to-down-animation {
   0% {
     opacity: 0;
     transform: translateY(-50px);
@@ -36,7 +36,7 @@ body {
 }
 
 .right-to-left-animation {
-  animation: right-to-left-animation 1s ease forwards;
+  animation: right-to-left-animation 0.25s ease forwards;
   transition: 2s ease;
 }
 
@@ -52,7 +52,7 @@ body {
 }
 
 .left-to-right-animation {
-  animation: left-to-right-animation 1s ease forwards;
+  animation: left-to-right-animation 0.25s ease forwards;
   transition: 2s ease;
 }
 
@@ -67,7 +67,7 @@ body {
   }
 }
 
-.hamburger-nav-animation {
+/* .hamburger-nav-animation {
   animation: hamburger-nav-animation 0.25s ease forwards;
   transition: 0.25s ease;
 }
@@ -81,9 +81,9 @@ body {
       opacity: 1;
       transform: translateX(0);
   }
-}
+} */
 
-.loginInfo-animation {
+/* .loginInfo-animation {
   animation: loginInfo-animation 0.25s ease forwards;
   transition: 0.25s ease;
 }
@@ -99,7 +99,7 @@ body {
       transform: translateX(0);
       transform: translateY(0);
   }
-}
+} */
 
 .productCard-animation {
   animation: productCard-animation 10s linear infinite;

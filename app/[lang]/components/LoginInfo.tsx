@@ -1,12 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import classnames from 'classnames'
 import React from 'react'
 
 const LoginInfo = ({phoneNumber} : {phoneNumber: string}) => {
 
   const currentPath = usePathname()
+  const { lang } = useParams()
 
   return (
     <div className='loginInfo-animation flex justify-center items-center fixed top-[80px] z-100 w-[180px] h-[250px] rounded-br-[calc(100%-30px)] rounded bg-[#ffffffb3] backdrop-blur-lg'>
@@ -22,11 +23,11 @@ const LoginInfo = ({phoneNumber} : {phoneNumber: string}) => {
               اطلاعات حساب
           </Link>
         </li>
-        <li className='nav-animation' >
+        <li className={classnames({'hidden': (/admin/).test(currentPath) ,'nav-animation': true})} >
           <Link
             className={classnames({
-              'text-[#00624a]': currentPath === "/logOut",
-              'text-[var(--dark-text)]': currentPath !== "/logOut",
+              'text-[#00624a]': currentPath === `/${lang}/${phoneNumber}/history`,
+              'text-[var(--dark-text)]': currentPath !== `/${lang}/${phoneNumber}/history`,
               'hover:text-[#00624a] transition-colors': true
             })}
             href={"/logOut"}>
@@ -35,12 +36,8 @@ const LoginInfo = ({phoneNumber} : {phoneNumber: string}) => {
         </li>
         <li className='nav-animation' >
           <Link
-            className={classnames({
-              'text-[#00624a]': currentPath === "/logOut",
-              'text-[var(--dark-text)]': currentPath !== "/logOut",
-              'hover:text-[#00624a] transition-colors': true
-            })}
-            href={"/logOut"}>
+            className='hover:text-[#00624a] transition-colors'
+            href={`/${lang}`}>
               خروج
           </Link>
         </li>

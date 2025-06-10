@@ -1,0 +1,36 @@
+{
+    "links": {
+        "about": "About Us",
+        "contact": "Contact",
+        "products": "Products",
+        "home": "Home",
+        "orders": "Orders",
+        "users": "Users"
+    },
+    "account": {
+        "login": "Login",
+        "logout": "LogOut",
+        "profile": "Profile",
+        "history": "History"
+    },
+    "content": {
+        "logo": "SoleimaniRice",
+        "seeOurProducts": "our products",
+        "continue": "Continue"
+    },
+    "product":{
+        "addToCart": "Add to Cart",
+        "deleteFromCart": "Delete from Cart",
+        "price": "Price",
+        "perkg": "per kg",
+        "currency": "$",
+        "label": "Label",
+        "massUnit": "Kg",
+        "products": {
+            "برنج_کشت_دوم": "Second Crop Rice",
+            "برنج_قهوه_ای": "Brown Rice",
+            "برنج_طارم_عطری": "Tarom Atri Rice",
+            "برنج_طارم_فجر": "Tarom Fajr Rice"
+        }
+    }
+}

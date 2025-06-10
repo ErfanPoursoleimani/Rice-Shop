@@ -1,0 +1,36 @@
+{
+    "links": {
+        "about": "Über uns",
+        "contact": "Kontakt",
+        "products": "Produkten",
+        "home": "Hauptseite",
+        "orders": "Bestellungen",
+        "users": "Benutzer/innen"
+    },
+    "account": {
+        "login": "Einloggen",
+        "logout": "Ausloggen",
+        "profile": "Profil",
+        "history": "Geschichte"
+    },
+    "content": {
+        "logo": "SoleimaniRice",
+        "seeOurProducts": "unsere produkten",
+        "continue": "weiter"
+    },
+    "product":{
+        "addToCart": "Zu Warenkorb hinzufügen",
+        "deleteFromCart": "Aus Warenkorb Löschen",
+        "price": "Preis",
+        "perkg": "pro kg",
+        "currency": "€",
+        "label": "Titel",
+        "massUnit": "Kg",
+        "products": {
+            "برنج_کشت_دوم": "Reis der zweiten Ernte",
+            "برنج_قهوه_ای": "Brauner Reis",
+            "برنج_طارم_عطری": "Tarom Atri Reis",
+            "برنج_طارم_فجر": "Tarom Fajr Reis"
+        }
+    }
+}

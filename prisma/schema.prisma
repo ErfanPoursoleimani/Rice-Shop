@@ -43,3 +43,10 @@ model Order {
   User            User?                @relation(fields: [userPhoneNumber], references: [phoneNumber])
   userPhoneNumber String?
 }
+
+model Product {
+  id          Int    @id @default(autoincrement())
+  label       String @unique
+  price       Int
+  description String @db.Text
+}

@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 import "./globals.css";
 import { NavBar  } from "./components";
 import { prisma } from "@/prisma/client";
+import { getDictionary } from './dictionaries'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,10 +39,16 @@ export const metadata: Metadata = {
   description: "rice shop",
 };
 
-export default async function RootLayout({children,}: Readonly<{children: React.ReactNode}>) {
+
+
+export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{lang: string}>}) {
 
   const addedToCartProducts = await prisma.addedToCartProduct.findMany()
   const users = await prisma.user.findMany()
+
+  const { lang } = await params
+
+  const dict = (await getDictionary(lang as "en" | "de" | "fa" | "ar"))
 
   return (
     <html lang="en">
@@ -50,7 +57,7 @@ export default async function RootLayout({children,}: Readonly<{children: React.
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
         <div>
-          <NavBar addedToCartProducts={addedToCartProducts} users={users}/>
+          <NavBar addedToCartProducts={addedToCartProducts} users={users} dict={dict}/>
         </div>
         <main>
           {children}

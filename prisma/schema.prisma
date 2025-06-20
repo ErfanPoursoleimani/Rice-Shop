@@ -13,40 +13,71 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model addedToCartProduct {
-  id      Int    @unique
-  label   String @unique
-  price   String
-  count   Int    @default(1)
-  Order   Order? @relation(fields: [orderId], references: [id])
-  orderId Int?
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 model User {
-  status      Status  @default(SIGNED_OUT)
+  id          Int     @id @default(autoincrement())
   phoneNumber String  @unique
+  postalCode  String  @default("postalCode")
+  address     String  @default("address")
+  firstName   String  @default("firstName")
+  lastName    String  @default("lastName")
+  cart        Cart?
+  cartId      Int?    @unique
   order       Order[]
+  orderId     Int?     @unique
+  role        Role    @default(USER)
 }
 
-enum Status {
-  SIGNED_OUT
-  LOGGED_IN
-}
-
-model Order {
-  id              Int                  @id @default(autoincrement())
-  postalCode      String               @unique
-  address         String               @default("address")
-  firstName       String               @default("firstName")
-  lastName        String               @default("lastName")
-  products        addedToCartProduct[]
-  User            User?                @relation(fields: [userPhoneNumber], references: [phoneNumber])
-  userPhoneNumber String?
+model Cart {
+  id       Int           @id @default(autoincrement())
+  products CartProduct[]
+  user     User          @relation(fields: [userId], references: [id])
+  userId   Int           @unique
 }
 
 model Product {
-  id          Int    @id @default(autoincrement())
-  label       String @unique
+  id          Int           @id @default(autoincrement())
+  label       String        @unique
   price       Int
-  description String @db.Text
+  description String        @db.Text
+  quantity    Int
+  carts       CartProduct[]
+  images      Image[]
+}
+
+model CartProduct {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  cartId    Int     @unique
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @unique
+  quantity  Int
+}
+
+model Order {
+  id     Int         @id @default(autoincrement())
+  user   User        @relation(fields: [userId], references: [id])
+  userId Int         @unique
+  status OrderStatus @default(PENDING)
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  label     String
+  url       String
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @unique
 }

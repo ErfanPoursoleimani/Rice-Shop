@@ -1,48 +1,28 @@
 
 import { FaArrowRight  } from "react-icons/fa6";
 import React, { useState } from 'react'
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import { useRouter } from "next/navigation";
-import { orderSchema } from "../validationSchemas";
-import { z } from "zod";
-import { useForm } from 'react-hook-form';
 import axios from "axios";
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Product, CartProduct } from "@prisma/client";
 
+interface Props {
+  cartProducts: ({product: Product} & CartProduct)[],
+  setOrderPageDisplay: Function,
+  phoneNumber: string
+}
 
-type orderData = z.infer<typeof orderSchema>
-
-const OrderPage = ({addedToCartProducts, setOrderPageDisplay, phoneNumber}: {addedToCartProducts: {id: number, label: string, price: string, count: number}[], setOrderPageDisplay: Function, phoneNumber: string}) => {
+const OrderPage = ({cartProducts, setOrderPageDisplay, phoneNumber}: Props) => {
 
   const router = useRouter()
+
   const handleDisplay = () => {
       setOrderPageDisplay('none')
   }
+
   let finalSum = 0
-  for (let i = 0; i < addedToCartProducts.length; i++) {
-    finalSum += parseInt(addedToCartProducts[i].price ) * addedToCartProducts[i].count
-    
+  for (let i = 0; i < cartProducts.length; i++) {
+    finalSum += cartProducts[i].product.price * cartProducts[i].product.quantity
   }
-
-  const {register, handleSubmit, formState: { errors, isSubmitted }} = useForm<orderData>({
-    resolver: zodResolver(orderSchema)
-  })
-
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
-
-  const onSubmit = handleSubmit( async(data) => {
-    try {
-      setIsSubmitting(true)
-      await axios.post('/api/orders' , data)
-      router.push('/')
-      setIsSubmitting(false)
-      router.refresh()
-    } catch (error) {
-      setError('An unexpected error occurred.')
-    }
-  })
 
   return (
     <div className='hamburger-nav-animation overflow-scroll fixed top-[80px] p-12 z-101 w-[100vw] h-[calc(100vh-80px)] backdrop-blur-3xl bg-[var(--light-foreground)] flex flex-col items-center'>
@@ -52,19 +32,19 @@ const OrderPage = ({addedToCartProducts, setOrderPageDisplay, phoneNumber}: {add
       <div className='flex flex-col gap-10 items-center'>
           <h1 className='text-[1.25rem]'>محصولات سفارش داده شده</h1>
           <div className="flex gap-10 flex-wrap justify-center">
-            {addedToCartProducts.map((item) => (
-            <div key={item.id} className="flex flex-col items-end gap-4 p-5 rounded-2xl bg-[var(--light-foreground)]">
+            {cartProducts.map((cartProduct) => (
+            <div key={cartProduct.product.id} className="flex flex-col items-end gap-4 p-5 rounded-2xl bg-[var(--light-foreground)]">
               <ul className="flex flex-col items-end gap-2">
                 <li className="flex gap-1">
-                  <h1>{item.label}</h1>
+                  <h1>{cartProduct.product.label}</h1>
                   <p className="text-[var(--sub-dark-text)]">: نام محصول</p>
                 </li>
                 <li className="flex gap-1">
-                  <h1>{parseInt(item.price) * item.count} تومان</h1>
+                  <h1>{cartProduct.product.price * cartProduct.product.quantity} تومان</h1>
                   <p className="text-[var(--sub-dark-text)]">: قیمت</p>
                 </li>
                 <li className="flex gap-1">
-                  <h1>{item.count}</h1>
+                  <h1>{cartProduct.product.quantity}</h1>
                   <p className="text-[var(--sub-dark-text)]">: کیلوگرم</p>
                 </li>
               </ul>
@@ -75,54 +55,11 @@ const OrderPage = ({addedToCartProducts, setOrderPageDisplay, phoneNumber}: {add
           <h1>{finalSum} تومان</h1>
           <p>: هزینه کل</p>
         </div>
-        <h1 className='text-[1.25rem]'>وارد کردن اطلاعات سفارش</h1>
-        <Box className="bg-white rounded-2xl flex flex-col items-cente justify-centerr gap-6" p={3}
-          component="form"
-          sx={{ '& .MuiTextField-root': { width: '25ch' } }}
-          noValidate
-          autoComplete="off"
-          onSubmit={onSubmit}
-        >
-            <div>
-              <TextField
-                id="outlined-required"
-                label="نام"
-                {...register("firstName")}
-              />
-              <p className="text-red-600 text-[12px] mt-2">{errors.firstName?.message}</p>
-            </div>
-            <div>
-              <TextField
-                id="outlined-required"
-                label="نام خانوادگی"
-                {...register("lastName")}
-              />
-              <p className="text-red-600 text-[12px] mt-2">{errors.lastName?.message}</p>
-            </div>
-            <div>
-              <TextField
-                id="outlined-disabled"
-                label="کد پستی"
-                type="number"
-                {...register("postalCode")}
-              />
-              <p className="text-red-600 text-[12px] mt-2">{errors.postalCode?.message}</p>
-            </div>
-            <div>
-              <TextField
-                id="outlined-multiline-static"
-                label="آدرس"
-                multiline
-                rows={4}
-                {...register("address")}
-              />
-              <p className="text-red-600 text-[12px] mt-2">{errors.address?.message}</p>
-            </div>
-          <button disabled={isSubmitting} className="bg-black p-3 rounded-[10px]">
-            {isSubmitting && <span className="loading loading-spinner loading-sm mr-3"></span>}
+        <h1 className='text-[1.25rem]'>تایید اطلاعات سفارش</h1>
+        
+          <button className="bg-black p-3 rounded-[10px]">
             ادامه
           </button>
-        </Box>
       </div>
     </div>
   )

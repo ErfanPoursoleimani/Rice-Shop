@@ -14,9 +14,27 @@
         "history": "History"
     },
     "content": {
-        "logo": "SoleimaniRice",
-        "seeOurProducts": "our products",
-        "continue": "Continue"
+        "homepage": {
+            "logo": "SoleimaniRice",
+            "seeOurProducts": "our products",
+            "description": {
+                "first": {
+                    "title": "Unique aroma",
+                    "body": "Feel the pleasant smell of the northern rice fields in your home with every cooking."
+                },
+                "second": {
+                    "title": "Exceptional taste",
+                    "body": "Each grain of taremi is tender and delicious, the pleasure of every bite is complete with this rice."
+                },
+                "third": {
+                    "title": "Premium quality",
+                    "body": "From our best farms, straight to your table. Fresh and healthy, as it should be."
+                }
+            }
+        }
+    },
+    "shoppingCart": {
+        "continue": "continue"
     },
     "product":{
         "addToCart": "Add to Cart",

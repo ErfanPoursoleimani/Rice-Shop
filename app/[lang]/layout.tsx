@@ -5,9 +5,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "./globals.css";
-import { NavBar  } from "./components";
-import { prisma } from "@/prisma/client";
-import { getDictionary } from './dictionaries'
+import { CookiesProvider } from "next-client-cookies/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,15 +38,7 @@ export const metadata: Metadata = {
 };
 
 
-
-export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{lang: string}>}) {
-
-  const addedToCartProducts = await prisma.addedToCartProduct.findMany()
-  const users = await prisma.user.findMany()
-
-  const { lang } = await params
-
-  const dict = (await getDictionary(lang as "en" | "de" | "fa" | "ar"))
+export default async function RootLayout({children}: {children: React.ReactNode}) {
 
   return (
     <html lang="en">
@@ -56,11 +46,8 @@ export default async function RootLayout({children, params}: {children: React.Re
         className={`${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
-        <div>
-          <NavBar addedToCartProducts={addedToCartProducts} users={users} dict={dict}/>
-        </div>
         <main>
-          {children}
+          <CookiesProvider>{children}</CookiesProvider>
         </main>
       </body>
     </html>

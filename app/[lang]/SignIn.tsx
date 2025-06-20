@@ -7,10 +7,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import { Status } from '@prisma/client'
 import { FaArrowRight } from 'react-icons/fa6'
 import axios from 'axios'
 import classNames from 'classnames'
+import { Role } from '@prisma/client'
 
 
 /* import { Button } from "@/components/ui/button"
@@ -29,41 +29,58 @@ import { Input } from "@/components/ui/input" */
 type userData = z.infer<typeof userSchema>
 
 interface Props {
-  users: {phoneNumber: string, status: Status}[],
+  users: {
+    id: number,
+    phoneNumber: string,
+    postalCode: string,
+    address: string, 
+    firstName: string, 
+    lastName: string, 
+    role: Role,
+    cartId: number | null,
+    orderId: number | null
+  }[], 
   setSignInDisplay: Function,
 }
 
 const SignInPage = ({users, setSignInDisplay}: Props) => {
 
-    const router = useRouter()
+  const router = useRouter()
 
-    const { lang } = useParams()
-      
-    const {register, handleSubmit, formState: { errors, isSubmitted }} = useForm<userData>({
-      resolver: zodResolver(userSchema)
-    })
-  
-    const [error, setError] = useState('')
+  const { lang } = useParams()
+    
+  const {register, handleSubmit, formState: { errors, isSubmitted }} = useForm<userData>({
+    resolver: zodResolver(userSchema)
+  })
 
-    const onSubmit = handleSubmit( async(data) => {
-      try {
+  const [error, setError] = useState('')
 
-        let t = 0
-        for (let i = 0; i < users.length; i++) {
-          users[i].phoneNumber === data.phoneNumber ? t++ : null
-        }
-        t === 0 ? await axios.post('/api/users', data) : null
-        data.phoneNumber === '09165736231' ? router.push(`/${lang}/admin/${data.phoneNumber}`) : router.push(`${lang}/${data.phoneNumber}`)
-        setSignInDisplay('none')
-        router.refresh()
-      } catch (error) {
-        setError('An unexpected error occurred.')
+  const onSubmit = handleSubmit( async(data) => {
+    try {
+      // Checks if the user exists. If so, we dont need to add it to the database
+      let t = 0
+      for (let i = 0; i < users.length; i++) {
+        users[i].phoneNumber === data.phoneNumber ? t++ : null
       }
-    })
+      if(t === 0){
+        await axios.post('/api/users', data)
+      }
 
-    const handleDisplay = () => {
+      // Deleting the cookie that temporarily held user's cart's info
+      document.cookie = "cartProducts=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT" 
+
+      // Redirecting to USER or ADMIN page, based on the user's role
+      data.phoneNumber === '09165736231' ? router.push(`/${lang}/admin/${data.phoneNumber}`) : router.push(`${lang}/${data.phoneNumber}`)
       setSignInDisplay('none')
+      router.refresh()
+    } catch (error) {
+      setError('An unexpected error occurred.')
     }
+  })
+
+  const handleDisplay = () => {
+    setSignInDisplay('none')
+  }
   return (
     <div className={classNames({'right-to-left-animation': !(lang === 'fa' || lang === 'ar'), 'left-to-right-animation': (lang === 'fa' || lang === 'ar') ,'overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] bg-[var(--background)] flex flex-col items-center justify-center': true})}>
       <div className="mb-15 cursor-pointer text-xl bg-[var(--foreground)] text-[var(--light-text)] p-2 rounded-full self-end" onClick={handleDisplay}>

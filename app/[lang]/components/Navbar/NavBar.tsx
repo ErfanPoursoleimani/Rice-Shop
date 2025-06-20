@@ -3,20 +3,45 @@ import Link from 'next/link'
 import classnames from 'classnames'
 import { useParams, usePathname } from 'next/navigation';
 import { PiShoppingBagFill } from "react-icons/pi";
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HamburgerNavBar, Shoppingcart, LoginInfo } from '..';
 import SignInPage from '../../SignIn';
-import { Status } from '@prisma/client';
+import { CartProduct, Product, User } from '@prisma/client';
 import Avatar from '@mui/material/Avatar';
 import HamburgerIcon from './HamburgerIcon';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { useCookies } from 'next-client-cookies';
 
-const NavBar = ({addedToCartProducts, users, phoneNumber, user, dict} : {addedToCartProducts: {id: number, label: string, price: string, count: number}[], users: {phoneNumber: string, status: Status}[], phoneNumber?: string, user?: {phoneNumber: string, status: Status}, dict?: {account: {login: string} ,links: {about: string,contact: string,products: string,home: string,orders: string, users: string}}}) => {
+interface Dict {
+  account: {
+    login: string
+  },
+  links: {
+    about: string,
+    contact: string,
+    products: string,
+    home: string,
+    orders: string,
+    users: string
+  }
+}
+
+interface Props {
+  user?: User, 
+  users: User[], 
+  cartProducts?: ({product: Product} & CartProduct)[],
+  phoneNumber?: string, 
+  dict?: Dict
+}
+
+const NavBar = ({cartProducts, users, phoneNumber, user, dict} : Props) => {
   
   const currentPath = usePathname()
   const { lang } = useParams()
+  
 
+  
   let locales = ['en', 'de', 'fa', 'ar'].filter((elem) => {
     return elem !== lang
   })
@@ -24,7 +49,7 @@ const NavBar = ({addedToCartProducts, users, phoneNumber, user, dict} : {addedTo
   const router = useRouter()
   const handleChangeLanguage = (event: {target: {value: string}}) => {
     router.push(currentPath.replace(lang?.toString()!, event.target.value)!)
-  } 
+  }
   
 const navLinks: {id: number, label: string, href: string}[] = [
   {id: 1, label: "home", href: '/' + lang + '#home'},
@@ -32,34 +57,12 @@ const navLinks: {id: number, label: string, href: string}[] = [
   {id: 3, label: "contact", href: '/' + lang + '#contact'},
   {id: 4, label: "about", href: '/' + lang + '#about'},
 ]
+
 const adminNavLinks: {id: number, label: string, href: string}[] =  [
   {id: 1, label: "home", href: '/' + lang + '/admin/09165736231#home'},
   {id: 3, label: "products", href:  '/' + lang + '/admin/09165736231#products'},
   {id: 2, label: "orders", href: '/' + lang + '/admin/09165736231#orders'},
 ]
-
-/* const [dictionary, setDictionary] = useState({about: "",contact: "",products: "",home: "",orders: "", users: ""})
-
-useEffect(() => {
-  const fetchData = async () => {
-    const res = await fetch(`/api/dictionary/${lang}`);
-    const data = await res.json();
-    setDictionary(data.links);
-  };
-
-  fetchData();
-}, [])
-
-useEffect(() => {
-  const fetchData = async () => {
-    const res = await fetch(`/api/dictionary/${lang}`);
-    const data = await res.json();
-    setDictionary(data.links);
-  };
-
-  fetchData();
-}, [lang]) */
-
     
 useEffect(() => {
   adminNavLinks.map((elem) => (
@@ -161,7 +164,7 @@ navLinks.map((elem) => (
       ))}
     </nav>
     <div style={{display: shoppingcartDisplay}}>
-      <Shoppingcart addedToCartProducts={addedToCartProducts} setShoppingcartDisplay={setShoppingcartDisplay} phoneNumber={phoneNumber!} setSignInDisplay={setSignInDisplay}/>
+      <Shoppingcart cartProducts={cartProducts} setShoppingcartDisplay={setShoppingcartDisplay} phoneNumber={phoneNumber!} setSignInDisplay={setSignInDisplay}/>
     </div>
     <div style={{display: hamburgerNavBarDisplay}}>
       <HamburgerNavBar navLinks={navLinks} adminNavLinks={adminNavLinks}/>

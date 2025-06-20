@@ -14,8 +14,26 @@
         "history": "Geschichte"
     },
     "content": {
-        "logo": "SoleimaniRice",
-        "seeOurProducts": "unsere produkten",
+        "homepage": {
+            "logo": "SoleimaniRice",
+            "seeOurProducts": "unsere produkten",
+            "description": {
+                "first": {
+                    "title": "Einzigartiges Aroma",
+                    "body": "Spüren Sie bei jedem Kochen den angenehmen Duft der nördlichen Reisfelder in Ihrem Zuhause."
+                },
+                "second": {
+                    "title": "Außergewöhnlicher Geschmack",
+                    "body": "Jedes Korn Taremi ist zart und köstlich, mit diesem Reis ist der Genuss jedes Bissens vollkommen."
+                },
+                "third": {
+                    "title": "Premium-Qualität",
+                    "body": "Von unseren besten Farmen direkt auf Ihren Tisch. Frisch und gesund, so wie es sein soll."
+                }
+            }
+        }
+    },
+    "shoppingCart": {
         "continue": "weiter"
     },
     "product":{

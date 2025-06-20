@@ -7,138 +7,151 @@ import { useRouter } from 'next/navigation';
 import { FaRegTrashCan } from 'react-icons/fa6'
 import classnames from 'classnames'
 import Image from "next/image";
+import type1 from '@/public/type1.jpg'
+import { useCookies } from 'next-client-cookies';
+import { CartProduct, Product } from '@prisma/client';
+
+
 
 interface Props {
-  id: number,
-  img: number,
-  label: string,
-  description: string,
-  productPrice: string,
-  addedToCartProduct: { id: number; label: string; price: string; count: number },
-  dict: {product: {deleteFromCart: string,perkg: string, addToCart: string, price: string, currency: string, label: string, massUnit: string, products: {برنج_کشت_دوم: string,برنج_قهوه_ای: string,برنج_طارم_عطری: string,برنج_طارم_فجر: string}}, content: {logo: string, seeOurProducts: string}},
+  product: {
+    id: number, 
+    label: string, 
+    price: number, 
+    description: string, 
+    quantity: number
+  },
+  cartProducts?: ({product: Product} & CartProduct)[], 
+  dict: {
+    product: {
+      deleteFromCart: string,
+      perkg: string,
+      addToCart: string,
+      price: string,
+      currency: string,
+      label: string,
+      massUnit: string,
+      products: {
+        برنج_کشت_دوم: string,
+        برنج_قهوه_ای: string,
+        برنج_طارم_عطری: string,
+        برنج_طارم_فجر: string
+      }
+    }
+  },
   lang: string
 }
 
 
 
-const ProductCard =  ({id, img, label, description, productPrice, addedToCartProduct, dict, lang}: Props) => {
-
-  const { deleteFromCart, addToCart , price , currency , massUnit, perkg } = dict.product
-  const { products } = dict.product
+const ProductCard =  ({product, cartProducts, dict, lang}: Props) => {
 
   const router = useRouter()
 
+  const cookies = useCookies()
   useEffect(() => {
-    if(addedToCartProduct === null){
-      addedToCartProduct = {id: -1, label: "", price: "", count: 0}
+    if(cookies.get("cartProduct")){
+      cartProducts = JSON.parse(cookies.get("cartProducts")!)
     }
-  }, [addedToCartProduct])
-  
+  }, [ , cookies.get('cartProducts')])
+
+  const { id, price: productPrice, description, label, quantity } = product
+  const { deleteFromCart, addToCart , price , currency , massUnit, perkg } = dict.product
+  const { products } = dict.product
+
+  // Checks if the product is added to cart by the user or not, and stores its index, so we know the quantity added to cart
+  const [inCartQuantity, setInCartQuantity] = useState(0)
+  const [inCartIndex, setInCartIndex] = useState(-1)
+  const [isAddedToCart, setIsAddedToCart] = useState(false)
   useEffect(() => {
-    if(addedToCartProduct.id === -1){
-      setAddToCartButtonDisplay('block')
-      setManageProductButtonDisplay('none')
-    } else if(addedToCartProduct.id !== -1){
-      setAddToCartButtonDisplay('none')
-      setManageProductButtonDisplay('block')
+    for (let i = 0; i < cartProducts!.length; i++) {
+      if(product.id === cartProducts![i].productId){
+        setInCartQuantity(cartProducts![i].quantity)
+        setInCartIndex(i)
+        break;
+      } else {
+        setInCartQuantity(0)
+        setInCartIndex(-1)
+      }
     }
-    setProductCount(addedToCartProduct.count === 0 ? 1 : (addedToCartProduct.count))
-  }, [addedToCartProduct, addedToCartProduct])
+    inCartQuantity !== 0 ? setIsAddedToCart(true) : setIsAddedToCart(false)
+  }, [cartProducts!.length, cartProducts![inCartIndex].quantity])
   
-  const [manageProductButtonDisplay, setManageProductButtonDisplay] = useState(addedToCartProduct === null ? "none" : "block")
-  const [addToCartButtonDisplay, setAddToCartButtonDisplay] = useState(addedToCartProduct !== null ? "none" : "block")
-  const [productCount, setProductCount] = useState(addedToCartProduct !== null ? addedToCartProduct.count : 1)
+
+  const [productQuantity, setProductQuantity] = useState(isAddedToCart ? inCartQuantity : 1)
+  const [buttonContent, setButtonContent] = useState(isAddedToCart ? addToCart : deleteFromCart)
+
   
-  
-  const [isAdding, setIsAdding] = useState(false)
-  const handleAddToCart = async() => {
-    setIsAdding(true)
-    await axios.post('/api/addedToCartProducts', {id: id, label: label, price: productPrice, count: productCount})
-    setAddToCartButtonDisplay('none')
-    setManageProductButtonDisplay('block')
+  const handleIncreaseQuantity = async() => {
+    await axios.patch('/api/cart/add', {cartId: cartProducts![inCartIndex].cartId, productId: cartProducts![inCartIndex].productId, quantity: productQuantity + 1})
     router.refresh()
-    setIsAdding(false)
   }
   
-  const handleIncreaseCount = async() => {
-    setProductCount(productCount + 1)
-    if(addedToCartProduct !== null) {
-      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: productPrice, count: productCount + 1})
+  const handleDecreaseQuantity = async() => {
+    productQuantity !== 1 ? setProductQuantity(productQuantity - 1) : null
+    if(isAddedToCart && inCartQuantity !== 1) {
+      await axios.patch('/api/cart/add', {cartId: cartProducts![inCartIndex].cartId, productId: cartProducts![inCartIndex].productId, quantity: productQuantity - 1})
       router.refresh()
     }
   }
   
-  const handleDecreaseCount = async() => {
-    productCount !== 1 ? setProductCount(productCount - 1) : null
-    if(addedToCartProduct !== null && addedToCartProduct.count !== 1) {
-      await axios.patch('/api/addedToCartProducts/' + id, {id: id, label: label, price: productPrice, count: productCount - 1})
-      router.refresh()
-    }
+  const handleAddToCart = async() => {
+    await axios.post(`/api/cart/add`, {cartId: cartProducts![inCartIndex].cartId, productId: cartProducts![inCartIndex].productId, quantity: productQuantity})
+    router.refresh()
   }
-  
   
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDelete = async() => {
     setIsDeleting(true)
-    await axios.delete('/api/addedToCartProducts/' + id)
+    await axios.delete(`/api/cart/delete?cartId=${cartProducts![inCartIndex].cartId}&productId=${cartProducts![inCartIndex].productId}`)
     router.refresh()
-    setProductCount(1)
+    setProductQuantity(1)
     setIsDeleting(false)
   }
   
+  const [scale, setScale] = useState('')
+  const handleHoverOverCard = (mode: string) => {
+    setScale(mode === "enter" ? 'scale-105' : '')
+  }
   return (
-    <div className={`w-67 h-80 text-[var(--light-text)] space-y-3 py-20 pb-10 px-5 relative flex justify-center items-center gap-2 rounded-[50px] overflow-clip`}>
+    <div className={`w-67 h-85 text-[var(--light-text)] space-y-3 pt-15 pb-7 px-5 relative flex justify-center items-center gap-2 rounded-[30px] overflow-clip`} onMouseEnter={() => handleHoverOverCard('enter')} onMouseLeave={() => handleHoverOverCard("leave")}>
       <div className='absolute w-full h-[500px] bg-[var(--foreground)] z-2'></div>
-      {img}
-      <Image className="rounded-[4px] absolute w-70 h-95 z-1" src={"https://picsum.photos/200/300"} width={1000} height={1000} alt="product"></Image>
+      <Image className={`rounded-[4px] absolute w-70 h-95 z-1 ${scale} duration-500`} src={type1} width={1000} height={1000} alt="product"></Image>
       <div className='z-3 w-full h-full flex flex-col justify-between items-center'>
         <h2 className="text-[25px]">{products[label as keyof typeof products]}</h2>
-        <div className={classnames({'text-left': !(lang === 'fa' || lang === 'ar'), 'text-right': lang === 'fa' || lang === 'ar'  , 'w-full': true})}>
+        <div className={classnames({'text-left': !(lang === 'fa' || lang === 'ar'), 'text-right': lang === 'fa' || lang === 'ar'  , 'w-full ': true})}>
           <p className={classnames({'ml-2': !(lang === 'fa' || lang === 'ar'), 'mr-3': lang === 'fa' || lang === 'ar'})}>
-            {price} {productPrice} {currency} <span className='text-[var(--sub-light-text)] text-[13px]'>({perkg})</span>
+            {price} <span className='text-[var(--sub-light-text)] text-[13px]'>({perkg})</span> {productPrice} {currency} 
           </p>
-          <div className={classnames({'text-[15px]': lang === 'de'})}>
-            <button style={{display: addToCartButtonDisplay}} className='mt-2 bg-[#000000] text-[var(--light-text)] p-3 rounded-xl w-full' onClick={handleAddToCart}>
-              {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
-              <p>{addToCart}</p>}
-            </button>
-            <button style={{display: manageProductButtonDisplay}} disabled={isDeleting} className=' mt-2 p-3 bg-[#ffffff] text-[var(--dark-text)] rounded-xl w-full' onClick={handleDelete}>
-              {isDeleting ? <span className="loading loading-spinner loading-sm"></span> :
-              <div className='flex justify-center items-center space-x-3'>
-                <p>{deleteFromCart}</p>
-                <FaRegTrashCan className='cursor-pointer text-red-600'/>
-              </div>}
-            </button>
+
+          <div className={classnames({'justify-end': lang === 'fa' || lang === 'ar', 'flex items-center': true})}>
+            <div
+            className={classnames({
+            'bg-[#ffffff] text-[var(--dark-text)]' : isAddedToCart,
+            'p-[6px] rounded-[7px] bg-[#000000] text-[var(--light-text)]': true})}>
+              <FaMinus className='cursor-pointer' onClick={handleDecreaseQuantity}/>
+            </div>
+
+            {!(lang === 'fa' || lang === 'ar') ?
+            <div className='flex gap-1 p-3 text-[var(--light-text) '>
+              {productQuantity * 10}
+              <p>{massUnit}</p>
+            </div>:
+            <div className='flex gap-3 p-3 text-[var(--light-text)]'>
+              <p>{massUnit}</p>
+                {productQuantity * 10}
+            </div>}
+
+            <div
+            className={classnames({
+            'bg-[#ffffff] text-[var(--dark-text)]' : isAddedToCart,
+            'p-[6px] rounded-[7px] bg-[#000000] text-[var(--light-text)]': true})}>
+              <FaPlus className='cursor-pointer' onClick={handleIncreaseQuantity}/>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div 
-      className={classnames({'absolute bottom-0 z-2 left-[50%] -translate-x-[50%] flex justify-between items-center': true})}>
-
-        <div
-        className={classnames({
-        'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 
-        'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null,
-        'p-2 rounded-full': true})}>
-
-          <FaMinus className='cursor-pointer' onClick={handleDecreaseCount}/>
-        </div>
-        {!(lang === 'fa' || lang === 'ar') ?
-        <div className='flex gap-1 p-3 text-[var(--light-text) '>
-          {productCount * 10}
-          <p>{massUnit}</p>
-        </div>:
-        <div className='flex gap-3 p-3 text-[var(--light-text)]'>
-          <p>{massUnit}</p>
-            {productCount * 10}
-        </div>}
-        <div
-        className={classnames({
-        'bg-[#ffffff] text-[var(--dark-text)]' : addedToCartProduct !== null, 
-        'bg-[#000000] text-[var(--light-text)]' : addedToCartProduct === null,
-        'p-2 rounded-full': true})}>
-          <FaPlus className='cursor-pointer' onClick={handleIncreaseCount}/>
+            <button className={classnames({'bg-white text-[var(--dark-text)]': isAddedToCart,'text-[15px]': lang === 'de', 'mt-2 p-3 bg-black text-[var(--light-text)] rounded-xl w-full': true})} disabled={isDeleting} onClick={isAddedToCart ? handleDelete : handleAddToCart}>
+              {isDeleting ? <span className="loading loading-spinner loading-sm"></span> : buttonContent}
+            </button>
         </div>
       </div>
     </div>

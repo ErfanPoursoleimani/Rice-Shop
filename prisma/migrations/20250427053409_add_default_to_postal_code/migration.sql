@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `order` MODIFY `postalCode` VARCHAR(191) NOT NULL DEFAULT '000';

@@ -1,42 +1,63 @@
 'use client'
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa6";
 import OrderPage from "../[phoneNumber]/OrderPage";
 import classNames from "classnames";
-import { IsLTR } from "./index";
+import { useCookies } from "next-client-cookies";
+import { CartProduct, Product } from "@prisma/client";
 
 
+interface Props {
+  cartProducts?: ({product: Product} & CartProduct)[],
+  setShoppingcartDisplay: Function, 
+  setSignInDisplay: Function, 
+  phoneNumber: string
+}
 
-const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay, setSignInDisplay, phoneNumber} : {addedToCartProducts: {id: number, label: string, price: string, count: number}[], setShoppingcartDisplay: Function, setSignInDisplay: Function, phoneNumber: string}) => {
+const Shoppingcart = ({cartProducts, setShoppingcartDisplay, setSignInDisplay, phoneNumber} : Props) => {
+
   const router = useRouter()
 
   const { lang } = useParams()
 
+  const cookies = useCookies()
+  useEffect(() => {
+    if(cookies.get("cartProduct")){
+      cartProducts = JSON.parse(cookies.get("cartProducts")!)
+    }
+  }, [ , cookies.get('cartProducts')])
+
   const handleDisplay = () => {
     setShoppingcartDisplay('none')
   }
-  const handleDelete = async(id: number) => {
-    await axios.delete('/api/addedToCartProducts/' + id)
+
+  const handleIncreaseQuantity = async(cartProduct: {product: Product} & CartProduct) => {
+    await axios.patch('/api/cart/add', {cartId: cartProduct.cartId, productId: cartProduct.productId, quantity: cartProduct.product.quantity + 1})
     router.refresh()
+  }
+  
+  const handleDecreaseQuantity = async(cartProduct: {product: Product} & CartProduct) => {
+    if(cartProduct.product.quantity === 1){
+      handleDelete(cartProduct)
+    }else {
+      await axios.patch('/api/cart/add', {cartId: cartProduct.cartId, productId: cartProduct.productId, quantity: cartProduct.product.quantity - 1})
+      router.refresh()
+    }
+  }
+  
+  const [isDeleting, setIsDeleting] = useState(false)
+  const handleDelete = async(cartProduct: {product: Product} & CartProduct) => {
+    setIsDeleting(true)
+    await axios.delete(`/api/cart/delete?cartId=${cartProduct.cartId}&productId=${cartProduct.productId}`)
+    router.refresh()
+    setIsDeleting(false)
   }
 
-  const handleIncreaseCount = async(item: {id: number, label: string, price: string, count: number}) => {
-    await axios.patch('/api/addedToCartProducts/' + item.id, {id: item.id, label: item.label, price: item.price, count: item.count + 1})
-    router.refresh()
-  }
-  const handleDecreaseCount = async(item: {id: number, label: string, price: string, count: number}) => {
-    if(item.count === 1) {
-      handleDelete(item.id)
-    } else {  
-      await axios.patch('/api/addedToCartProducts/' + item.id, {id: item.id, label: item.label, price: item.price, count: item.count - 1})
-    }
-    router.refresh()
-  }
-  const [redirected, setRedirected] = useState(false)
+
   const [orderPageDisplay, setOrderPageDisplay] = useState('none')
   const handleOrderPageDisplay = () => {
     setOrderPageDisplay('block')
@@ -54,40 +75,39 @@ const Shoppingcart = ({addedToCartProducts, setShoppingcartDisplay, setSignInDis
           <FaArrowRight />
         </div>
         <div className="flex gap-10 flex-wrap w-full justify-center">
-          {addedToCartProducts.length === 0 ? <p>سبد خرید خالی است</p> :
-            addedToCartProducts.map((item) => (
-              <div key={item.id} className="flex flex-col items-end gap-4 p-5 rounded-2xl bg-[#1d58172c]">
+          {cartProducts!.length === 0 ? <p>سبد خرید خالی است</p> :
+            cartProducts!.map((cartProduct) => (
+              <div key={cartProduct.product.id} className="flex flex-col items-end gap-4 p-5 rounded-2xl bg-[#1d58172c]">
                 <ul className="flex flex-col items-end gap-3">
                   <li className="flex gap-1">
-                    <h1>{item.label}</h1>
+                    <h1>{cartProduct.product.label}</h1>
                     <p className="text-[var(--sub-dark-text)]">: نام محصول</p>
                   </li>
                   <li className="flex gap-1">
-                    <h1>{parseInt(item.price) * item.count} تومان</h1>
+                    <h1>{cartProduct.product.price * cartProduct.product.quantity} تومان</h1>
                     <p className="text-[var(--sub-dark-text)]">: قیمت</p>
                   </li>
                   <li className="flex gap-1">
-                    <h1>{item.count}</h1>
+                    <h1>{cartProduct.product.quantity}</h1>
                     <p className="text-[var(--sub-dark-text)]">: کیلوگرم</p>
                   </li>
                 </ul>
                 <div className="flex justify-center items-center gap-2 text-[var(--light-text)]">
-                  <button className="bg-[#7c0000] mt-3 p-2 rounded-[3px] cursor-pointer" onClick={() => handleDelete(item.id)}>حذف از سبد</button>
+                  <button className="bg-[#7c0000] mt-3 p-2 rounded-[3px] cursor-pointer" onClick={() => handleDelete(cartProduct)}>حذف از سبد</button>
                   <div className='mt-3 flex gap-4 p-3 bg-[#105200da] rounded-[3px]'>
-                    <FaMinus className='cursor-pointer' onClick={() => handleDecreaseCount(item)}/>
-                    <FaPlus className='cursor-pointer' onClick={() => handleIncreaseCount(item)}/>
+                    <FaMinus className='cursor-pointer' onClick={() => handleDecreaseQuantity(cartProduct)}/>
+                    <FaPlus className='cursor-pointer' onClick={() => handleIncreaseQuantity(cartProduct)}/>
                   </div>
                 </div>
               </div>
             ))}
         </div>
-        <button disabled={redirected} style={addedToCartProducts.length === 0 ? {display: 'none'} : {}} className="mt-20 p-2 bg-[#105200da] rounded-[5px] cursor-pointer text-[var(--light-text)]" onClick={phoneNumber === undefined ? handleSignInDisplay : handleOrderPageDisplay}>
-          {redirected && <span className="loading loading-spinner loading-sm"></span>}
+        <button style={cartProducts!.length === 0 ? {display: 'none'} : {}} className="mt-20 p-2 bg-[#105200da] rounded-[5px] cursor-pointer text-[var(--light-text)]" onClick={phoneNumber === undefined ? handleSignInDisplay : handleOrderPageDisplay}>
           {phoneNumber === undefined ? "وارد شوید" : "ادامه"}
         </button>
       </div>
       <div style={{display: orderPageDisplay}}>
-        <OrderPage addedToCartProducts={addedToCartProducts} setOrderPageDisplay={setOrderPageDisplay} phoneNumber={phoneNumber}/>
+        <OrderPage cartProducts={cartProducts!} setOrderPageDisplay={setOrderPageDisplay} phoneNumber={phoneNumber}/>
       </div>
     </div>
   )

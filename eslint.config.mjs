@@ -22,6 +22,8 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       'react-hooks/exhaustive-deps': 'off',
+      'prefer-const': 'off',
+      'react/jsx-key': 'off',
     },
   }),
 ];

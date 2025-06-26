@@ -6,6 +6,8 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import "./globals.css";
 import { CookiesProvider } from "next-client-cookies/server";
+import { AuthProvider } from "../contexts/AuthContext";
+import { DataProvider } from "../contexts/DataContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +40,8 @@ export const metadata: Metadata = {
 };
 
 
-export default async function RootLayout({children}: {children: React.ReactNode}) {
+export default async function RootLayout({children, params}: {children: React.ReactNode, params: Promise<{ lang: string }>}) {
+  const { lang } = await params
 
   return (
     <html lang="en">
@@ -46,9 +49,15 @@ export default async function RootLayout({children}: {children: React.ReactNode}
         className={`${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
-        <main>
-          <CookiesProvider>{children}</CookiesProvider>
-        </main>
+        <CookiesProvider>
+          <AuthProvider>
+            <DataProvider lang={lang}>
+              <main>
+                  {children}
+              </main>
+            </DataProvider>
+          </AuthProvider>
+        </CookiesProvider>
       </body>
     </html>
   );

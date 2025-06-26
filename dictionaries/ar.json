@@ -8,6 +8,7 @@
         "users": "Users"
     },
     "account": {
+        "register": "Register",
         "login": "ورود به حساب",
         "logout": "خروج",
         "profile": "اطلاعات حساب",

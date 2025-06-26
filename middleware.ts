@@ -1,8 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
-import { cookies } from "next/headers";
-
  
 let locales = ['en', 'de', 'fa', 'ar']
  
@@ -14,14 +12,26 @@ function getLocale(request: NextRequest) {
     return match(languages, locales, defaultLocale);
 }
  
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+
+  // User authentication
+/*   const router = useRouter()
+  const cookieStore = await cookies()
+  const auth = await axios.post('/api/auth', { jwt: cookieStore.get("jwt")?.value })
+  const isAuthorized = auth.data.isAuthorized
+  const userRole = auth.data.role
+  isAuthorized ? userRole === "ADMIN" ? router.push(`/${getLocale(request)}/`) : router.push(`/${getLocale(request)}/`)
+ */
+
+
+
   // Check if there is any supported locale in the pathname
   const { pathname } = request.nextUrl
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
  
-  if (pathnameHasLocale) return
+  if(pathnameHasLocale) return
  
   // Redirect if there is no locale
   const locale = getLocale(request)

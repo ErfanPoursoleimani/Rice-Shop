@@ -8,6 +8,7 @@
         "users": "Benutzer/innen"
     },
     "account": {
+        "register": "Anmeldung",
         "login": "Einloggen",
         "logout": "Ausloggen",
         "profile": "Profil",

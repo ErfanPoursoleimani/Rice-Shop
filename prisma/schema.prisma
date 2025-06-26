@@ -29,7 +29,7 @@ enum Role {
 
 model User {
   id          Int     @id @default(autoincrement())
-  phoneNumber String  @unique
+  phoneNumber Int  @unique
   postalCode  String  @default("postalCode")
   address     String  @default("address")
   firstName   String  @default("firstName")

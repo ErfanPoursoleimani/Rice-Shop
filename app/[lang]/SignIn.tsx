@@ -8,9 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import { FaArrowRight } from 'react-icons/fa6'
-import axios from 'axios'
+import axios, { AxiosStatic } from 'axios'
 import classNames from 'classnames'
-import { Role } from '@prisma/client'
 
 
 /* import { Button } from "@/components/ui/button"
@@ -29,48 +28,27 @@ import { Input } from "@/components/ui/input" */
 type userData = z.infer<typeof userSchema>
 
 interface Props {
-  users: {
-    id: number,
-    phoneNumber: string,
-    postalCode: string,
-    address: string, 
-    firstName: string, 
-    lastName: string, 
-    role: Role,
-    cartId: number | null,
-    orderId: number | null
-  }[], 
   setSignInDisplay: Function,
 }
 
-const SignInPage = ({users, setSignInDisplay}: Props) => {
+const SignInPage = ({setSignInDisplay}: Props) => {
 
   const router = useRouter()
-
   const { lang } = useParams()
+  const [error, setError] = useState('')
     
+  const handleDisplay = () => {
+    setSignInDisplay('none')
+  }
+
   const {register, handleSubmit, formState: { errors, isSubmitted }} = useForm<userData>({
     resolver: zodResolver(userSchema)
   })
-
-  const [error, setError] = useState('')
-
   const onSubmit = handleSubmit( async(data) => {
     try {
-      // Checks if the user exists. If so, we dont need to add it to the database
-      let t = 0
-      for (let i = 0; i < users.length; i++) {
-        users[i].phoneNumber === data.phoneNumber ? t++ : null
-      }
-      if(t === 0){
-        await axios.post('/api/users', data)
-      }
+      await axios.post('/api/auth/login', data)
 
-      // Deleting the cookie that temporarily held user's cart's info
-      document.cookie = "cartProducts=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT" 
 
-      // Redirecting to USER or ADMIN page, based on the user's role
-      data.phoneNumber === '09165736231' ? router.push(`/${lang}/admin/${data.phoneNumber}`) : router.push(`${lang}/${data.phoneNumber}`)
       setSignInDisplay('none')
       router.refresh()
     } catch (error) {
@@ -78,9 +56,7 @@ const SignInPage = ({users, setSignInDisplay}: Props) => {
     }
   })
 
-  const handleDisplay = () => {
-    setSignInDisplay('none')
-  }
+
   return (
     <div className={classNames({'right-to-left-animation': !(lang === 'fa' || lang === 'ar'), 'left-to-right-animation': (lang === 'fa' || lang === 'ar') ,'overflow-scroll fixed top-[80px] p-12 z-100 w-[100vw] h-[calc(100vh-80px)] bg-[var(--background)] flex flex-col items-center justify-center': true})}>
       <div className="mb-15 cursor-pointer text-xl bg-[var(--foreground)] text-[var(--light-text)] p-2 rounded-full self-end" onClick={handleDisplay}>

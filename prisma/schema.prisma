@@ -14,12 +14,9 @@ datasource db {
 }
 
 enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELED
+  IN_PROGRESS
+  SENT
+  CANCELLED
 }
 
 enum Role {
@@ -28,17 +25,19 @@ enum Role {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  phoneNumber Int  @unique
-  postalCode  String  @default("postalCode")
-  address     String  @default("address")
-  firstName   String  @default("firstName")
-  lastName    String  @default("lastName")
+  id          Int      @id @default(autoincrement())
+  phoneNumber String?  @unique
+  email       String?  @unique
+  postalCode  String   @default("")
+  address     String   @default("")
+  firstName   String   @default("")
+  lastName    String   @default("")
   cart        Cart?
-  cartId      Int?    @unique
+  cartId      Int?     @unique
   order       Order[]
   orderId     Int?     @unique
-  role        Role    @default(USER)
+  role        Role     @default(USER)
+  reviews     Review[]
 }
 
 model Cart {
@@ -46,16 +45,41 @@ model Cart {
   products CartProduct[]
   user     User          @relation(fields: [userId], references: [id])
   userId   Int           @unique
+  order    Order?
+  orderId  Int?          @unique
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
-  label       String        @unique
-  price       Int
-  description String        @db.Text
-  quantity    Int
-  carts       CartProduct[]
-  images      Image[]
+  id              Int           @id @default(autoincrement())
+  label           String        @unique
+  originalPriceAr Float         @default(0)
+  priceAr         Float         @default(0)
+  originalPriceFa Float         @default(0)
+  priceFa         Float         @default(0)
+  description     String        @db.Text
+  stock           Int           @default(10)
+  inStock         Boolean       @default(true)
+  carts           CartProduct[]
+  images          Image[]
+  tag             Tag           @relation(fields: [tagId], references: [id])
+  tagId           Int
+  reviews         Review[]
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  rating    Int
+  comment   String  @db.Text
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  label    String    @unique
+  products Product[]
 }
 
 model CartProduct {
@@ -71,7 +95,9 @@ model Order {
   id     Int         @id @default(autoincrement())
   user   User        @relation(fields: [userId], references: [id])
   userId Int         @unique
-  status OrderStatus @default(PENDING)
+  cart   Cart        @relation(fields: [cartId], references: [id])
+  cartId Int         @unique
+  status OrderStatus @default(IN_PROGRESS)
 }
 
 model Image {

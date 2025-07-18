@@ -1,4 +1,4 @@
-import { cartProductSchema } from "@/app/[lang]/validationSchemas";
+import { cartProductSchema } from "@/validation/validationSchemas";
 import { prisma } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,11 @@ export async function GET(req: NextRequest) {
             cartId: cartId
         },
         include: {
-            product: true,
+            product: {
+                include: {
+                    images: true
+                }
+            }
         }
     })
     return NextResponse.json(cartProducts)

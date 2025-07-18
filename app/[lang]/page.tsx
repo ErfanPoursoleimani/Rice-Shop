@@ -1,27 +1,17 @@
 'use client'
-import { useParams } from "next/navigation";
-import { useAuth } from "../contexts/AuthContext";
-import { HomePage, NavBar } from "./components";
-import { DataProvider, useData } from "../contexts/DataContext";
+import Footer from "./Footer";
+import HomeSec from "./_HomeSec/HomeSec";
 
-const Home = () => {
-  const { lang } = useParams()
-  const { userId } = useAuth()
-  const { user } = useData()
+const page = () => {
 
-  let cartId = null
-  if(user){
-    cartId = user.cartId!
-  }
 
   return (
-    <>
-      <DataProvider lang={lang as string} cartId={cartId} userId={userId}>
-        <NavBar />
-        <HomePage />
-      </DataProvider>
-    </>
+    <div className="relative top-[105px]">
+      <HomeSec />
+      {/* <Footer /> */}
+      <div className="h-14 md:hidden"></div>
+    </div>
   )
 }
 
-export default Home
+export default page

@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto, Noto_Sans_Arabic, Rubik } from "next/font/google";
+import { AuthInitializer } from '@/components/auth-initializer';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import "./globals.css";
+import type { Metadata } from "next";
 import { CookiesProvider } from "next-client-cookies/server";
-import { AuthProvider } from "../contexts/AuthContext";
-import { DataProvider } from "../contexts/DataContext";
+import { Geist, Geist_Mono, Noto_Sans_Arabic, Roboto, Rubik } from "next/font/google";
+import ClientLayoutWrapper from "./ClientLayoutWrapper";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,19 +44,17 @@ export default async function RootLayout({children, params}: {children: React.Re
   const { lang } = await params
 
   return (
-    <html lang="en">
+    <html lang={lang}>
       <body
-        className={`${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
+        className={`overflow-x-hidden ${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
         <CookiesProvider>
-          <AuthProvider>
-            <DataProvider lang={lang}>
-              <main>
-                  {children}
-              </main>
-            </DataProvider>
-          </AuthProvider>
+          <AuthInitializer lang={lang}>
+              <ClientLayoutWrapper lang={lang}>
+                {children}
+              </ClientLayoutWrapper>
+          </AuthInitializer>
         </CookiesProvider>
       </body>
     </html>

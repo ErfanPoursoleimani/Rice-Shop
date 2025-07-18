@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { orderSchema } from '@/app/[lang]/validationSchemas'
+import { orderSchema } from '@/validation/validationSchemas'
 import { prisma } from "@/prisma/client";
 
 export async function GET(){
@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({error: "Order already exists"}, {status: 400})
     const neworder = await prisma.order.create({
         data: {
-            userId: body.userId
+            userId: body.userId,
+            cartId: body.cartId,
         }
     })
     return NextResponse.json(neworder, {status: 201})

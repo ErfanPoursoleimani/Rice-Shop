@@ -1,12 +1,28 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@theme {
+  --breakpoint-xs: 320px;    /* 480px - new breakpoint */
+  --breakpoint-sm: 40rem;    /* 640px - default, but you can override */
+  --breakpoint-md: 56.25rem; /* 900px - your custom md breakpoint */
+  --breakpoint-lg: 64rem;    /* 1024px - default, but you can override */
+  --breakpoint-1364: 1364px; /* 1364px - new breakpoint */
+  --breakpoint-1484: 1484px; /* 1484px - new breakpoint */
+  --breakpoint-xl: 80rem;    /* 1280px - default, but you can override */
+  --breakpoint-2xl: 100rem;  /* 1600px instead of default 1536px */
+  --breakpoint-3xl: 120rem;  /* 1920px - new breakpoint */
+}
+
 :root {
   --icons: #000000;
+  /* --theme: #0f4200; */
+  --theme: #44c544;
+  --theme2: #005300;
+  --theme3: #008170;
   --dark-text: rgb(1, 1, 1);
   --sub-dark-text: rgba(0, 0, 0, 0.671);
   --light-text: rgb(255, 255, 255);
-  --sub-light-text: rgba(255, 255, 255, 0.637);
+  --sub-light-text: rgb(216, 216, 216);
   --background: rgb(255, 255, 255);
   --foreground: rgba(5, 5, 5, 0.363);
   --light-foreground: rgba(255, 255, 255, 0.13);
@@ -17,6 +33,14 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }
 
 .top-to-down-animation {

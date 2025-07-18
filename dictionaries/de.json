@@ -1,11 +1,50 @@
 {
+    "logo": "SoleimaniRice",
+    "logoPt1": "Soleimani",
+    "logoPt2": "Rice",
+    "search": "Suchen",
+    "in": "in",
+    "enterEmailOrPhone": "Bitte geben Sie Ihre E-Mail-Adresse oder Telefonnummer ein",
+    "selectYourRegion": "Wählen Sie Ihre Region",
+    "otherProducts": "Andere Produkten",  
+    "seeAllProducts": "Alle sehen",
+    "region": "Region",
+    "unitedArabEmirates": "Vereinigte Arabische Emirate",
+    "iran": "Iran",
+    "addresses": "Adressen",
+    "notifications": "Benachrichtigungen",
+    "accountDetails": "Kontodetails",
+    "logout": "Abmelden",
+    "ordersHistory": "Bestellhistorie",
+    "myOrders": "Meine Bestellungen",
+    "inProgress": "In Bearbeitung",
+    "canceled": "Storniert",
+    "sent": "Versandt",
+    "description": "Beschreibung",
+    "no": "Nein",
+    "reviews": "Bewertungen",
+    "similarProducts": "Ähnliche Produkte",
+    "recommendations": "Empfehlungen",
+    "orders": "Bestellungen",
+    "activitySummary": "Aktivitätszusammenfassung",
+    "ERROR_MESSAGES":{
+        "PHONE_NUMBER": "Bitte geben Sie eine gültige Telefonnummer ein",
+        "PHONE_NUMBER_AND_EMAIL": "Bitte geben Sie eine gültige Telefonnummer oder E-Mail-Adresse ein",
+        "POSTAL_CODE": "Postleitzahl muss 10 Ziffern haben",
+        "FIRST_NAME": "Vorname muss 3-20 Zeichen lang sein",
+        "LAST_NAME": "Nachname muss 3-25 Zeichen lang sein",
+        "EMAIL": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+        "URL": "Muss eine gültige URL sein, die mit http oder https beginnt",
+        "REQUIRED": "Lassen Sie diesen Bereich nicht leer"
+    },
     "links": {
         "about": "Über uns",
         "contact": "Kontakt",
         "products": "Produkten",
         "home": "Hauptseite",
-        "orders": "Bestellungen",
-        "users": "Benutzer/innen"
+        "users": "Benutzer/innen",
+        "cart": "Warenkorb",
+        "profile": "Profil"
     },
     "account": {
         "register": "Anmeldung",
@@ -16,20 +55,19 @@
     },
     "content": {
         "homepage": {
-            "logo": "SoleimaniRice",
             "seeOurProducts": "unsere produkten",
             "description": {
                 "first": {
                     "title": "Einzigartiges Aroma",
-                    "body": "Spüren Sie bei jedem Kochen den angenehmen Duft der nördlichen Reisfelder in Ihrem Zuhause."
+                    "body": "Spüren Sie den angenehmen Duft der nördlichen Reisfelder."
                 },
                 "second": {
                     "title": "Außergewöhnlicher Geschmack",
-                    "body": "Jedes Korn Taremi ist zart und köstlich, mit diesem Reis ist der Genuss jedes Bissens vollkommen."
+                    "body": "Jedes Korn Taremi ist zart und köstlich."
                 },
                 "third": {
                     "title": "Premium-Qualität",
-                    "body": "Von unseren besten Farmen direkt auf Ihren Tisch. Frisch und gesund, so wie es sein soll."
+                    "body": "Von unseren besten Farmen direkt auf Ihren Tisch."
                 }
             }
         }
@@ -42,14 +80,30 @@
         "deleteFromCart": "Aus Warenkorb Löschen",
         "price": "Preis",
         "perkg": "pro kg",
-        "currency": "€",
+        "currency": "IRT",
         "label": "Titel",
         "massUnit": "Kg",
         "products": {
+            "برنج_بسمتی": "Basmati Reis",
             "برنج_کشت_دوم": "Reis der zweiten Ernte",
             "برنج_قهوه_ای": "Brauner Reis",
             "برنج_طارم_عطری": "Tarom Atri Reis",
-            "برنج_طارم_فجر": "Tarom Fajr Reis"
+            "برنج_طارم_فجر": "Tarom Fajr Reis",
+            "روغن_زیتون": "Olivenöl",
+            "روغن_کنجد": "Sesamöl",
+            "روغن_نارگیل": "Kokosöl",
+            "آرد_برنج": "Reismehl",
+            "برنجک": "Reis Snack",
+            "لوبیا_چیتی": "Kichererbsen",
+            "عدس": "Linsen",
+            "میوه_خشک": "Trockenfrüchte"
+        },
+        "categories": {
+            "برنج_و_غلات": "Reis und Getreide",
+            "روغن_ها": "Öle",
+            "حبوبات": "Hülsenfrüchte",
+            "محصولات_برنجی": "Reisprodukte",
+            "خشکبار": "Trockenwaren"
         }
     }
 }

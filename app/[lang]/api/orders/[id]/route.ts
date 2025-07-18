@@ -1,4 +1,4 @@
-import { orderSchema } from "@/app/[lang]/validationSchemas";
+import { orderSchema } from "@/validation/validationSchemas";
 import { prisma } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,26 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
-import { userSchema } from '@/app/[lang]/validationSchemas'
+import { userLoginSchema } from '@/validation/validationSchemas'
 import { prisma } from "@/prisma/client";
 import { cookies } from "next/headers";
 import jwt, { SignOptions } from 'jsonwebtoken';
 
 export async function POST(request: NextRequest) {
     const body = await request.json()
-    const validation = userSchema.safeParse(body)
+    const validation = userLoginSchema.safeParse(body)
+    const isPhoneNumber = !((/[^0-9+]/g).test(body.emailOrPhone))
+
+    let filteredBody: {phoneNumber: string | undefined, email: string | undefined} = {
+        phoneNumber: isPhoneNumber ? body.emailOrPhone : undefined,
+        email: !isPhoneNumber ? body.emailOrPhone : undefined,
+    }
+
     if(!validation.success)
         return NextResponse.json(validation.error.errors, {status: 400})
 
     let user = await prisma.user.findUnique({
-        where: { 
-            phoneNumber: body.phoneNumber
-        }
+        where: 
+            isPhoneNumber 
+            ? { phoneNumber: filteredBody.phoneNumber }
+            : { email: filteredBody.email }
     })
-
+    
     if(!user){        
         const newUser = await prisma.user.create({
             data: {
-                phoneNumber: body.phoneNumber,
-                
+                phoneNumber: filteredBody.phoneNumber,
+                email: filteredBody.email,
             }
         })
         const newCart = await prisma.cart.create({
@@ -36,7 +44,7 @@ export async function POST(request: NextRequest) {
                 cartId: newCart.id
             }
         })
-    } 
+    }
 
     const payload = { userId: user.id }
     const secretKey = process.env.JWT_SECRET!
@@ -45,5 +53,7 @@ export async function POST(request: NextRequest) {
     const token = jwt.sign(payload, secretKey, options);
 
     const cookieStore = await cookies()
-    cookieStore.set("jwt", token)
+    cookieStore.set("auth-token", token)
+
+    return NextResponse.json(user)
 }

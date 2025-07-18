@@ -1,11 +1,52 @@
 {
+    "logo": "SoleimaniRice",
+    "logoPt1": "Soleimani",
+    "logoPt2": "Rice",
+    "search": "Search",
+    "in": "in",
+    "enterEmailOrPhone": "Please enter your email or phone number",
+    "selectYourRegion": "Select your region",
+    "otherProducts": "Other Products",  
+    "seeAllProducts": "See all", 
+
+    "region": "Region",
+    "unitedArabEmirates": "United Arab Emirates",
+    "iran": "Iran",
+    "addresses": "Addresses",
+    "notifications": "Notifications",
+    "accountDetails": "Account Details",
+    "logout": "Logout",
+    "ordersHistory": "Orders History",
+    "myOrders": "My Orders",
+    "inProgress": "In Progress",
+    "canceled": "Canceled",
+    "sent": "Sent",
+    "description": "Description",
+    "no": "No",
+    "reviews": "Reviews",
+    "similarProducts": "Similar Products",
+    "recommendations": "Recommendations",
+    "orders": "Orders",
+    "activitySummary": "Activity Summary",
+
+    "ERROR_MESSAGES": {
+        "PHONE_NUMBER": "Please enter a valid phone number",
+        "PHONE_NUMBER_AND_EMAIL": "Please enter a valid phone number or email",
+        "POSTAL_CODE": "Postal code must be 10 digits",
+        "FIRST_NAME": "First name must be 3-20 characters",
+        "LAST_NAME": "Last name must be 3-25 characters",
+        "EMAIL": "Please enter a valid email address",
+        "URL": "Must be a valid URL starting with http or https",
+        "REQUIRED": "Dont leave this section empty"
+    },
     "links": {
         "about": "About Us",
         "contact": "Contact",
         "products": "Products",
         "home": "Home",
-        "orders": "Orders",
-        "users": "Users"
+        "users": "Users",
+        "cart": "Cart",
+        "profile": "Profile"
     },
     "account": {
         "register": "Register",
@@ -16,20 +57,19 @@
     },
     "content": {
         "homepage": {
-            "logo": "SoleimaniRice",
             "seeOurProducts": "our products",
             "description": {
                 "first": {
                     "title": "Unique aroma",
-                    "body": "Feel the pleasant smell of the northern rice fields in your home with every cooking."
+                    "body": "Feel the pleasant smell of the northern rice fields."
                 },
                 "second": {
                     "title": "Exceptional taste",
-                    "body": "Each grain of taremi is tender and delicious, the pleasure of every bite is complete with this rice."
+                    "body": "Each grain of taremi is tender and delicious."
                 },
                 "third": {
                     "title": "Premium quality",
-                    "body": "From our best farms, straight to your table. Fresh and healthy, as it should be."
+                    "body": "From our best farms, straight to your table."
                 }
             }
         }
@@ -42,14 +82,30 @@
         "deleteFromCart": "Delete from Cart",
         "price": "Price",
         "perkg": "per kg",
-        "currency": "$",
+        "currency": "IRT",
         "label": "Label",
         "massUnit": "Kg",
         "products": {
             "برنج_کشت_دوم": "Second Crop Rice",
             "برنج_قهوه_ای": "Brown Rice",
             "برنج_طارم_عطری": "Tarom Atri Rice",
-            "برنج_طارم_فجر": "Tarom Fajr Rice"
+            "برنج_طارم_فجر": "Tarom Fajr Rice",
+            "برنج_بسمتی": "Basmati Rice",
+            "روغن_زیتون": "Olive Oil",
+            "روغن_کنجد": "Sesame Oil",
+            "روغن_نارگیل": "Coconut Oil",
+            "آرد_برنج": "Rice Flour",
+            "برنجک": "Rice Snack",
+            "لوبیا_چیتی": "Chickpeas",
+            "عدس": "Lentils",
+            "میوه_خشک": "Dried Fruits"
+        },
+        "categories": {
+            "برنج_و_غلات": "Rice and Grains",
+            "روغن_ها": "Oils",
+            "حبوبات": "Legumes",
+            "محصولات_برنجی": "Rice Products",
+            "خشکبار": "Dried Goods"
         }
     }
 }

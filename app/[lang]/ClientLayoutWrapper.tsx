@@ -1,0 +1,45 @@
+'use client';
+import { DataInitializer } from '@/components/data-initializer';
+import { useAuthStore } from '@/stores/authStore';
+import { useDataStore } from '@/stores/dataStore';
+import { usePathname } from 'next/navigation';
+import { ReactNode, useEffect } from 'react';
+import BottomNavBar from './_Navbar/BottomNavBar';
+import TopNavBar from './_Navbar/TopNavBar';
+
+interface ClientLayoutWrapperProps {
+  children: ReactNode;
+  lang: string;
+}
+
+export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrapperProps) {
+  
+  const currentPath = usePathname()
+
+  const { user } = useAuthStore()
+
+  let cartId = null
+  if(user){
+    cartId = user.cartId!
+  }
+
+  return (
+    <>
+      <DataInitializer lang={lang} cartId={cartId}>
+        {
+        currentPath.startsWith(`/${lang}/users/login`) /* || 
+        currentPath.startsWith(`/${lang}/profile`)   */
+        ? null 
+        : <TopNavBar 
+          className={`
+            ${currentPath.startsWith(`/${lang}/profile`) ? "hidden md:flex" : null}
+          `}/>
+        }
+          <main>
+            {children}
+          </main>
+        {currentPath.startsWith(`/${lang}/users/login`) ? null : <BottomNavBar />}
+      </DataInitializer>
+    </>
+  );
+}

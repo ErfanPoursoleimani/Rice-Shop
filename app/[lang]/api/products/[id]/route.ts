@@ -1,4 +1,4 @@
-import { productSchema } from "@/app/[lang]/validationSchemas";
+import { productSchema } from "@/validation/validationSchemas";
 import { prisma } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -27,9 +27,12 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
         data: {
             id: body.id,
             label: body.label,
-            price: body.price,
+            priceAr: body.priceAr,
+            priceFa: body.priceFa,
+            originalPriceAr: body.originalPriceAr,
+            originalPriceFa: body.originalPriceFa,
             description: body.description,
-            quantity: body.quantity,
+            stock: body.stock,
             carts: body.carts,
             images: body.images
         }

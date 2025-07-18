@@ -1,4 +1,4 @@
-import { userSchema } from "@/app/[lang]/validationSchemas";
+import { userSchema } from "@/validation/validationSchemas";
 import { prisma } from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -59,6 +59,12 @@ export async function DELETE(request: NextRequest, props: { params: Promise<{ id
 
     if(!user)
         return NextResponse.json({ error: 'Invalid user'}, { status: 404 })
+
+    await prisma.cart.delete({
+        where: {
+            id: user.cartId!
+        }
+    })
 
     await prisma.user.delete({
         where:{

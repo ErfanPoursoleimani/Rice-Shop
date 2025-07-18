@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { productSchema } from '@/app/[lang]/validationSchemas'
+import { productSchema } from '@/validation/validationSchemas'
 import { prisma } from "@/prisma/client";
 
 export async function GET(){
-    const products = await prisma.product.findMany()
+    const products = await prisma.product.findMany({
+        include: {
+            images: true,
+            reviews: true
+        }
+    })
     return NextResponse.json(products)
 }
 
@@ -24,10 +29,14 @@ export async function POST(request: NextRequest) {
     const newProduct = await prisma.product.create({
         data: {
             label: body.label,
-            price: body.price,
+            priceFa: body.priceFa,
+            priceAr: body.priceAr,
+            originalPriceAr: body.originalPriceAr,
+            originalPriceFa: body.originalPriceFa,
             description: body.description,
-            quantity: body.quantity,
-        }
+            stock: body.stock,
+            tagId: body.tagId
+        },
     })
     return NextResponse.json(newProduct, {status: 201})
 }

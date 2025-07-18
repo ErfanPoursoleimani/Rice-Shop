@@ -1,11 +1,50 @@
 {
+    "logo": "SoleimaniRice",
+    "logoPt1": "Soleimani",
+    "logoPt2": "Rice",
+    "search": "جستجو",
+    "in": "فی",
+    "enterEmailOrPhone": "لطفا شماره موبایل یا ایمیل خود را وارد کنید",
+    "selectYourRegion": "منطقه خود را انتخاب کنید",
+    "otherProducts": "Other Products",  
+    "seeAllProducts": "See all", 
+    "region": "المنطقة",
+    "unitedArabEmirates": "الإمارات العربية المتحدة",
+    "iran": "الایران",
+    "addresses": "العناوين",
+    "notifications": "الإشعارات",
+    "accountDetails": "تفاصيل الحساب",
+    "logout": "تسجيل الخروج",
+    "ordersHistory": "تاريخ الطلبات",
+    "myOrders": "طلباتي",
+    "inProgress": "قيد التنفيذ",
+    "canceled": "ملغي",
+    "sent": "تم الإرسال",
+    "description": "الوصف",
+    "no": "لا",
+    "reviews": "التقييمات",
+    "similarProducts": "منتجات مشابهة",
+    "recommendation": "التوصية",
+    "orders": "Orders",
+    "activitySummary": "Activity Summary",
+    "ERROR_MASSAGES":{
+        "PHONE_NUMBER": "Bitte geben Sie eine gültige Telefonnummer ein",
+        "PHONE_NUMBER_AND_EMAIL": "Please enter a valid phone number or email",
+        "POSTAL_CODE": "Postleitzahl muss 10 Ziffern haben",
+        "FIRST_NAME": "Vorname muss 3-20 Zeichen lang sein",
+        "LAST_NAME": "Nachname muss 3-25 Zeichen lang sein",
+        "EMAIL": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+        "URL": "Muss eine gültige URL sein, die mit http oder https beginnt",
+        "REQUIRED": "Lassen Sie diesen Bereich nicht leer"
+    },
     "links": {
         "about": "About Us",
         "contact": "Contact",
         "products": "Products",
         "home": "Home",
-        "orders": "Orders",
-        "users": "Users"
+        "users": "Users",
+        "cart": "سبد خرید",
+        "profile": "Profile"
     },
     "account": {
         "register": "Register",
@@ -16,7 +55,6 @@
     },
     "content": {
         "homepage": {
-            "logo": "SoleimaniRice",
             "seeOurProducts": "unsere produkten",
             "description": {
                 "first": {
@@ -46,10 +84,26 @@
         "label": "Titel",
         "massUnit": "Kg",
         "products": {
+            "برنج_بسمتی": "برنج بسمتی",
             "برنج_کشت_دوم": "Reis der zweiten Ernte",
             "برنج_قهوه_ای": "Brauner Reis",
             "برنج_طارم_عطری": "Tarom Atri Reis",
-            "برنج_طارم_فجر": "Tarom Fajr Reis"
+            "برنج_طارم_فجر": "Tarom Fajr Reis",
+            "روغن_زیتون": "Olive Oil",
+            "روغن_کنجد": "Sesame Oil",
+            "روغن_نارگیل": "Coconut Oil",
+            "آرد_برنج": "Rice Flour",
+            "برنجک": "Rice Snack",
+            "لوبیا_چیتی": "Chickpeas",
+            "عدس": "Lentils",
+            "میوه_خشک": "Dried Fruits"
+        },
+        "categories": {
+            "برنج_و_غلات": "Rice and Grains",
+            "روغن_ها": "Oils",
+            "حبوبات": "Legumes",
+            "محصولات_برنجی": "Rice Products",
+            "خشکبار": "Dried Goods"
         }
     }
 }

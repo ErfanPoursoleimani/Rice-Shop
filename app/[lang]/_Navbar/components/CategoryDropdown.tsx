@@ -34,21 +34,21 @@ const CategoryDropdown: React.FC = () => {
   const handleTagIcon = (label: string): ReactNode => {
     switch (label) {
       case 'برنج_و_غلات':
-        return <Tractor size={'1.3rem'} />
+        return <Tractor size={'1rem'} />
       case "روغن_ها":
-        return <Amphora size={'1.3rem'} />
+        return <Amphora size={'1rem'} />
       case "حبوبات":
-        return <Bean size={'1.3rem'} />
+        return <Bean size={'1rem'} />
       case "محصولات_برنجی":
-        return <Wheat size={'1.3rem'} />
+        return <Wheat size={'1rem'} />
       case "خشکبار":
-        return <Citrus size={'1.3rem'} />
+        return <Citrus size={'1rem'} />
     }
     return null
   }
 
   return (
-        <div className='hidden h-full md:block'>
+        <div className='hidden md:block'>
           <div className={`relative z-10 h-full flex flex-col 
               ${isRTL ? "items-end" : "items-start"}
             `}
@@ -84,7 +84,7 @@ const CategoryDropdown: React.FC = () => {
             </button>
             {isOpen &&
               <div 
-                className={`absolute top-full flex max-w-[70vw] 
+                className={`absolute top-[94%] flex max-w-[70vw] 
                   ${isRTL ? "flex-row-reverse" : "flex-row"}
                 `}
                 onMouseEnter={() => setIsOpen(true)}
@@ -94,8 +94,8 @@ const CategoryDropdown: React.FC = () => {
                   {tags.map((tag, i) => (
                     <p
                       key={tag.id}
-                      className={`flex items-end gap-2 truncate px-6 py-6 cursor-pointer border-x-1 border-[#c7c7c7]
-                        ${tagHover === tag ? "bg-white text-[var(--theme2)]" : null}
+                      className={`flex items-center gap-2 truncate px-6 py-6 cursor-pointer border-x-1 border-[#c7c7c7]
+                        ${tagHover === tag ? "bg-white text-[var(--theme)]" : null}
                         ${i !== tags.length - 1 ? "border-b-1" : null} 
                         ${isRTL ? "flex-row-reverse" : "flex-row"}
                       `}
@@ -119,7 +119,7 @@ const CategoryDropdown: React.FC = () => {
                       })}>
                           {/* <h2 className='hidden md:flex flex-col justify-center items-center self-stretch px-2 text-center mx-13 text-[40px] font-bold'>{dict.product.categories[tagHover && tagHover.label as keyof typeof dict.product.categories]}</h2> */}
                           {tagHover && tagHover.products.map((product) => (
-                              <ProductCard key={product.id} product={product}/>
+                              <ProductCard key={product.id} product={product} buttonBg={'--theme2'}/>
                           ))}
                           {/* <SeeAllProducts arrowDirection={`${isRTL ? "toLeft" : "toRight"}`} /> */}
                       </div>
@@ -129,7 +129,7 @@ const CategoryDropdown: React.FC = () => {
               </div>
             }
           </div>
-          {isOpen && <div className='fixed top-[104px] left-0 w-[100vw] h-[calc(100vh-104px)] bg-[#00000085] z-9'></div>}
+          {isOpen && <div className='fixed top-[50px] left-0 w-[100%] h-[100vh] bg-[#000000c0] z-9'></div>}
         </div>
   );
 };

@@ -1,6 +1,6 @@
 import { match } from '@formatjs/intl-localematcher';
+import { jwtVerify } from 'jose';
 import Negotiator from 'negotiator';
-import jwt from 'jsonwebtoken'
 import { NextRequest, NextResponse } from "next/server";
 
 let locales = ['en', 'de', 'fa', 'ar']
@@ -17,6 +17,11 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl
   const domain = url.origin
   const { pathname } = request.nextUrl
+
+  // Early return for API routes to prevent any processing
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
 
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
@@ -41,18 +46,20 @@ export async function middleware(request: NextRequest) {
   let isAuthenticated = false
   let response = NextResponse.next()
 
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload
-      isAuthenticated = true
-    } catch (error) {
-      // Invalid token - clear it
-      response.cookies.delete('auth-token')
-    }
+
+// In your middleware
+if (token) {
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+    const { payload } = await jwtVerify(token, secret)
+    isAuthenticated = true
+  } catch (error: any) {
+    response.cookies.delete('auth-token')
   }
+}
 
   // Protected routes - need to account for locale prefix
-  const protectedPaths = ['/dashboard', '/profile', '/settings']
+  const protectedPaths = ['/profile']
   const isProtectedPath = protectedPaths.some(path => 
     locales.some(locale => 
       pathname.startsWith(`/${locale}${path}`)
@@ -64,7 +71,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  const authPaths = ['/login']
+  const authPaths = ['/users/login']
   const isAuthPath = authPaths.some(path => 
     locales.some(locale => 
       pathname.startsWith(`/${locale}${path}`)
@@ -80,7 +87,17 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    /*
+     * Match all request paths except:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     * - files with extensions (like .js, .css, .png, etc.)
+     */
+    '/((?!api/|_next/static|_next/image|favicon.ico|public/|.*\\.).*)',
   ],
 }
+
+// export const runtime = 'nodejs'

@@ -52,12 +52,6 @@ interface DataStore {
     initializeStore: (lang: string, cartId?: number | null) => Promise<void>;
     clearError: () => void;
     getProduct: (productId: number) => Product | null;
-    
-    // Cart Management
-    addToCart: (product: Product, quantity: number) => void;
-    removeFromCart: (productId: number) => void;
-    updateCartQuantity: (productId: number, quantity: number) => void;
-    clearCart: () => void;
 }
 
 const initialDict: Dict = {
@@ -183,23 +177,6 @@ const cookieManager = {
             console.error('Error reading cookie:', error);
             return null;
         }
-    },
-    set: (name: string, value: string, days = 30) => {
-        if (typeof window === 'undefined') return;
-        try {
-            const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-            document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
-        } catch (error) {
-            console.error('Error setting cookie:', error);
-        }
-    },
-    remove: (name: string) => {
-        if (typeof window === 'undefined') return;
-        try {
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-        } catch (error) {
-            console.error('Error removing cookie:', error);
-        }
     }
 };
 
@@ -221,8 +198,6 @@ const createSSRStorage = () => {
                 localStorage.setItem(name, value);
             } catch (error) {
                 console.error('Error writing to localStorage:', error);
-                // Fallback to cookies if localStorage fails
-                cookieManager.set(name, value);
             }
         },
         removeItem: (name: string): void => {
@@ -231,7 +206,6 @@ const createSSRStorage = () => {
                 localStorage.removeItem(name);
             } catch (error) {
                 console.error('Error removing from localStorage:', error);
-                cookieManager.remove(name);
             }
         },
     };
@@ -340,7 +314,7 @@ export const useDataStore = create<DataStore>()(
                         const { data } = await axios.get(`/${lang}/api/cartProducts?cartId=${cartId}`);
                         set({ cartProducts: data, loading: false });
                     } else {
-                        const cookieData = cookieManager.get('cartProducts');
+                        const cookieData = cookieManager.get('cartProduct');
                         const cartProducts = cookieData ? JSON.parse(cookieData) : [];
                         set({ cartProducts, loading: false });
                     }
@@ -372,15 +346,8 @@ export const useDataStore = create<DataStore>()(
                     get().fetchOrders(lang),
                     get().fetchImages(lang),
                     get().fetchDict(lang),
+                    get().fetchCartProducts(lang, cartId),
                 ];
-
-                if (cartId) {
-                    promises.push(get().fetchCartProducts(lang, cartId));
-                    cookieManager.remove('cartProducts');
-                } else {
-                    cookieManager.set('cartProducts', '[]');
-                    promises.push(get().fetchCartProducts(lang));
-                }
 
                 try {
                     await Promise.all(promises);
@@ -396,74 +363,6 @@ export const useDataStore = create<DataStore>()(
             getProduct: (productId: number) => {
                 const { products } = get();
                 return products.find(p => p.id === productId) || null;
-            },
-
-            // Cart Management
-            addToCart: (product: ({images: Image[]} & Product), quantity: number) => {
-                const { cartProducts, cartId } = get();
-                
-                if (cartId) {
-                    // Handle database cart
-                    // You'll need to implement API call here
-                } else {
-                    // Handle cookie cart
-                    const existingItem = cartProducts.find(cp => cp.product.id === product.id);
-                    let newCartProducts: CartProduct[];
-                    
-                    if (existingItem) {
-                        newCartProducts = cartProducts.map(cp => 
-                            cp.product.id === product.id 
-                                ? { ...cp, quantity: cp.quantity + quantity }
-                                : cp
-                        );
-                    } else {
-                        newCartProducts = [...cartProducts, { 
-                            product, 
-                            quantity,
-                            id: Date.now(), // temporary ID
-                            cartId: null,
-                            productId: product.id
-                        }];
-                    }
-                    
-                    set({ cartProducts: newCartProducts });
-                    cookieManager.set('cartProducts', JSON.stringify(newCartProducts));
-                }
-            },
-
-            removeFromCart: (productId: number) => {
-                const { cartProducts, cartId } = get();
-                
-                if (cartId) {
-                    // Handle database cart
-                    // You'll need to implement API call here
-                } else {
-                    const newCartProducts = cartProducts.filter(cp => cp.product.id !== productId);
-                    set({ cartProducts: newCartProducts });
-                    cookieManager.set('cartProducts', JSON.stringify(newCartProducts));
-                }
-            },
-
-            updateCartQuantity: (productId: number, quantity: number) => {
-                const { cartProducts, cartId } = get();
-                
-                if (cartId) {
-                    // Handle database cart
-                    // You'll need to implement API call here
-                } else {
-                    const newCartProducts = cartProducts.map(cp => 
-                        cp.product.id === productId 
-                            ? { ...cp, quantity }
-                            : cp
-                    );
-                    set({ cartProducts: newCartProducts });
-                    cookieManager.set('cartProducts', JSON.stringify(newCartProducts));
-                }
-            },
-
-            clearCart: () => {
-                set({ cartProducts: [] });
-                cookieManager.remove('cartProducts');
             }
         }),
         {

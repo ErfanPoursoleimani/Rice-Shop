@@ -9,14 +9,14 @@ const LargeLogo = () => {
 
   return (
     <>
-      <div className='hidden 1484:flex font-extrabold 1484:flex-col 1484:items-center 1484:gap-10 '>
+      <div className='hidden xl:flex text-[var(--theme)] font-extrabold xl:flex-col xl:items-center xl:gap-10 '>
         <span className={classNames({
-            "1484:text-[120px]": isRTL,
-            "1484:text-[60px]": !(isRTL),
+            "xl:text-[120px]": isRTL,
+            "xl:text-[60px]": !(isRTL),
         })}>{ logoPt1 }</span>
         <span className={classNames({
-            "1484:text-[40px]": isRTL,
-            "1484:text-[130px]": !(isRTL),
+            "xl:text-[40px]": isRTL,
+            "xl:text-[130px]": !(isRTL),
         })}>{ logoPt2 }</span>
     </div>
     </>

@@ -6,9 +6,7 @@
   --breakpoint-sm: 40rem;    /* 640px - default, but you can override */
   --breakpoint-md: 56.25rem; /* 900px - your custom md breakpoint */
   --breakpoint-lg: 64rem;    /* 1024px - default, but you can override */
-  --breakpoint-1364: 1364px; /* 1364px - new breakpoint */
-  --breakpoint-1484: 1484px; /* 1484px - new breakpoint */
-  --breakpoint-xl: 80rem;    /* 1280px - default, but you can override */
+  --breakpoint-xl: 83rem;    /* 1280px + 3rem - default, but you can override */
   --breakpoint-2xl: 100rem;  /* 1600px instead of default 1536px */
   --breakpoint-3xl: 120rem;  /* 1920px - new breakpoint */
 }
@@ -16,9 +14,9 @@
 :root {
   --icons: #000000;
   /* --theme: #0f4200; */
-  --theme: #44c544;
-  --theme2: #005300;
-  --theme3: #008170;
+  --theme: #247fe7;
+  --theme2: #373b37;
+  --theme3: #458fff;
   --dark-text: rgb(1, 1, 1);
   --sub-dark-text: rgba(0, 0, 0, 0.671);
   --light-text: rgb(255, 255, 255);
@@ -91,49 +89,18 @@ body {
   }
 }
 
-/* .hamburger-nav-animation {
-  animation: hamburger-nav-animation 0.25s ease forwards;
-  transition: 0.25s ease;
+.bottom-to-top-animation {
+  animation: bottom-to-top-animation 0.25s ease both;
+  transition: 2s ease;
 }
 
-@keyframes hamburger-nav-animation {
+@keyframes bottom-to-top-animation {
   0% {
-      opacity: 0;
-      transform: translateX(250px);
+    opacity: 0;
+    transform: translateY(100%);
   }
   100% {
-      opacity: 1;
-      transform: translateX(0);
-  }
-} */
-
-/* .loginInfo-animation {
-  animation: loginInfo-animation 0.25s ease forwards;
-  transition: 0.25s ease;
-}
-
-@keyframes loginInfo-animation {
-  0% {
-      opacity: 0;
-      transform: translateX(-950px);
-      transform: translateY(-350px);
-  }
-  100% {
-      opacity: 1;
-      transform: translateX(0);
-      transform: translateY(0);
-  }
-} */
-
-.productCard-animation {
-  animation: productCard-animation 10s linear infinite;
-}
-
-@keyframes productCard-animation {
-  0% {
-    transform: rotateZ(0);
-  }
-  100% {
-    transform: rotateZ(360);
+    opacity: 1;
+    transform: translateY(0);
   }
 }

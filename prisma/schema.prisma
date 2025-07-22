@@ -79,6 +79,7 @@ model Review {
 model Tag {
   id       Int       @id @default(autoincrement())
   label    String    @unique
+  image    String    @default("https://i.imgur.com/JQMqjf4.jpeg")
   products Product[]
 }
 

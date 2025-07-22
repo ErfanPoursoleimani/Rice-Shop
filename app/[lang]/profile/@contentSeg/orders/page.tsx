@@ -1,7 +1,7 @@
 "use client"
 import useDataStore from '@/stores/dataStore'
 import Link from 'next/link'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
@@ -45,9 +45,10 @@ const page = () => {
 
 
   return (
-      <div className={`min-h-60 flex flex-col flex-1 justify-stretch md:border-1 border-neutral-300 rounded-[10px]`}>
+    <div className={`bottom-to-top-animation min-h-60 max-md:fixed max-md:min-h-full max-md:w-full max-md:bg-white max-md:p-5 flex flex-col flex-1 justify-stretch md:border-1 border-neutral-300 rounded-[10px]`}>
       <div className={`md:mx-5 md:mt-5 flex justify-between items-end h-10 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
             <p className='font-medium self-stretch'>Orders History</p>
+            {isRTL ? <MdArrowBackIos className='self-start' onClick={useRouter().back} /> : <MdArrowForwardIos className='self-start' onClick={useRouter().back} /> }
       </div>
       <div className={`flex text-[13px] justify-stretch border-b-1 border-neutral-200 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
         {navLinks.map((link) => (
@@ -89,12 +90,6 @@ const page = () => {
             </div>
           ))
         }
-          <div className='min-h-40 flex-1 border-1 border-neutral-200 rounded-[10px] '>
-          </div>
-          <div className='min-h-40 flex-1 border-1 border-neutral-200 rounded-[10px] '>
-          </div>
-          <div className='min-h-40 flex-1 border-1 border-neutral-200 rounded-[10px] '>
-          </div>
       </div>
     </div>
   )

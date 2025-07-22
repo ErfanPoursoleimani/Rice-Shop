@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { Product } from '@prisma/client';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import useDataStore from '@/stores/dataStore';
-import { CartProduct } from '@/types/types';
+import { CartProduct, Product } from '@/types/types';
 import { useAuthStore } from '@/stores/authStore';
 
 type CartItem = CartProduct
@@ -28,6 +27,41 @@ interface ApiError {
     status?: number;
 }
 
+// Cookie manager for non-authenticated users
+const cookieManager = {
+    get: (name: string) => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [key, value] = cookie.trim().split('=');
+                if (key === name) return decodeURIComponent(value);
+            }
+            return null;
+        } catch (error) {
+            console.error('Error reading cookie:', error);
+            return null;
+        }
+    },
+    set: (name: string, value: string, days = 30) => {
+        if (typeof window === 'undefined') return;
+        try {
+            const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+            document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+        } catch (error) {
+            console.error('Error setting cookie:', error);
+        }
+    },
+    remove: (name: string) => {
+        if (typeof window === 'undefined') return;
+        try {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+        } catch (error) {
+            console.error('Error removing cookie:', error);
+        }
+    }
+};
+
 // Custom hook for toast notifications (you can replace with your preferred toast library)
 const useToast = () => {
     return {
@@ -37,33 +71,21 @@ const useToast = () => {
     };
 };
 
+const modifyCartProducts = () => {
+
+} 
+
 export function useCartAction(product: Product): CartActionReturn {
     const router = useRouter();
-    const { user } = useAuthStore();
-    const { cartProducts } = useDataStore();
+    const { userId } = useAuthStore();
+    const { cartProducts, setCartProducts, cartId, lang } = useDataStore();
     const toast = useToast();
     
     const [isDeletingFromCart, setIsDeletingFromCart] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    
-    // Refs for debouncing and preventing race conditions
-    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const abortControllerRef = useRef<AbortController | null>(null);
-    const mountedRef = useRef(true);
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            mountedRef.current = false;
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
-            }
-            if (abortControllerRef.current) {
-                abortControllerRef.current.abort();
-            }
-        };
-    }, []);
+    const isAuthenticated = Boolean(userId);
 
     // Memoize cart item lookup for efficiency
     const cartItem = useMemo((): CartItem | null => {
@@ -117,89 +139,86 @@ export function useCartAction(product: Product): CartActionReturn {
         console.error(`Cart action error (${action}):`, error);
     }, [toast]);
 
-    // Generic API call handler with comprehensive error handling and optimistic updates
+    // Update cart products in store and cookies for non-authenticated users
+    const updateCartState = useCallback((newCartProducts: CartProduct[]) => {
+        setCartProducts(newCartProducts);
+        if (!isAuthenticated) {
+            cookieManager.set('cartProducts', JSON.stringify(newCartProducts));
+        }
+    }, [setCartProducts, isAuthenticated]);
+
+    // Handle cookie cart operations for non-authenticated users
+    const handleCookieCart = useCallback((operation: 'add' | 'update' | 'delete', quantity?: number) => {
+        const existingItem = cartProducts.find(cp => cp.productId === product.id);
+        let newCartProducts: CartProduct[];
+        
+        switch (operation) {
+            case 'add':
+                if (existingItem) {
+                    newCartProducts = cartProducts.map(cp => 
+                        cp.productId === product.id 
+                            ? { ...cp, quantity: cp.quantity + 1 }
+                            : cp
+                    );
+                } else {
+                    newCartProducts = [...cartProducts, { 
+                        id: Date.now(), // temporary ID for cookie cart
+                        cartId: null,
+                        productId: product.id,
+                        quantity: 1,
+                        product: product
+                    }];
+                }
+                break;
+            case 'update':
+                if (existingItem && quantity !== undefined) {
+                    newCartProducts = cartProducts.map(cp => 
+                        cp.productId === product.id 
+                            ? { ...cp, quantity }
+                            : cp
+                    );
+                } else {
+                    return;
+                }
+                break;
+            case 'delete':
+                newCartProducts = cartProducts.filter(cp => cp.productId !== product.id);
+                break;
+            default:
+                return;
+        }
+        
+        updateCartState(newCartProducts);
+    }, [cartProducts, product, updateCartState]);
+
+    // Generic API call handler for authenticated users
     const handleApiCall = useCallback(async (
-        apiCall: (signal: AbortSignal) => Promise<any>,
-        optimisticUpdate?: () => void,
-        revertUpdate?: () => void,
+        apiCall: () => Promise<any>,
         successMessage?: string
     ) => {
-        if (!mountedRef.current) return;
-
-        // Cancel any pending requests
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-
-        // Create new abort controller for this request
-        abortControllerRef.current = new AbortController();
-        const signal = abortControllerRef.current.signal;
-
         setIsLoading(true);
         setError(null);
-        
-        // Apply optimistic update
-        optimisticUpdate?.();
 
         try {
-            await apiCall(signal);
+            await apiCall();
             
-            if (!mountedRef.current) return;
-            
-            // Refresh data
-            router.refresh();
+            // Refresh data for authenticated users
+            if (isAuthenticated) {
+                router.refresh();
+            }
             
             if (successMessage) {
                 toast.success(successMessage);
             }
         } catch (error) {
-            if (!mountedRef.current) return;
-            
-            // Revert optimistic update on error
-            revertUpdate?.();
-            
-            // Don't handle aborted requests as errors
-            if (axios.isCancel(error) || (error as Error).name === 'AbortError') {
-                return;
-            }
-            
             handleError(error, 'update cart');
         } finally {
-            if (mountedRef.current) {
-                setIsLoading(false);
-            }
+            setIsLoading(false);
         }
-    }, [router, toast, handleError]);
-
-    // Debounced quantity update to prevent rapid API calls
-    const debouncedQuantityUpdate = useCallback((newQuantity: number) => {
-        if (debounceTimeoutRef.current) {
-            clearTimeout(debounceTimeoutRef.current);
-        }
-        
-        debounceTimeoutRef.current = setTimeout(() => {
-            if (cartItem && mountedRef.current) {
-                handleApiCall(
-                    (signal) => axios.patch('/api/cart/add', {
-                        cartId: cartItem.cartId,
-                        productId: cartItem.productId,
-                        quantity: newQuantity
-                    }, { signal }),
-                    undefined,
-                    undefined,
-                    'Quantity updated'
-                );
-            }
-        }, 300); // 300ms debounce
-    }, [cartItem, handleApiCall]);
+    }, [router, toast, handleError, isAuthenticated]);
 
     // Validation helper
     const validateCartAction = useCallback((action: string): boolean => {
-        if (!user) {
-            toast.error('Please log in to manage your cart');
-            return false;
-        }
-        
         if (!product) {
             toast.error('Product not found');
             return false;
@@ -211,24 +230,27 @@ export function useCartAction(product: Product): CartActionReturn {
         }
         
         return true;
-    }, [user, product, toast]);
+    }, [product, toast]);
 
     const handleIncreaseQuantity = useCallback(async () => {
         if (!validateCartAction('increase') || !cartItem || !canIncrease) return;
         
         const newQuantity = currentQuantity + 1;
         
-        await handleApiCall(
-            (signal) => axios.patch('/api/cart/add', {
-                cartId: cartItem.cartId,
-                productId: cartItem.productId,
-                quantity: newQuantity
-            }, { signal }),
-            undefined,
-            undefined,
-            'Quantity increased'
-        );
-    }, [validateCartAction, cartItem, canIncrease, currentQuantity, handleApiCall]);
+        if (isAuthenticated && cartId) {
+            await handleApiCall(
+                () => axios.post(`/${lang}/api/cartProducts`, {
+                    cartId: cartId,
+                    productId: cartItem.productId,
+                    quantity: newQuantity
+                }),
+                'Quantity increased'
+            );
+        } else {
+            handleCookieCart('update', newQuantity);
+            toast.success('Quantity increased');
+        }
+    }, [validateCartAction, cartItem, canIncrease, currentQuantity, isAuthenticated, cartId, lang, handleApiCall, handleCookieCart, toast]);
 
     const handleAddToCart = useCallback(async () => {
         if (!validateCartAction('add')) return;
@@ -239,43 +261,40 @@ export function useCartAction(product: Product): CartActionReturn {
             return;
         }
         
-        // Get user's cart ID (assuming you have a way to get this)
-        const userCartId = user?.cartId; // Adjust based on your data structure
-        
-        if (!userCartId) {
-            toast.error('Unable to find your cart. Please refresh and try again.');
-            return;
+        if (isAuthenticated && cartId) {
+            await handleApiCall(
+                () => axios.post(`/${lang}/api/cartProducts`, {
+                    cartId: cartId,
+                    productId: product.id,
+                    quantity: 1
+                }),
+                'Added to cart'
+            );
+        } else {
+            handleCookieCart('add');
+            toast.success('Added to cart');
         }
-        
-        await handleApiCall(
-            (signal) => axios.post('/api/cart/add', {
-                cartId: userCartId,
-                productId: product.id,
-                quantity: 1
-            }, { signal }),
-            undefined,
-            undefined,
-            'Added to cart'
-        );
-    }, [validateCartAction, isAddedToCart, handleIncreaseQuantity, user, product.id, handleApiCall, toast]);
-
+    }, [validateCartAction, isAddedToCart, handleIncreaseQuantity, isAuthenticated, cartId, lang, product.id, handleApiCall, handleCookieCart, toast]);
 
     const handleDecreaseQuantity = useCallback(async () => {
         if (!validateCartAction('decrease') || !cartItem || !canDecrease) return;
         
         const newQuantity = currentQuantity - 1;
         
-        await handleApiCall(
-            (signal) => axios.patch('/api/cart/add', {
-                cartId: cartItem.cartId,
-                productId: cartItem.productId,
-                quantity: newQuantity
-            }, { signal }),
-            undefined,
-            undefined,
-            'Quantity decreased'
-        );
-    }, [validateCartAction, cartItem, canDecrease, currentQuantity, handleApiCall]);
+        if (isAuthenticated && cartId) {
+            await handleApiCall(
+                () => axios.post(`/${lang}/api/cartProducts`, {
+                    cartId: cartId,
+                    productId: cartItem.productId,
+                    quantity: newQuantity
+                }),
+                'Quantity decreased'
+            );
+        } else {
+            handleCookieCart('update', newQuantity);
+            toast.success('Quantity decreased');
+        }
+    }, [validateCartAction, cartItem, canDecrease, currentQuantity, isAuthenticated, cartId, lang, handleApiCall, handleCookieCart, toast]);
 
     const setQuantity = useCallback(async (quantity: number) => {
         if (!validateCartAction('update') || !cartItem) return;
@@ -291,8 +310,20 @@ export function useCartAction(product: Product): CartActionReturn {
             return;
         }
         
-        debouncedQuantityUpdate(quantity);
-    }, [validateCartAction, cartItem, product.stock, toast, debouncedQuantityUpdate]);
+        if (isAuthenticated && cartId) {
+            await handleApiCall(
+                () => axios.post(`/${lang}/api/cartProducts`, {
+                    cartId: cartId,
+                    productId: cartItem.productId,
+                    quantity: quantity
+                }),
+                'Quantity updated'
+            );
+        } else {
+            handleCookieCart('update', quantity);
+            toast.success('Quantity updated');
+        }
+    }, [validateCartAction, cartItem, product.stock, toast, isAuthenticated, cartId, lang, handleApiCall, handleCookieCart]);
 
     const handleDeleteFromCart = useCallback(async () => {
         if (!validateCartAction('delete') || !cartItem) return;
@@ -300,30 +331,41 @@ export function useCartAction(product: Product): CartActionReturn {
         setIsDeletingFromCart(true);
         
         try {
-            await axios.delete(`/api/cart/delete?cartId=${cartItem.cartId}&productId=${cartItem.productId}`);
-            
-            if (mountedRef.current) {
+            if (isAuthenticated && cartId) {
+                await axios.delete(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartItem.productId}`);
                 router.refresh();
-                toast.success('Removed from cart');
+            } else {
+                handleCookieCart('delete');
             }
+            
+            toast.success('Removed from cart');
         } catch (error) {
-            if (mountedRef.current) {
-                handleError(error, 'remove from cart');
-            }
+            handleError(error, 'remove from cart');
         } finally {
-            if (mountedRef.current) {
-                setIsDeletingFromCart(false);
+            setIsDeletingFromCart(false);
+        }
+    }, [validateCartAction, cartItem, isAuthenticated, cartId, lang, router, handleCookieCart, toast, handleError]);
+
+    // Load cart products from cookie on mount for non-authenticated users
+    useEffect(() => {
+        if (!isAuthenticated && cartProducts.length === 0) {
+            const cookieData = cookieManager.get('cartProducts');
+            if (cookieData) {
+                try {
+                    const parsedData = JSON.parse(cookieData);
+                    setCartProducts(parsedData);
+                } catch (error) {
+                    console.error('Error parsing cart cookie:', error);
+                }
             }
         }
-    }, [validateCartAction, cartItem, router, toast, handleError]);
+    }, [isAuthenticated, cartProducts.length, setCartProducts]);
 
     // Clear error after some time
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => {
-                if (mountedRef.current) {
-                    setError(null);
-                }
+                setError(null);
             }, 5000);
             
             return () => clearTimeout(timer);

@@ -1,9 +1,10 @@
 'use client'
+import useDataStore from '@/stores/dataStore';
 import classNames from 'classnames';
 import { useParams } from 'next/navigation';
-import HomeSecProducts from './components/HomeSecProducts';
-import HomeSecText from './components/HomeSecText';
-import useDataStore from '@/stores/dataStore';
+import LargeLogo from '../_components/LargeLogo';
+import MainView from './components/MainView';
+import ProductsSection from './components/ProductsSection';
 
 const HomeSec = () => {
 
@@ -11,12 +12,15 @@ const HomeSec = () => {
     const { isRTL } = useDataStore()
 
   return (
-    <div className={classNames({
+    <div className='flex flex-col'>
+      <MainView />
+      <div className={classNames({
         "text-end flex-row-reverse": isRTL,
-        "md:min-h-[calc(100vh-80px)] w-[100%] md:px-15 flex flex-wrap items-center justify-center gap-[15vh] 1484:gap-[5vw] text-[var(--light-text)]": true,
-    })}>
-        <HomeSecText />
-        <HomeSecProducts />
+        "w-[100%] md:px-[4vw] py-10 flex items-center justify-evenly xl:gap-[4.3rem] text-[var(--light-text)]": true,
+      })}>
+          <LargeLogo />
+          <ProductsSection />
+      </div>
     </div>
   )
 }

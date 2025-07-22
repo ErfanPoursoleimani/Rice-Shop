@@ -16,7 +16,7 @@ const LoginForm = () => {
 
   const { lang } = useParams()
 
-  const { isLoading, login, clearError, error } = useAuthStore()
+  const { isLoading, login, clearError, error, refreshSession } = useAuthStore()
 
   const { isRTL, dict } = useDataStore()
 
@@ -29,8 +29,11 @@ const LoginForm = () => {
   const onSubmit = handleSubmit( async (data) => {
     try {
       await login(data, lang as string)
-      redirectToReturnUrl()
+      await refreshSession(lang as string)
     } catch (error) {
+      
+    } finally {
+      redirectToReturnUrl()
     }
   })
 

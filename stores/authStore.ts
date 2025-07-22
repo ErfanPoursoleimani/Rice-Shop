@@ -14,6 +14,7 @@ interface AuthState {
   user: User | null
   isLoading: boolean
   isInitialized: boolean
+  isAuthenticated: boolean,
   error: string | null
 
   // Configurations
@@ -68,6 +69,7 @@ const initialState = {
   user: null,
   isLoading: false,
   isInitialized: false,
+  isAuthenticated: false,
   lang: 'en',
   error: null,
 }
@@ -103,11 +105,11 @@ export const useAuthStore = create<AuthState>()(
               try {
                 const user = await authApi.getUser(userId, lang)
                 set((state) => {
-                  state.user = user
+                  state.user = user,
+                  state.isAuthenticated = true
                 })
               } catch (error) {
                 console.error('User fetch error:', error)
-                // Don't set error here as session is still valid
               }
             }
           } catch (error) {
@@ -150,7 +152,7 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             const user = await authApi.login(credentials, lang)
-            
+
             set((state) => {
               state.user = user
               state.userId = user.id
@@ -175,11 +177,12 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             await authApi.logout(lang)
-            
+          
             set((state) => {
               state.userId = null
               state.user = null
-              state.isLoading = false
+              state.isLoading = false,
+              state.isAuthenticated = false,
               state.error = null
             })
           } catch (error) {
@@ -210,7 +213,7 @@ export const useAuthStore = create<AuthState>()(
               state.isLoading = false
             })
 
-            if (userId && !get().user) {
+            if (userId) {
               try {
                 const user = await authApi.getUser(userId, lang)
                 set((state) => {

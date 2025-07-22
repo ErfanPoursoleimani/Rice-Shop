@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 
 
-const ProductCard =  ({ product }: { product: Product} ) => {
+const ProductCard =  ({ product, buttonBg }: { product: Product, buttonBg: string} ) => {
 
   const router = useRouter()
   const { lang } = useParams()
@@ -49,19 +49,22 @@ const ProductCard =  ({ product }: { product: Product} ) => {
     handleHoverOverCard("leave")
   };
 
+  const handleClick = (event: any) => {
+    // router.push(`/${lang}/products/${id}`)
+  }
 
   
   return (
-      <Link href={`/${lang}/products/${id}`}>
         <div
         ref={cardRef}
         className={classNames({
           'text-left': !(isRTL),
           'text-right': isRTL,
-          'hover:cursor-pointer md:min-w-50 md:min-h-70 min-h-60 min-w-45 bg-cover text-[var(--light-text)] relative flex justify-center items-center overflow-clip select-none': true})}
+          'md:min-w-50 md:min-h-70 min-h-50 min-w-35 bg-cover text-[var(--light-text)] flex justify-center items-center overflow-clip select-none': true})}
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
           style={{
             transform: isHovered
               ? `rotateY(${mousePosition.x * 2}deg) rotateX(${-mousePosition.y * 2}deg) translateZ(20px)`
@@ -70,8 +73,7 @@ const ProductCard =  ({ product }: { product: Product} ) => {
             transition: isHovered ? 'none' : 'transform 2s ease-out'
           }}
         >
-          <div className='absolute w-full h-[500px] bg-[#00000011] z-2'></div>
-          <div className='md:p-4 p-3 z-3 w-full h-[50%] rounded-b-[7px] fixed bottom-0 flex flex-col justify-between bg-[#00000034] backdrop-blur-[4px] text-[var(--light-text)]'>
+          <div className='md:p-4 p-3 z-3 w-full h-[50%] fixed bottom-0 flex flex-col justify-between  bg-[#051e3393] backdrop-blur-[4px] text-[var(--light-text)]'>
             <h2 className="truncate md:text-[22px] text-[17px]">{products[label as keyof typeof products]}</h2>
             <div
               className={`
@@ -79,11 +81,10 @@ const ProductCard =  ({ product }: { product: Product} ) => {
                 ${isRTL ? "flex-row-reverse" : "flex-row"}
               `}
             >
-              <PricingAndButton product={product}/>
+              <PricingAndButton product={product} buttonBg={buttonBg}/>
             </div>
           </div>
         </div>
-      </Link>
   )
 }
 

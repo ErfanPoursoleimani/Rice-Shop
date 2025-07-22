@@ -1,59 +1,38 @@
-import { NextRequest, NextResponse } from "next/server";
-import { userLoginSchema } from '@/validation/validationSchemas'
-import { prisma } from "@/prisma/client";
+import { userLoginSchema } from '@/validation/validationSchemas';
+import axios from "axios";
+import { SignJWT } from 'jose';
 import { cookies } from "next/headers";
-import jwt, { SignOptions } from 'jsonwebtoken';
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, { params }: {params: Promise<{lang: string}> }) {
     const body = await request.json()
+    const lang = (await params).lang
+
     const validation = userLoginSchema.safeParse(body)
-    const isPhoneNumber = !((/[^0-9+]/g).test(body.emailOrPhone))
-
-    let filteredBody: {phoneNumber: string | undefined, email: string | undefined} = {
-        phoneNumber: isPhoneNumber ? body.emailOrPhone : undefined,
-        email: !isPhoneNumber ? body.emailOrPhone : undefined,
-    }
-
     if(!validation.success)
         return NextResponse.json(validation.error.errors, {status: 400})
-
-    let user = await prisma.user.findUnique({
-        where: 
-            isPhoneNumber 
-            ? { phoneNumber: filteredBody.phoneNumber }
-            : { email: filteredBody.email }
-    })
     
-    if(!user){        
-        const newUser = await prisma.user.create({
-            data: {
-                phoneNumber: filteredBody.phoneNumber,
-                email: filteredBody.email,
-            }
-        })
-        const newCart = await prisma.cart.create({
-            data: {
-                userId: newUser.id
-            }
-        })
-        user = await prisma.user.update({
-            where: {
-                id: newUser.id
-            },
-            data: {
-                cartId: newCart.id
-            }
-        })
+    try {
+        const { data } = await axios.post(`http://localhost:3000/${lang}/api/users`, body)
+        const userId = data.user.id
+        const user = data.user
+
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+        const token = await new SignJWT({ userId })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('1h')
+        .sign(secret)
+
+        const response = NextResponse.json({ user });
+        (await cookies()).set("auth-token", token)
+        return response
+        
+    } catch (error) {
+        console.error('Login API Error:', error)
+        return NextResponse.json(
+            { error: 'Login failed' }, 
+            { status: 500 }
+        )
     }
-
-    const payload = { userId: user.id }
-    const secretKey = process.env.JWT_SECRET!
-    const options = { expiresIn: '1h' } as SignOptions
-
-    const token = jwt.sign(payload, secretKey, options);
-
-    const cookieStore = await cookies()
-    cookieStore.set("auth-token", token)
-
-    return NextResponse.json(user)
 }

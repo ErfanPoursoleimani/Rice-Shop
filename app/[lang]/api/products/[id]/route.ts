@@ -27,9 +27,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
         data: {
             id: body.id,
             label: body.label,
-            priceAr: body.priceAr,
             priceFa: body.priceFa,
-            originalPriceAr: body.originalPriceAr,
             originalPriceFa: body.originalPriceFa,
             description: body.description,
             stock: body.stock,

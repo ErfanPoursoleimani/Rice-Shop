@@ -18,11 +18,19 @@ export async function GET(req: NextRequest) {
             }
         }
     })
-    return NextResponse.json(cartProducts)
+    return NextResponse.json({ cartProducts })
 }
 
 export async function POST(req: NextRequest) {
     const body = await req.json()
+
+    const { searchParams } = new URL(req.url)
+    if(!searchParams.get('cartId') || !searchParams.get('productId')) {
+        return NextResponse.json({error: "SearchParams must contain cartId and ProductId"}, {status: 400})
+    }
+
+    const cartId = parseInt(searchParams.get('cartId')!)
+    const productId = parseInt(searchParams.get('productId')!)
     
     const validation = cartProductSchema.safeParse(body)
     if(!validation.success)
@@ -30,13 +38,15 @@ export async function POST(req: NextRequest) {
 
     const cartProduct = await prisma.cartProduct.findUnique({
         where: { 
-            cartId: body.cartId,
-            productId: body.productId
+            cartId_productId: {
+                cartId,
+                productId
+            }
         }
     })
 
     if(cartProduct){
-        const updatedCartProduct = prisma.cartProduct.update({
+        const updatedCartProduct = await prisma.cartProduct.update({
             where: {
                 id: cartProduct.id
             },
@@ -50,8 +60,8 @@ export async function POST(req: NextRequest) {
     
     const newCartProduct = await prisma.cartProduct.create({
         data:{
-            cartId: body.cartId,
-            productId: body.productId,
+            cartId,
+            productId,
             quantity: body.quantity
         }
     })
@@ -64,8 +74,10 @@ export async function DELETE(req: NextRequest) {
     const productId = parseInt(searchParams.get("productId")!)
     const cartProduct = await prisma.cartProduct.findUnique({
         where: {
-            cartId,
-            productId
+            cartId_productId: {
+                cartId,
+                productId
+            }
         }
     })
 
@@ -74,8 +86,10 @@ export async function DELETE(req: NextRequest) {
 
     await prisma.cartProduct.delete({
         where:{ 
-            cartId,
-            productId
+            cartId_productId: {
+                cartId,
+                productId
+            }
         }
     })
     return NextResponse.json({})

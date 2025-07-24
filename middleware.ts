@@ -46,17 +46,15 @@ export async function middleware(request: NextRequest) {
   let isAuthenticated = false
   let response = NextResponse.next()
 
-
-// In your middleware
-if (token) {
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
-    const { payload } = await jwtVerify(token, secret)
-    isAuthenticated = true
-  } catch (error: any) {
-    response.cookies.delete('auth-token')
+  if (token) {
+    try {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+      const { payload } = await jwtVerify(token, secret)
+      isAuthenticated = true
+    } catch (error: any) {
+      response.cookies.delete('auth-token')
+    }
   }
-}
 
   // Protected routes - need to account for locale prefix
   const protectedPaths = ['/profile']

@@ -1,9 +1,9 @@
-// stores/dataStore.ts
 import { CartProduct, Dict, Product, Tag, User } from '@/types/types';
 import { Cart, Image, Order } from '@prisma/client';
 import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { useAuthStore } from './authStore';
 
 
 interface DataStore {
@@ -23,13 +23,14 @@ interface DataStore {
     // Configuration
     lang: string;
     cartId: number | null;
+    isAuthenticated: boolean
     
     // Actions
     setUsers: (users: User[]) => void;
     setCarts: (carts: Cart[]) => void;
     setProducts: (products: Product[]) => void;
     setTags: (tags: Tag[]) => void;
-    setCartProducts: (cartProducts: CartProduct[]) => void;
+    setCartProducts: (lang: string, cartProducts: CartProduct[], productId: number, cartId: number | null) => void;
     setOrders: (orders: Order[]) => void;
     setImages: (images: Image[]) => void;
     setDict: (dict: Dict) => void;
@@ -37,6 +38,7 @@ interface DataStore {
     setLoading: (loading: boolean) => void;
     setLang: (lang: string) => void;
     setCartId: (cartId: number | null) => void;
+    setIsAuthenticated: (isAuthenticated: boolean) => void
     
     // API Actions
     fetchTags: (lang: string) => Promise<void>;
@@ -45,11 +47,11 @@ interface DataStore {
     fetchProducts: (lang: string) => Promise<void>;
     fetchOrders: (lang: string) => Promise<void>;
     fetchImages: (lang: string) => Promise<void>;
-    fetchCartProducts: (lang: string, cartId?: number | null) => Promise<void>;
+    fetchCartProducts: (lang: string, isAuthenticated: boolean, cartId?: number | null) => Promise<void>;
     fetchDict: (lang: string) => Promise<void>;
     
     // Utility Actions
-    initializeStore: (lang: string, cartId?: number | null) => Promise<void>;
+    initializeStore: (lang: string, isAuthenticated: boolean, cartId?: number | null) => Promise<void>;
     clearError: () => void;
     getProduct: (productId: number) => Product | null;
 }
@@ -177,7 +179,23 @@ const cookieManager = {
             console.error('Error reading cookie:', error);
             return null;
         }
-    }
+    },
+    delete: (name: string, path: string = '/', domain?: string) => {
+        if (typeof window === 'undefined') return;
+        try {
+            // Set the cookie with an expired date to delete it
+            let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+            
+            // Add domain if specified
+            if (domain) {
+                cookieString += ` domain=${domain};`;
+            }
+            
+            document.cookie = cookieString;
+        } catch (error) {
+            console.error('Error deleting cookie:', error);
+        }
+    },
 };
 
 // Create a storage adapter for Zustand that handles SSR
@@ -228,13 +246,30 @@ export const useDataStore = create<DataStore>()(
             loading: false,
             lang: 'en',
             cartId: null,
+            isAuthenticated: false,
 
             // Basic Setters
             setUsers: (users) => set({ users }),
             setCarts: (carts) => set({ carts }),
             setProducts: (products) => set({ products }),
             setTags: (tags) => set({ tags }),
-            setCartProducts: (cartProducts) => set({ cartProducts }),
+            setCartProducts: async(lang, cartProducts, productId ,cartId) => {
+                set({loading: true})
+                /* const updatedCartProducts: CartProduct[] = []
+                if(get().cartId) {
+                    try {
+                        {cartProducts.map(async(cartProduct)=> {
+                            const { data: updatedCartProduct } = await axios.post(`/${lang}/api/carts?cartId${cartId}&productId=${productId}`, cartProduct)
+                            updatedCartProducts.push(updatedCartProduct)
+                        })}
+                    } catch (error) {
+                        set({error: "Error POST cartProducts"})
+                    }
+                }
+                set({ cartProducts: get().cartId ? updatedCartProducts : cartProducts }) */
+                set({ cartProducts: [...cartProducts] })
+                set({loading: false})
+            },
             setOrders: (orders) => set({ orders }),
             setImages: (images) => set({ images }),
             setDict: (dict) => set({ dict }),
@@ -245,6 +280,7 @@ export const useDataStore = create<DataStore>()(
                 get().fetchDict(lang);
             },
             setCartId: (cartId) => set({ cartId }),
+            setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 
             // API Actions
             fetchTags: async (lang: string) => {
@@ -307,16 +343,24 @@ export const useDataStore = create<DataStore>()(
                 }
             },
 
-            fetchCartProducts: async (lang: string, cartId?: number | null) => {
+            fetchCartProducts: async (lang: string, isAuthenticated, cartId?: number | null) => {
                 try {
                     set({ loading: true });
-                    if (cartId) {
+                    if (isAuthenticated) {
+                        const parsedCookieCartProducts = cookieManager.get('cartProducts');
+                        if (parsedCookieCartProducts) {
+                            const cookieProducts: CartProduct[] = JSON.parse(parsedCookieCartProducts);
+                            for (const cartProduct of cookieProducts) {
+                                await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartProduct.productId}`, cartProduct);
+                            }
+                            cookieManager.delete('cartProducts');
+                        }
                         const { data } = await axios.get(`/${lang}/api/cartProducts?cartId=${cartId}`);
-                        set({ cartProducts: data, loading: false });
+                        set({ cartProducts: [...(data.cartProducts || [])], loading: false });
                     } else {
-                        const cookieData = cookieManager.get('cartProduct');
+                        const cookieData = cookieManager.get('cartProducts');
                         const cartProducts = cookieData ? JSON.parse(cookieData) : [];
-                        set({ cartProducts, loading: false });
+                        set({ cartProducts: [...cartProducts], loading: false });
                     }
                 } catch (err) {
                     set({ error: err as string, loading: false });
@@ -334,7 +378,7 @@ export const useDataStore = create<DataStore>()(
             },
 
             // Initialize Store (replaces your useEffect logic)
-            initializeStore: async (lang: string, cartId?: number | null) => {
+            initializeStore: async (lang: string, isAuthenticated ,cartId?: number | null) => {
                 set({ lang, cartId, isRTL: lang === 'fa' || lang === 'ar' });
                 
                 // Fetch all data in parallel
@@ -346,7 +390,7 @@ export const useDataStore = create<DataStore>()(
                     get().fetchOrders(lang),
                     get().fetchImages(lang),
                     get().fetchDict(lang),
-                    get().fetchCartProducts(lang, cartId),
+                    get().fetchCartProducts(lang, isAuthenticated, cartId),
                 ];
 
                 try {
@@ -368,7 +412,6 @@ export const useDataStore = create<DataStore>()(
         {
             name: 'data-store',
             storage: createJSONStorage(() => createSSRStorage()),
-            // Only persist certain fields
             partialize: (state) => ({
                 lang: state.lang,
                 cartId: state.cartId
@@ -387,5 +430,4 @@ export const selectIsRTL = (state: DataStore) => state.isRTL;
 export const selectError = (state: DataStore) => state.error;
 export const selectLoading = (state: DataStore) => state.loading;
 
-// Export the store for use outside components
 export default useDataStore;

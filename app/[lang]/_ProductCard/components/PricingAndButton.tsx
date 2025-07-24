@@ -8,7 +8,7 @@ const PricingAndButton = ({ product, buttonBg }: { product: Product, buttonBg: s
 
     const { lang } = useParams()
     const { dict, cartProducts, isRTL } = useDataStore()
-    const { id, priceAr, priceFa, description, label, stock } = product
+    const { id, priceFa, description, label, stock } = product
 
     let productPrice = priceFa
 

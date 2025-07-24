@@ -6,12 +6,14 @@ interface DataInitializerProps {
     children: React.ReactNode;
     lang?: string;
     cartId?: number | null;
+    isAuthenticated: boolean
 }
 
 export const DataInitializer: React.FC<DataInitializerProps> = ({ 
     children, 
     lang = 'en', 
     cartId = null,
+    isAuthenticated = false
 }) => {
     const [isHydrated, setIsHydrated] = useState(false);
     const initializeStore = useDataStore((state) => state.initializeStore);
@@ -22,13 +24,13 @@ export const DataInitializer: React.FC<DataInitializerProps> = ({
             useDataStore.persist.rehydrate();
             
             // Then initialize the store with fresh data
-            await initializeStore(lang, cartId);
+            await initializeStore(lang, isAuthenticated, cartId);
             
             setIsHydrated(true);
         };
 
         hydrate();
-    }, [initializeStore, lang, cartId]);
+    }, [initializeStore, lang, cartId, isAuthenticated]);
 
     // Show loading state during hydration
     if (!isHydrated) {

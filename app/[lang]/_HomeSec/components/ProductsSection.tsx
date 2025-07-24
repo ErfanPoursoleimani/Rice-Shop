@@ -17,7 +17,7 @@ const ProductsSection = () => {
   return (
     <div className="w-full xl:max-w-[830px] 2xl:max-w-[1100px]">
 
-        <div className="flex flex-col justify-center w-full bg-[var(--theme)] md:rounded-t-[15px] relative overflow-x-auto z-2 md:border-b-2 border-[#fff] py-5 ">
+        <div className="flex text-[var(--theme)] flex-col justify-center w-full bg-[var(--theme2)] md:rounded-t-[15px] relative overflow-x-auto z-2 md:border-b-2 border-[#fff] py-5 ">
             <h2 className='md:hidden font-bold mb-3 mx-5 text-[23px]'>{dict.product.categories[tags[0].label as keyof typeof dict.product.categories]}</h2>
             <div
             className={classNames({
@@ -34,7 +34,7 @@ const ProductsSection = () => {
             <ListNavButtons />
         </div>
 
-        <div className="flex bg-[var(--theme2)] md:rounded-b-[15px] flex-col justify-center w-full relative overflow-x-auto z-2 py-5">
+        <div className="flex bg-[var(--theme)] text-[var(--theme2)] md:rounded-b-[15px] flex-col justify-center w-full relative overflow-x-auto z-2 py-5">
             <h2 
                 className='md:hidden font-bold mb-3 mx-5 text-[23px]'
                 style={

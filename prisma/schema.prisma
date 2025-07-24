@@ -25,19 +25,36 @@ enum Role {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  phoneNumber String?  @unique
-  email       String?  @unique
-  postalCode  String   @default("")
-  address     String   @default("")
-  firstName   String   @default("")
-  lastName    String   @default("")
-  cart        Cart?
-  cartId      Int?     @unique
-  order       Order[]
-  orderId     Int?     @unique
-  role        Role     @default(USER)
-  reviews     Review[]
+  id            Int            @id @default(autoincrement())
+  phoneNumber   String?        @unique
+  email         String?        @unique
+  postalCode    String         @default("")
+  address       String         @default("")
+  firstName     String         @default("")
+  lastName      String         @default("")
+  nationalCode  String         @default("")
+  cart          Cart?
+  cartId        Int?           @unique
+  order         Order[]
+  orderId       Int?           @unique
+  role          Role           @default(USER)
+  reviews       Review[]
+  addresses     Address[]
+  notifications Notification[]
+}
+
+model Address {
+  id     Int    @id @default(autoincrement())
+  text   String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Notification {
+  id     Int    @id @default(autoincrement())
+  text   String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 model Cart {
@@ -52,10 +69,8 @@ model Cart {
 model Product {
   id              Int           @id @default(autoincrement())
   label           String        @unique
-  originalPriceAr Float         @default(0)
-  priceAr         Float         @default(0)
-  originalPriceFa Float         @default(0)
-  priceFa         Float         @default(0)
+  originalPriceFa Float         @default(1200)
+  priceFa         Float         @default(1200)
   description     String        @db.Text
   stock           Int           @default(10)
   inStock         Boolean       @default(true)
@@ -84,12 +99,15 @@ model Tag {
 }
 
 model CartProduct {
-  id        Int     @id @default(autoincrement())
-  cart      Cart    @relation(fields: [cartId], references: [id])
-  cartId    Int     @unique
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int     @unique
+  id        Int @id @default(autoincrement())
+  cartId    Int
+  productId Int
   quantity  Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 }
 
 model Order {

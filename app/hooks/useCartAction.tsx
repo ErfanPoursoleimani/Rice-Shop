@@ -79,6 +79,7 @@ export function useCartAction(product: Product): CartActionReturn {
     const router = useRouter();
     const { userId } = useAuthStore();
     const { cartProducts, setCartProducts, cartId, lang } = useDataStore();
+    const initializeStore = useDataStore((state) => state.initializeStore);
     const toast = useToast();
     
     const [isDeletingFromCart, setIsDeletingFromCart] = useState(false);
@@ -87,12 +88,16 @@ export function useCartAction(product: Product): CartActionReturn {
 
     const isAuthenticated = Boolean(userId);
 
+    
     // Memoize cart item lookup for efficiency
     const cartItem = useMemo((): CartItem | null => {
         return cartProducts.find(item => item.productId === product.id) || null;
     }, [cartProducts, product.id]);
-
-    const isAddedToCart = Boolean(cartItem);
+    
+    const isAddedToCart = useMemo((): boolean => {
+        return Boolean(cartItem)
+    }, [cartItem])
+    
     const currentQuantity = cartItem?.quantity || 1;
 
     // Stock validation
@@ -141,7 +146,7 @@ export function useCartAction(product: Product): CartActionReturn {
 
     // Update cart products in store and cookies for non-authenticated users
     const updateCartState = useCallback((newCartProducts: CartProduct[]) => {
-        setCartProducts(newCartProducts);
+        setCartProducts(lang, newCartProducts, product.id,cartId);
         if (!isAuthenticated) {
             cookieManager.set('cartProducts', JSON.stringify(newCartProducts));
         }
@@ -190,33 +195,77 @@ export function useCartAction(product: Product): CartActionReturn {
         
         updateCartState(newCartProducts);
     }, [cartProducts, product, updateCartState]);
-
+    
     // Generic API call handler for authenticated users
     const handleApiCall = useCallback(async (
         apiCall: () => Promise<any>,
         successMessage?: string
     ) => {
-        setIsLoading(true);
-        setError(null);
 
+        setError(null);
+        
         try {
             await apiCall();
             
-            // Refresh data for authenticated users
-            if (isAuthenticated) {
-                router.refresh();
-            }
+            if(isAuthenticated)
+                router.refresh()
             
             if (successMessage) {
                 toast.success(successMessage);
             }
         } catch (error) {
             handleError(error, 'update cart');
-        } finally {
-            setIsLoading(false);
         }
     }, [router, toast, handleError, isAuthenticated]);
 
+    const handleRealCart = useCallback(async(operation: 'add' | 'update' | 'delete', quantity?: number) => {
+        switch (operation) {
+            case 'add':
+                setIsLoading(true)
+                await handleApiCall(
+                    async () => {
+                        await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${product.id}`, {
+                            cartId: cartId,
+                            productId: product.id,
+                            quantity: 1
+                        });
+                        await initializeStore(lang, isAuthenticated, cartId);
+                    },
+                    'Added to cart'
+                )
+                setIsLoading(false)
+                break;
+            case 'update':
+                setIsLoading(true)
+                await handleApiCall(
+                    async () => {
+                        await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${product.id}`, {
+                            cartId: cartId,
+                            productId: cartItem!.productId,
+                            quantity: quantity
+                        });
+                        await initializeStore(lang, isAuthenticated, cartId);
+                    },
+                    'Quantity updated'
+                );
+                setIsLoading(false)
+                break;
+            case 'delete':
+                setIsDeletingFromCart(true)
+                await handleApiCall(
+                    async () => {
+                        await axios.delete(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartItem!.productId}`);
+                        await initializeStore(lang, isAuthenticated, cartId);
+                    },
+                    'Removed from cart'
+                );
+                setIsDeletingFromCart(false)
+                break;
+            default:
+                return;
+        }
+    }, [cartProducts, product, handleApiCall, initializeStore]);
+    
     // Validation helper
     const validateCartAction = useCallback((action: string): boolean => {
         if (!product) {
@@ -238,14 +287,7 @@ export function useCartAction(product: Product): CartActionReturn {
         const newQuantity = currentQuantity + 1;
         
         if (isAuthenticated && cartId) {
-            await handleApiCall(
-                () => axios.post(`/${lang}/api/cartProducts`, {
-                    cartId: cartId,
-                    productId: cartItem.productId,
-                    quantity: newQuantity
-                }),
-                'Quantity increased'
-            );
+            handleRealCart('update', newQuantity)
         } else {
             handleCookieCart('update', newQuantity);
             toast.success('Quantity increased');
@@ -262,14 +304,7 @@ export function useCartAction(product: Product): CartActionReturn {
         }
         
         if (isAuthenticated && cartId) {
-            await handleApiCall(
-                () => axios.post(`/${lang}/api/cartProducts`, {
-                    cartId: cartId,
-                    productId: product.id,
-                    quantity: 1
-                }),
-                'Added to cart'
-            );
+            handleRealCart('add')
         } else {
             handleCookieCart('add');
             toast.success('Added to cart');
@@ -282,14 +317,7 @@ export function useCartAction(product: Product): CartActionReturn {
         const newQuantity = currentQuantity - 1;
         
         if (isAuthenticated && cartId) {
-            await handleApiCall(
-                () => axios.post(`/${lang}/api/cartProducts`, {
-                    cartId: cartId,
-                    productId: cartItem.productId,
-                    quantity: newQuantity
-                }),
-                'Quantity decreased'
-            );
+            handleRealCart('update', newQuantity)
         } else {
             handleCookieCart('update', newQuantity);
             toast.success('Quantity decreased');
@@ -332,7 +360,7 @@ export function useCartAction(product: Product): CartActionReturn {
         
         try {
             if (isAuthenticated && cartId) {
-                await axios.delete(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartItem.productId}`);
+                handleRealCart('delete')
                 router.refresh();
             } else {
                 handleCookieCart('delete');
@@ -340,7 +368,7 @@ export function useCartAction(product: Product): CartActionReturn {
             
             toast.success('Removed from cart');
         } catch (error) {
-            handleError(error, 'remove from cart');
+            handleError(error, 'Remove from cart');
         } finally {
             setIsDeletingFromCart(false);
         }
@@ -353,7 +381,7 @@ export function useCartAction(product: Product): CartActionReturn {
             if (cookieData) {
                 try {
                     const parsedData = JSON.parse(cookieData);
-                    setCartProducts(parsedData);
+                    setCartProducts(lang, parsedData, product.id ,cartId);
                 } catch (error) {
                     console.error('Error parsing cart cookie:', error);
                 }

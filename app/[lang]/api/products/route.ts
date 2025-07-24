@@ -30,8 +30,6 @@ export async function POST(request: NextRequest) {
         data: {
             label: body.label,
             priceFa: body.priceFa,
-            priceAr: body.priceAr,
-            originalPriceAr: body.originalPriceAr,
             originalPriceFa: body.originalPriceFa,
             description: body.description,
             stock: body.stock,

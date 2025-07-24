@@ -55,17 +55,17 @@ const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string 
     <>
       <button
         className={`
-          w-[50%] md:w-[55%] px-2 py-1 md:py-2 select-none flex justify-stretch items-center rounded-[7px] md:text-[22px] text-[20px] border-1 border-neutral-300 border-b-3
+          w-[50%] md:w-[55%] min-md:h-12 h-10 px-2 py-1 md:py-2 select-none flex justify-stretch items-center rounded-[7px] md:text-[22px] text-[20px]
           ${ !isAddedToCart ? "cursor-pointer" : null}
         `}
         style={{
-          backgroundColor: isAddedToCart ? "#ffffff" : `var(${buttonBg})`
+          backgroundColor: isAddedToCart ? "#ffffff" : `var(${buttonBg})`,
         }}
         disabled={isLoading}
       >
           {
-            isLoading || isDeletingFromCart
-            ? <Loading className={`text-white px-6 py-[14px]`}/>
+            isDeletingFromCart
+            ? <Loading className={`text-black self-center`} />
             : isAddedToCart
             ? <div className={`text-[16px] text-black relative w-full flex justify-between items-center gap-2`}>
                 { currentQuantity === 1
@@ -83,7 +83,7 @@ const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string 
                    />
                 }
                 { isLoading
-                  ? <Loading className={`text-white`}/>
+                  ? <Loading className={`text-black text-[10px] flex-1`}/>
                   : <span className='flex-1 max-md:text-[13px]'>{currentQuantity}</span>
                   // : <input className='cursor-pointer md:w-10 w-5 flex-1 max-md:text-[13px] outline-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]' type="number" onChange={(e) => handleQuantityInput(e)} defaultValue={currentQuantity}/>
                 }
@@ -94,7 +94,15 @@ const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string 
                 }}
                 />
               </div>
-            : <div onClick={(e) => handleClickButton(e)} className='flex-1 flex justify-center'><ShoppingCart className='max-md:w-5 max-md:h-5'/></div>
+            : <div 
+                onClick={(e) => handleClickButton(e)} 
+                className='flex-1 flex justify-center'
+                style={{
+                  color: buttonBg === '--theme' ? `var(--theme2)` : 'var(--theme)',
+                }}
+              >
+                <ShoppingCart className='max-md:w-5 max-md:h-5'/>
+              </div>
           }
       </button>
     </>

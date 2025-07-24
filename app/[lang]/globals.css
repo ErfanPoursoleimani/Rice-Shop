@@ -14,7 +14,7 @@
 :root {
   --icons: #000000;
   /* --theme: #0f4200; */
-  --theme: #247fe7;
+  --theme: #32af13;
   --theme2: #373b37;
   --theme3: #458fff;
   --dark-text: rgb(1, 1, 1);
@@ -90,17 +90,15 @@ body {
 }
 
 .bottom-to-top-animation {
-  animation: bottom-to-top-animation 0.25s ease both;
-  transition: 2s ease;
+  animation: bottom-to-top-animation 0.1s ease both;
+  transition: 0.25s ease;
 }
 
 @keyframes bottom-to-top-animation {
   0% {
-    opacity: 0;
     transform: translateY(100%);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }

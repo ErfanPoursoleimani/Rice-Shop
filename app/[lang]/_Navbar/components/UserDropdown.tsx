@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore'
 import useDataStore from '@/stores/dataStore'
 import Link from 'next/link'
 
-import { useParams, usePathname } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { BiDirections } from 'react-icons/bi'
 import { FaRegUser } from 'react-icons/fa6'
@@ -17,6 +17,7 @@ const UserDropdown = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const currentPath = usePathname()
   const { lang } = useParams()
+  const router = useRouter()
   const { user, logout } = useAuthStore()
   const { dict, isRTL } = useDataStore()
 
@@ -27,6 +28,7 @@ const UserDropdown = () => {
 
   const handleLogout = async () => {
     await logout(lang as string)
+    router.push(`/${lang}/users/login?returnUrl=%2Fen%2Fprofile`)
     setIsOpen(false)
   }
 
@@ -61,7 +63,7 @@ const UserDropdown = () => {
             {id: 1, label: "orders", icon: <IoBagOutline className='text-[20px]' />, href: `/${lang}/profile/orders`},
             {id: 2, label: "addresses", icon: <BiDirections className='text-[20px]' />, href: `/${lang}/profile/addresses`},
             {id: 3, label: "notifications", icon: <IoMdNotifications className='text-[20px]' />, href: `/${lang}/profile/notifications`},
-            {id: 4, label: "accountDetails", icon: <FaRegUser className='text-[20px]' />, href: `/${lang}/profile` },
+            {id: 4, label: "accountDetails", icon: <FaRegUser className='text-[20px]' />, href: `/${lang}/profile/personal-info` },
         ]
   
         // Create new array with translated labels

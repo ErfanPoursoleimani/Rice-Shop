@@ -84,7 +84,7 @@ const CategoryDropdown: React.FC = () => {
             </button>
             {isOpen &&
               <div 
-                className={`absolute top-[94%] flex max-w-[70vw] 
+                className={`absolute top-[100%] border-t-1 border-neutral-200 flex max-w-[70vw] min-h-[50vh]
                   ${isRTL ? "flex-row-reverse" : "flex-row"}
                 `}
                 onMouseEnter={() => setIsOpen(true)}

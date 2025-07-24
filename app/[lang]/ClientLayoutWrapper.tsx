@@ -16,7 +16,7 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
   
   const currentPath = usePathname()
 
-  const { user } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
 
   let cartId = null
   if(user){
@@ -25,7 +25,7 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
 
   return (
     <>
-      <DataInitializer lang={lang} cartId={cartId}>
+      <DataInitializer lang={lang} cartId={cartId} isAuthenticated={isAuthenticated}>
         {
         currentPath.startsWith(`/${lang}/users/login`) /* || 
         currentPath.startsWith(`/${lang}/profile`)   */

@@ -5,6 +5,8 @@ import {
     Image as PrismaImage, 
     Tag as PrismaTag,
     Order as PrismaOrder,
+    Address as PrismaAddress,
+    Notification as PrismaNotification,
     User as PrismaUser,
     Cart as PrismaCart,
 } from "@prisma/client"
@@ -18,7 +20,7 @@ interface CartProductCartIdNullable{
 export type Product = ({images: PrismaImage[]} & {reviews: PrismaReview[]} & PrismaProduct)
 export type Tag = ({products: ({images: PrismaImage[]} & {reviews: PrismaReview[]} & PrismaProduct)[]} & PrismaTag)
 export type CartProduct = ({product: {images: PrismaImage[]} & {reviews: PrismaReview[]} & PrismaProduct} & CartProductCartIdNullable)
-export type User = ({orders: PrismaOrder[]} & {reviews: PrismaReview[]} & PrismaUser)
+export type User = ({orders: PrismaOrder[]} & {addresses: PrismaAddress[]} & {notifications: PrismaNotification[]} & {reviews: PrismaReview[]} & PrismaUser)
 export type Cart = ({products: PrismaProduct[]} & PrismaCart)
 
 

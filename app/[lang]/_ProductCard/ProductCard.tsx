@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 
 
-const ProductCard =  ({ product, buttonBg }: { product: Product, buttonBg: string} ) => {
+const ProductCard =  ({ product, buttonBg = "--theme" }: { product: Product, buttonBg: string} ) => {
 
   const router = useRouter()
   const { lang } = useParams()

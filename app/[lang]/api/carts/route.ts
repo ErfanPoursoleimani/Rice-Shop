@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(validation.error.errors, {status: 400})
     
     const userId = body.userId
+    const cartProducts = body.cartProducts
 
     const cart = await prisma.cart.findUnique({
         where: {
@@ -27,8 +28,19 @@ export async function POST(request: NextRequest) {
         }
     })
 
-    if(cart)
+    if(cart) {
+
+        const updatedCart = await prisma.cart.update({
+            where: {
+                userId
+            },
+            data: {
+                
+            }
+        })
+
         return NextResponse.json({ cart }, {status: 200})
+    }
     
     const newCart = await prisma.cart.create({
         data: {

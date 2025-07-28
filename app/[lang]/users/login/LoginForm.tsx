@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { FaArrowRight } from 'react-icons/fa6'
 import { z } from 'zod'
 import { userLoginSchema } from '../../../../validation/validationSchemas'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import useDataStore from '@/stores/dataStore'
 
 type userData = z.infer<typeof userLoginSchema>
@@ -15,10 +15,10 @@ type userData = z.infer<typeof userLoginSchema>
 const LoginForm = () => {
 
   const { lang } = useParams()
+  const router = useRouter()
 
-  const { isLoading, login, clearError, error, refreshSession } = useAuthStore()
-
-  const { isRTL, dict } = useDataStore()
+  const { isLoading, login, error, initialize: initializeAuthStore, cartId } = useAuthStore()
+  const { isRTL, dict, initializeStore: initializeDataStore, isAuthenticated} = useDataStore()
 
   const { redirectToReturnUrl } = useReturnUrl()
 
@@ -29,7 +29,6 @@ const LoginForm = () => {
   const onSubmit = handleSubmit( async (data) => {
     try {
       await login(data, lang as string)
-      await refreshSession(lang as string)
     } catch (error) {
       
     } finally {

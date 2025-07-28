@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { FaMinus, FaPlus, FaTrashCan } from 'react-icons/fa6'
 
 
-const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string }) => {
+const CartButton = ({ product, buttonBg, className }: { product: Product, buttonBg: string, className?: string }) => {
 
    // Functions for cart related processes ( add to cart, delete from cart ...) and indicators
    const {
@@ -53,15 +53,15 @@ const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string 
 
   return (
     <>
-      <button
+      <div
         className={`
+          ${className}
           w-[50%] md:w-[55%] min-md:h-12 h-10 px-2 py-1 md:py-2 select-none flex justify-stretch items-center rounded-[7px] md:text-[22px] text-[20px]
-          ${ !isAddedToCart ? "cursor-pointer" : null}
         `}
         style={{
           backgroundColor: isAddedToCart ? "#ffffff" : `var(${buttonBg})`,
         }}
-        disabled={isLoading}
+        
       >
           {
             isDeletingFromCart
@@ -69,42 +69,43 @@ const CartButton = ({ product, buttonBg }: { product: Product, buttonBg: string 
             : isAddedToCart
             ? <div className={`text-[16px] text-black relative w-full flex justify-between items-center gap-2`}>
                 { currentQuantity === 1
-                  ? <FaTrashCan className='flex-1 hover:cursor-pointer text-red-400'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteFromCart()
-                  }}
-                   />
-                  : <FaMinus className='flex-1 cursor-pointer'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDecreaseQuantity()
-                  }}
-                   />
+                  ? <button className={`${isLoading || isDeletingFromCart ? "cursor-not-allowed" : ""}`} disabled={isLoading || isDeletingFromCart}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteFromCart()
+                      }}
+                    ><FaTrashCan className='flex-1 hover:cursor-pointer text-red-400'/></button>
+                  : <button className={`${isLoading ? "cursor-not-allowed" : ""}`} disabled={isLoading || isDeletingFromCart}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDecreaseQuantity()
+                      }}
+                    ><FaMinus className='flex-1 cursor-pointer'/></button>
                 }
                 { isLoading
                   ? <Loading className={`text-black text-[10px] flex-1`}/>
-                  : <span className='flex-1 max-md:text-[13px]'>{currentQuantity}</span>
+                  : <span className='flex-1 flex items-center justify-center max-md:text-[13px] text-neutral-900'>{currentQuantity}</span>
                   // : <input className='cursor-pointer md:w-10 w-5 flex-1 max-md:text-[13px] outline-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]' type="number" onChange={(e) => handleQuantityInput(e)} defaultValue={currentQuantity}/>
                 }
-                <FaPlus className='flex-1 cursor-pointer'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleIncreaseQuantity()
-                }}
-                />
+                <button className={`${isLoading ? "cursor-not-allowed" : ""}`} disabled={isLoading || isDeletingFromCart}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleIncreaseQuantity()
+                  }}
+                ><FaPlus className='flex-1 cursor-pointer'/></button>
               </div>
-            : <div 
+            : <button 
+                disabled={isLoading}
                 onClick={(e) => handleClickButton(e)} 
-                className='flex-1 flex justify-center'
+                className={`w-full flex-1 flex justify-center ${ !isAddedToCart ? "cursor-pointer" : null}`}
                 style={{
                   color: buttonBg === '--theme' ? `var(--theme2)` : 'var(--theme)',
                 }}
               >
                 <ShoppingCart className='max-md:w-5 max-md:h-5'/>
-              </div>
+              </button>
           }
-      </button>
+      </div>
     </>
   )
 }

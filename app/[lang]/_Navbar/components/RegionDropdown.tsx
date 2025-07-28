@@ -12,9 +12,9 @@ interface Option {
 
 const options = [
   { value: 'ir', label: 'Iran' },
-  { value: 'uae', label: 'UAE' },
-  // { value: 'pa', label: 'Pakistan', disabled: true },
-  // { value: 'tr', label: 'Turkey', disabled: true },
+  { value: 'uae', label: 'UAE', disabled: true },
+  { value: 'pa', label: 'Pakistan', disabled: true },
+  { value: 'tr', label: 'Turkey', disabled: true },
 ];
   
 const RegionDropdown: React.FC = () => {
@@ -158,11 +158,13 @@ const RegionDropdown: React.FC = () => {
                 filteredOptions.map((option) => (
                     <button
                     key={option.value}
+                    disabled={option.disabled}
                     onClick={() => handleSelect(option)}
                     className={`
                         w-full px-4 py-3 text-sm
                         first:rounded-t-lg last:rounded-b-lg
                         transition-colors duration-150 text-center
+                        ${option.disabled ? "cursor-not-allowed text-gray-400" : ""}
                         ${selectedOption?.value === option.value ? 'bg-blue-50 text-blue-700' : ''}
                     `}
                     >

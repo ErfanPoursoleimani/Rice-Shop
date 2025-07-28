@@ -24,7 +24,7 @@ const Shoppingcart = () => {
   }
 
   return (
-    <div className={`relative py-15 px-10 top-[120px] flex items-center justify-center w-[100vw] min-h-max`}>
+    <div className={`relative py-10 top-[120px] flex items-center justify-center w-[100vw] min-h-max`}>
       <div className={`max-w-300 w-full flex justify-stretch gap-10
         ${isRTL ? "flex-row-reverse" : null}
         `}
@@ -32,19 +32,19 @@ const Shoppingcart = () => {
         <div className={`md:border-l- rounded-xl border-neutral-300 flex flex-1 flex-col ${isRTL ? "items-end" : null}`}>
           {/* <div className="w-full h-45 mb-10 border-1 border-neutral-200 rounded-xl"></div> */}
           {cartProducts.map((cartProduct) => (
-            <div className={`py-3 border-b-2 border-neutral-200`} key={cartProduct.id}>
+            <div className={`mx-3 sm:px-6`} key={cartProduct.id}>
               <InCartProduct cartProduct={cartProduct} />
             </div>
           ))}
         </div>
         <div className={`
-            w-full md:w-80 md:h-max px-5 py-4
-            fixed md:sticky md:top-[105px] md:bottom-auto bottom-[56px] left-0
-            flex justify-between md:flex-col md:justify-start gap-5 items-center
-            md:border-1 border-neutral-300 rounded-xl bg-white
-            text-[14px]
-            `}
-          >
+          w-full md:w-80 md:h-max px-5 py-4
+          fixed md:sticky md:top-[105px] md:bottom-auto bottom-[56px] left-0
+          flex justify-between md:flex-col md:justify-start gap-5 items-center
+          md:border-1 border-neutral-300 rounded-xl bg-white
+          text-[14px]
+          `}
+        >
           <span className={`text-neutral-400 hidden md:flex md:w-full justify-between items-center ${isRTL ? "flex-row-reverse" : null}`}>
             <p>products price {cartProducts.length}</p>
             <p>{cartProducts.reduce((sum, elem) => elem.product.originalPriceFa, 0)}</p>

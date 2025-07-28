@@ -1,16 +1,17 @@
 {
-    "logo": "SoleimaniRice",
-    "logoPt1": "Soleimani",
-    "logoPt2": "Rice",
-    "search": "جستجو",
-    "in": "فی",
-    "enterEmailOrPhone": "لطفا شماره موبایل یا ایمیل خود را وارد کنید",
-    "selectYourRegion": "منطقه خود را انتخاب کنید",
-    "otherProducts": "Other Products",  
-    "seeAllProducts": "See all", 
-    "region": "المنطقة",
-    "unitedArabEmirates": "الإمارات العربية المتحدة",
-    "iran": "الایران",
+    "logo": "أرز بورسليماني",
+    "logoPt1": "أرز",
+    "logoPt2": "سليماني",
+    "search": "بحث",
+    "in": "في",
+    "enterEmailOrPhone": "يرجى إدخال بريدك الإلكتروني أو رقم هاتفك",
+    "selectYourRegion": "اختر منطقتك",
+    "otherProducts": "منتجات أخرى",  
+    "seeAllProducts": "عرض الكل",
+
+    "region": "منطقة",
+    "unitedArabEmirates": "دولة الإمارات العربية المتحدة",
+    "iran": "إيران",
     "addresses": "العناوين",
     "notifications": "الإشعارات",
     "accountDetails": "تفاصيل الحساب",
@@ -19,91 +20,91 @@
     "myOrders": "طلباتي",
     "inProgress": "قيد التنفيذ",
     "canceled": "ملغي",
-    "sent": "تم الإرسال",
+    "sent": "مرسل",
     "description": "الوصف",
     "no": "لا",
-    "reviews": "التقييمات",
+    "reviews": "المراجعات",
     "similarProducts": "منتجات مشابهة",
-    "recommendation": "التوصية",
-    "orders": "Orders",
-    "activitySummary": "Activity Summary",
-    "ERROR_MASSAGES":{
-        "PHONE_NUMBER": "Bitte geben Sie eine gültige Telefonnummer ein",
-        "PHONE_NUMBER_AND_EMAIL": "Please enter a valid phone number or email",
-        "POSTAL_CODE": "Postleitzahl muss 10 Ziffern haben",
-        "FIRST_NAME": "Vorname muss 3-20 Zeichen lang sein",
-        "LAST_NAME": "Nachname muss 3-25 Zeichen lang sein",
-        "EMAIL": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-        "URL": "Muss eine gültige URL sein, die mit http oder https beginnt",
-        "REQUIRED": "Lassen Sie diesen Bereich nicht leer"
+    "recommendations": "التوصيات",
+    "orders": "الطلبات",
+    "activitySummary": "ملخص النشاط",
+    "ERROR_MESSAGES": {
+        "PHONE_NUMBER": "يرجى إدخال رقم هاتف صحيح",
+        "PHONE_NUMBER_AND_EMAIL": "يرجى إدخال رقم هاتف أو بريد إلكتروني صحيح",
+        "POSTAL_CODE": "يجب أن يكون الرمز البريدي 10 أرقام",
+        "FIRST_NAME": "يجب أن يكون الاسم الأول من 3-20 حرف",
+        "LAST_NAME": "يجب أن يكون اسم العائلة من 3-25 حرف",
+        "EMAIL": "يرجى إدخال عنوان بريد إلكتروني صحيح",
+        "URL": "يجب أن يكون رابط صحيح يبدأ بـ http أو https",
+        "REQUIRED": "لا تترك هذا القسم فارغاً"
     },
     "links": {
-        "about": "About Us",
-        "contact": "Contact",
-        "products": "Products",
-        "home": "Home",
-        "users": "Users",
-        "cart": "سبد خرید",
-        "profile": "Profile"
+        "about": "من نحن",
+        "contact": "اتصل",
+        "products": "المنتجات",
+        "home": "الرئيسية",
+        "users": "المستخدمون",
+        "cart": "السلة",
+        "profile": "الملف الشخصي"
     },
     "account": {
-        "register": "Register",
-        "login": "ورود به حساب",
-        "logout": "خروج",
-        "profile": "اطلاعات حساب",
-        "history": "تاریخچه خرید"
+        "register": "التسجيل",
+        "login": "تسجيل الدخول",
+        "logout": "تسجيل الخروج",
+        "profile": "الملف الشخصي",
+        "history": "التاريخ"
     },
     "content": {
         "homepage": {
-            "seeOurProducts": "unsere produkten",
+            "seeOurProducts": "منتجاتنا",
             "description": {
                 "first": {
-                    "title": "Einzigartiges Aroma:",
-                    "body": "Spüren Sie bei jedem Kochen den angenehmen Duft der nördlichen Reisfelder in Ihrem Zuhause."
+                    "title": "رائحة فريدة",
+                    "body": "اشعر برائحة حقول الأرز الشمالية اللطيفة."
                 },
                 "second": {
-                    "title": "Außergewöhnlicher Geschmack:",
-                    "body": "Jedes Korn Taremi ist zart und köstlich, mit diesem Reis ist der Genuss jedes Bissens vollkommen."
+                    "title": "طعم استثنائي",
+                    "body": "كل حبة من أرز تاريمي طرية ولذيذة."
                 },
                 "third": {
-                    "title": "Premium-Qualität:",
-                    "body": "Von unseren besten Farmen direkt auf Ihren Tisch. Frisch und gesund, so wie es sein soll."
-                }    
+                    "title": "جودة ممتازة",
+                    "body": "من أفضل مزارعنا، مباشرة إلى مائدتك."
+                }
             }
         }
     },
     "shoppingCart": {
-        "continue": "weiter"
+        "continue": "متابعة"
     },
     "product":{
-        "addToCart": "افزودن به سبد خرید",
-        "deleteFromCart": "حذف از سبد",
-        "price": "Pris",
-        "perkg": "per kg",
-        "currency": "€",
-        "label": "Titel",
-        "massUnit": "Kg",
+        "addToCart": "إضافة إلى السلة",
+        "deleteFromCart": "حذف من السلة",
+        "price": "السعر",
+        "perkg": "للكيلو",
+        "currency": "تومان",
+        "label": "اسم المنتج",
+        "massUnit": "كيلوغرام",
         "products": {
-            "برنج_بسمتی": "برنج بسمتی",
-            "برنج_کشت_دوم": "Reis der zweiten Ernte",
-            "برنج_قهوه_ای": "Brauner Reis",
-            "برنج_طارم_عطری": "Tarom Atri Reis",
-            "برنج_طارم_فجر": "Tarom Fajr Reis",
-            "روغن_زیتون": "Olive Oil",
-            "روغن_کنجد": "Sesame Oil",
-            "روغن_نارگیل": "Coconut Oil",
-            "آرد_برنج": "Rice Flour",
-            "برنجک": "Rice Snack",
-            "لوبیا_چیتی": "Chickpeas",
-            "عدس": "Lentils",
-            "میوه_خشک": "Dried Fruits"
+            "برنج_بسمتی": "أرز بسمتي",
+            "برنج_کشت_دوم": "أرز الزراعة الثانية",
+            "برنج_قهوه_ای": "أرز بني",
+            "برنج_طارم_عطری": "أرز طارم عطري",
+            "برنج_طارم_فجر": "أرز طارم فجر",
+            "روغن_زیتون": "زيت الزيتون",
+            "روغن_کنجد": "زيت السمسم",
+            "روغن_نارگیل": "زيت جوز الهند",
+            "آرد_برنج": "دقيق الأرز",
+            "برنجک": "رقائق الأرز",
+            "لوبیا_چیتی": "فاصولياء مرقطة",
+            "عدس": "عدس",
+            "میوه_خشک": "فواكه مجففة"
         },
         "categories": {
-            "برنج_و_غلات": "Rice and Grains",
-            "روغن_ها": "Oils",
-            "حبوبات": "Legumes",
-            "محصولات_برنجی": "Rice Products",
-            "خشکبار": "Dried Goods"
+            "برنج_و_غلات": "الأرز والحبوب",
+            "روغن_ها": "الزيوت",
+            "حبوبات": "البقوليات",
+            "محصولات_برنجی": "منتجات الأرز",
+            "خشکبار": "المكسرات والفواكه المجففة"
         }
     }
 }

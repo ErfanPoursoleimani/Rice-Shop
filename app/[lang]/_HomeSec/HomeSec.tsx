@@ -16,7 +16,7 @@ const HomeSec = () => {
       <MainView />
       <div className={classNames({
         "text-end flex-row-reverse": isRTL,
-        "w-[100%] md:px-[4vw] py-10 flex items-center justify-evenly xl:gap-[4.3rem] text-[var(--light-text)]": true,
+        "w-[100%] md:px-[4vw] md:py-10 flex items-center justify-evenly xl:gap-[4.3rem] text-[var(--light-text)]": true,
       })}>
           <LargeLogo />
           <ProductsSection />

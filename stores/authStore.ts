@@ -1,16 +1,17 @@
 'use client'
 import axios from 'axios'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { devtools } from 'zustand/middleware'
 import { User } from '@/types/types'
+import useDataStore from './dataStore'
 
 // Types
 
 interface AuthState {
   // State
   userId: number | null
+  cartId: number | null
   user: User | null
   isLoading: boolean
   isInitialized: boolean
@@ -37,13 +38,13 @@ interface LoginCredentials {
 
 // API functions (can be moved to separate file)
 const authApi = {
-  getSession: async (lang: string): Promise<number | null> => {
+  getSession: async (lang: string): Promise<{ userId: number | null, cartId: number | null }> => {
     try {
-      const response = await axios.get(`/${lang}/api/auth/session`)
-      return response.data || null
+      const { data } = await axios.get(`/${lang}/api/auth/session`)
+      return data
     } catch (error) {
       console.error('Session fetch error:', error)
-      return null
+      return { userId: null, cartId: null }
     }
   },
 
@@ -66,6 +67,7 @@ const authApi = {
 // Initial state
 const initialState = {
   userId: null,
+  cartId: null,
   user: null,
   isLoading: false,
   isInitialized: false,
@@ -77,185 +79,178 @@ const initialState = {
 // Create the store
 export const useAuthStore = create<AuthState>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        ...initialState,
+    immer((set, get) => ({
+      ...initialState,
 
-        initialize: async (lang: string) => {
-          const state = get()
-          if (state.isInitialized) return
+      initialize: async (lang: string) => {
+        const state = get()
+        if (state.isInitialized || state.isLoading) return
 
-          set((state) => {
-            state.isLoading = true
-            state.error = null
-            state.lang = lang
-          })
+        set((state) => {
+          state.isLoading = true
+          state.error = null
+          state.lang = lang
+        })
 
-          try {
-            const userId = await authApi.getSession(lang)
-            
-            set((state) => {
-              state.userId = userId
-              state.isInitialized = true
-              state.isLoading = false
-            })
-
-            // Fetch full user data
-            if (userId) {
-              try {
-                const user = await authApi.getUser(userId, lang)
-                set((state) => {
-                  state.user = user,
-                  state.isAuthenticated = true
-                })
-              } catch (error) {
-                console.error('User fetch error:', error)
-              }
-            }
-          } catch (error) {
-            set((state) => {
-              state.userId = null
-              state.user = null
-              state.error = error instanceof Error ? error.message : 'Failed to initialize auth'
-              state.isLoading = false
-              state.isInitialized = true
-            })
-          }
-        },
-
-        // Set user ID
-        setUserId: (userId) => {
+        try {
+          const { userId, cartId } = await authApi.getSession(lang)
+          
           set((state) => {
             state.userId = userId
-            if (!userId) {
-              state.user = null
-            }
+            state.cartId = cartId
+            state.isInitialized = true
+            state.isLoading = false
           })
-        },
 
-        // Set user data
-        setUser: (user) => {
+          // Fetch full user data
+          if (userId) {
+            try {
+              const user = await authApi.getUser(userId, lang)
+              set((state) => {
+                state.user = user,
+                state.isAuthenticated = true
+              })
+            } catch (error) {
+              console.error('User fetch error:', error)
+            }
+          }
+        } catch (error) {
+          set((state) => {
+            state.userId = null
+            state.user = null
+            state.error = error instanceof Error ? error.message : 'Failed to initialize auth'
+            state.isLoading = false
+            state.isInitialized = true
+          })
+        }
+      },
+
+      // Set user ID
+      setUserId: (userId) => {
+        set((state) => {
+          state.userId = userId
+          if (!userId) {
+            state.user = null
+          }
+        })
+      },
+
+      // Set user data
+      setUser: (user) => {
+        set((state) => {
+          state.user = user
+          if (user) {
+            state.userId = user.id
+          }
+        })
+      },
+
+      // Login action
+      login: async (credentials, lang) => {
+        set((state) => {
+          state.isLoading = true
+          state.error = null
+        })
+
+        try {
+          const user = await authApi.login(credentials, lang)
+
           set((state) => {
             state.user = user
-            if (user) {
-              state.userId = user.id
-            }
-          })
-        },
-
-        // Login action
-        login: async (credentials, lang) => {
-          set((state) => {
-            state.isLoading = true
+            state.userId = user.id
+            state.isLoading = false
+            state.isAuthenticated = true
             state.error = null
           })
-
-          try {
-            const user = await authApi.login(credentials, lang)
-
-            set((state) => {
-              state.user = user
-              state.userId = user.id
-              state.isLoading = false
-              state.error = null
-            })
-          } catch (error) {
-            set((state) => {
-              state.error = error instanceof Error ? error.message : 'Login failed'
-              state.isLoading = false
-            })
-            throw error // Re-throw so components can handle it
-          }
-        },
-
-        // Logout action
-        logout: async (lang) => {
+          await get().refreshSession(lang)
+        } catch (error) {
           set((state) => {
-            state.isLoading = true
+            state.error = error instanceof Error ? error.message : 'Login failed'
+            state.isLoading = false
+          })
+          throw error // Re-throw so components can handle it
+        }
+      },
+
+      // Logout action
+      logout: async (lang) => {
+        set((state) => {
+          state.isLoading = true
+          state.error = null
+        })
+
+        try {
+          await authApi.logout(lang)
+          set((state) => {
+            state.userId = null
+            state.cartId = null
+            state.user = null
+            state.isAuthenticated = false
+            state.isLoading = false
             state.error = null
           })
+        } catch (error) {
+          set((state) => {
+            state.error = error instanceof Error ? error.message : 'Logout failed'
+            state.isLoading = false
+          })
+          // Still clear the local state even if API call fails
+          set((state) => {
+            state.userId = null
+            state.user = null
+          })
+        }
+      },
 
-          try {
-            await authApi.logout(lang)
+      // Refresh session
+      refreshSession: async (lang) => {
+        set((state) => {
+          state.isLoading = true
+          state.error = null
+        })
+
+        try {
+          const { userId, cartId } = await authApi.getSession(lang)
           
-            set((state) => {
-              state.userId = null
-              state.user = null
-              state.isLoading = false,
-              state.isAuthenticated = false,
-              state.error = null
-            })
-          } catch (error) {
-            set((state) => {
-              state.error = error instanceof Error ? error.message : 'Logout failed'
-              state.isLoading = false
-            })
-            // Still clear the local state even if API call fails
-            set((state) => {
-              state.userId = null
-              state.user = null
-            })
-          }
-        },
-
-        // Refresh session
-        refreshSession: async (lang) => {
           set((state) => {
-            state.isLoading = true
-            state.error = null
+            state.userId = userId
+            state.cartId = cartId
+            state.isLoading = false
           })
 
-          try {
-            const userId = await authApi.getSession(lang)
-            
-            set((state) => {
-              state.userId = userId
-              state.isLoading = false
-            })
-
-            if (userId) {
-              try {
-                const user = await authApi.getUser(userId, lang)
-                set((state) => {
-                  state.user = user
-                })
-              } catch (error) {
-                console.error('User refresh error:', error)
-              }
+          if (userId) {
+            try {
+              const user = await authApi.getUser(userId, lang)
+              set((state) => {
+                state.user = user
+              })
+            } catch (error) {
+              console.error('User refresh error:', error)
             }
-          } catch (error) {
-            set((state) => {
-              state.userId = null
-              state.user = null
-              state.error = error instanceof Error ? error.message : 'Session refresh failed'
-              state.isLoading = false
-            })
           }
-        },
-
-        // Clear error
-        clearError: () => {
+        } catch (error) {
           set((state) => {
-            state.error = null
+            state.userId = null
+            state.user = null
+            state.error = error instanceof Error ? error.message : 'Session refresh failed'
+            state.isLoading = false
           })
-        },
+        }
+      },
 
-        // Reset store to initial state
-        reset: () => {
-          set(() => ({ ...initialState }))
-        },
-      })),
-      {
-        name: 'auth-store',
-        storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({
-          userId: state.userId,
-          user: state.user,
-          isInitialized: state.isInitialized,
-          lang: state.lang
-        }),
-      }
-    ),
+      // Clear error
+      clearError: () => {
+        set((state) => {
+          state.error = null
+        })
+      },
+
+      // Reset store to initial state (no localStorage clearing)
+      reset: () => {
+        // Reset the state to initial values
+        set(() => ({ ...initialState }))
+      },
+    })),
     {
       name: 'auth-store',
     }

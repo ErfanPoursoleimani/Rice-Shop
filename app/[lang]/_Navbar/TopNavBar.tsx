@@ -20,7 +20,7 @@ const DesktopNavBar = ({ className }: { className: string }) => {
   const currentPath = usePathname()
 
   const { lang } = useParams()
-  const { user } = useAuthStore()
+  const { user, isAuthenticated } = useAuthStore()
   const { dict, isRTL } = useDataStore()
   const { logo, selectYourRegion } = dict
 
@@ -89,7 +89,7 @@ const DesktopNavBar = ({ className }: { className: string }) => {
               <PiShoppingBagFill color='var(--icons)' />
             </Link>
             <span className='hidden md:inline-block text-[13px] text-[#8f8f8f]'>|</span>
-            {user === null
+            {!isAuthenticated
               ? <SignInButton className={'hidden md:block'} />
               : <UserDropdown />
             }

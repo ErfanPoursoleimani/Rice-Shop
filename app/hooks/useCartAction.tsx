@@ -71,15 +71,10 @@ const useToast = () => {
     };
 };
 
-const modifyCartProducts = () => {
-
-} 
-
 export function useCartAction(product: Product): CartActionReturn {
     const router = useRouter();
     const { userId } = useAuthStore();
-    const { cartProducts, setCartProducts, cartId, lang } = useDataStore();
-    const initializeStore = useDataStore((state) => state.initializeStore);
+    const { cartProducts, setCartProducts, cartId, lang, fetchCartProducts } = useDataStore();
     const toast = useToast();
     
     const [isDeletingFromCart, setIsDeletingFromCart] = useState(false);
@@ -229,42 +224,42 @@ export function useCartAction(product: Product): CartActionReturn {
                             productId: product.id,
                             quantity: 1
                         });
-                        await initializeStore(lang, isAuthenticated, cartId);
+                        fetchCartProducts(lang, isAuthenticated, cartId)
                     },
                     'Added to cart'
                 )
                 setIsLoading(false)
                 break;
-            case 'update':
-                setIsLoading(true)
-                await handleApiCall(
-                    async () => {
-                        await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${product.id}`, {
-                            cartId: cartId,
-                            productId: cartItem!.productId,
-                            quantity: quantity
-                        });
-                        await initializeStore(lang, isAuthenticated, cartId);
-                    },
-                    'Quantity updated'
-                );
-                setIsLoading(false)
-                break;
-            case 'delete':
-                setIsDeletingFromCart(true)
-                await handleApiCall(
-                    async () => {
-                        await axios.delete(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartItem!.productId}`);
-                        await initializeStore(lang, isAuthenticated, cartId);
-                    },
-                    'Removed from cart'
-                );
+                case 'update':
+                    setIsLoading(true)
+                    await handleApiCall(
+                        async () => {
+                            await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${product.id}`, {
+                                cartId: cartId,
+                                productId: cartItem!.productId,
+                                quantity: quantity
+                            });
+                            fetchCartProducts(lang, isAuthenticated, cartId)
+                        },
+                        'Quantity updated'
+                    );
+                    setIsLoading(false)
+                    break;
+                    case 'delete':
+                        setIsDeletingFromCart(true)
+                        await handleApiCall(
+                            async () => {
+                                await axios.delete(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartItem!.productId}`);
+                                fetchCartProducts(lang, isAuthenticated, cartId)
+                            },
+                            'Removed from cart'
+                        );
                 setIsDeletingFromCart(false)
                 break;
             default:
                 return;
         }
-    }, [cartProducts, product, handleApiCall, initializeStore]);
+    }, [cartProducts, product]);
     
     // Validation helper
     const validateCartAction = useCallback((action: string): boolean => {

@@ -8,6 +8,7 @@ import { CookiesProvider } from "next-client-cookies/server";
 import { Geist, Geist_Mono, Noto_Sans_Arabic, Roboto, Rubik } from "next/font/google";
 import ClientLayoutWrapper from "./ClientLayoutWrapper";
 import "./globals.css";
+import { DataInitializer } from '@/components/data-initializer';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,9 +52,11 @@ export default async function RootLayout({children, params}: {children: React.Re
       >
         <CookiesProvider>
           <AuthInitializer lang={lang}>
+            <DataInitializer lang={lang}>
               <ClientLayoutWrapper lang={lang}>
                 {children}
               </ClientLayoutWrapper>
+            </DataInitializer>
           </AuthInitializer>
         </CookiesProvider>
       </body>

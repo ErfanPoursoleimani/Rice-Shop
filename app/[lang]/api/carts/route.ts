@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        return NextResponse.json({ cart }, {status: 200})
+        return NextResponse.json({ cart: updatedCart }, {status: 200})
     }
     
     const newCart = await prisma.cart.create({

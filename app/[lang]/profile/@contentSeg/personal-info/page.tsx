@@ -51,7 +51,7 @@ const page = () => {
           <div className={`h-20 flex justify-between items-center max-md:border-b-1 border-neutral-200 md:flex-1 px-4 ${ isRTL ? "flex-row-reverse" : null }`}>
             <div className={`flex flex-col gap-1 ${isRTL ? "items-end" : ""}`}>
               <span className={`md:text-[15px] text-[13px] text-neutral-400`}>Full name</span>
-              <span className={`${user?.firstName || "hidden"}`}>{`${user!.firstName} ${user?.lastName}`}</span>
+              <span className={`${user?.firstName ? "hidden" : ''}`}>{`${user?.firstName} ${user?.lastName}`}</span>
             </div>
             <span onClick={() => handelOpenEditInfo()}>
               <FaRegEdit className='text-[14px] md:text-[15px]'/>
@@ -60,7 +60,7 @@ const page = () => {
           <div className={`h-20 flex justify-between items-center max-md:border-b-1 md:flex-1 px-4 md:border-l-1 border-neutral-200 ${isRTL ? "flex-row-reverse" : null }`}>
             <div className={`flex flex-col gap-1 ${isRTL ? "items-end" : ""}`}>
               <span className={`md:text-[15px] text-[13px] text-neutral-400`}>National code</span>
-              <span className={`${user?.nationalCode || "hidden"}`}>{user!.nationalCode}</span>
+              <span className={`${user?.nationalCode || "hidden"}`}>{user?.nationalCode}</span>
             </div>
             <span onClick={() => handelOpenEditInfo()}>
               <FaRegEdit className='text-[14px] md:text-[15px]'/>

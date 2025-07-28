@@ -8,11 +8,11 @@ export async function GET(req: NextRequest){
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload
         const userId = decoded.userId
-        return NextResponse.json(userId)
+        const cartId = decoded.cartId
+        return NextResponse.json({ userId, cartId })
     } catch (error) {
-        return NextResponse.json({ error: error }, { status: 404 })
+        return NextResponse.json({ userId: null, cartId: null })
     }
-
 }
 
 

@@ -28,7 +28,7 @@ const UserDropdown = () => {
 
   const handleLogout = async () => {
     await logout(lang as string)
-    router.push(`/${lang}/users/login?returnUrl=%2Fen%2Fprofile`)
+    router.push(`/${lang}`)
     setIsOpen(false)
   }
 
@@ -79,7 +79,7 @@ const UserDropdown = () => {
     <div ref={dropdownRef} className={`relative hidden md:flex flex-col ${isRTL ? "items-start" : "items-end" }`}>
         <div 
             onClick={() => setIsOpen(!isOpen)} 
-            className={`hidden md:flex items-center p-2 rounded-[10px] ${ isOpen && "bg-[#5eff0067]" }`}
+            className={`hidden md:flex items-center p-2 rounded-[10px] ${ isOpen && "bg-[#5eff0050]" }`}
         >
             <FaRegUser className='text-[23px]'/>
             <MdArrowDropDown className='text-xl'/>

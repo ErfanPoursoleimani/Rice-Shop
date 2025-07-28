@@ -16,16 +16,9 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
   
   const currentPath = usePathname()
 
-  const { user, isAuthenticated } = useAuthStore()
-
-  let cartId = null
-  if(user){
-    cartId = user.cartId!
-  }
 
   return (
     <>
-      <DataInitializer lang={lang} cartId={cartId} isAuthenticated={isAuthenticated}>
         {
         currentPath.startsWith(`/${lang}/users/login`) /* || 
         currentPath.startsWith(`/${lang}/profile`)   */
@@ -39,7 +32,6 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
             {children}
           </main>
         {currentPath.startsWith(`/${lang}/users/login`) ? null : <BottomNavBar />}
-      </DataInitializer>
     </>
   );
 }

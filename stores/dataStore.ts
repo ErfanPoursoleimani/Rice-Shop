@@ -2,9 +2,6 @@ import { CartProduct, Dict, Product, Tag, User } from '@/types/types';
 import { Cart, Image, Order } from '@prisma/client';
 import axios from 'axios';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
-import { useAuthStore } from './authStore';
-
 
 interface DataStore {
     // State
@@ -54,6 +51,7 @@ interface DataStore {
     initializeStore: (lang: string, isAuthenticated: boolean, cartId?: number | null) => Promise<void>;
     clearError: () => void;
     getProduct: (productId: number) => Product | null;
+    reset: () => void;
 }
 
 const initialDict: Dict = {
@@ -164,7 +162,25 @@ const initialDict: Dict = {
     }
 };
 
-// SSR-safe cookie manager
+// Define initial state as a constant to reuse in reset function
+const initialState = {
+    users: [],
+    carts: [],
+    products: [],
+    tags: [],
+    cartProducts: [],
+    orders: [],
+    images: [],
+    dict: initialDict,
+    isRTL: false,
+    error: '',
+    loading: false,
+    lang: 'en',
+    cartId: null,
+    isAuthenticated: false,
+};
+
+// SSR-safe cookie manager (only for cookies, no localStorage)
 const cookieManager = {
     get: (name: string) => {
         if (typeof window === 'undefined') return null;
@@ -198,229 +214,180 @@ const cookieManager = {
     },
 };
 
-// Create a storage adapter for Zustand that handles SSR
-const createSSRStorage = () => {
-    return {
-        getItem: (name: string): string | null => {
-            if (typeof window === 'undefined') return null;
+export const useDataStore = create<DataStore>()((set, get) => ({
+    // Initial State
+    ...initialState,
+
+    // Basic Setters
+    setUsers: (users) => set({ users }),
+    setCarts: (carts) => set({ carts }),
+    setProducts: (products) => set({ products }),
+    setTags: (tags) => set({ tags }),
+    setCartProducts: async(lang, cartProducts, productId ,cartId) => {
+        set({loading: true})
+        /* const updatedCartProducts: CartProduct[] = []
+        if(get().cartId) {
             try {
-                return localStorage.getItem(name);
+                {cartProducts.map(async(cartProduct)=> {
+                    const { data: updatedCartProduct } = await axios.post(`/${lang}/api/carts?cartId${cartId}&productId=${productId}`, cartProduct)
+                    updatedCartProducts.push(updatedCartProduct)
+                })}
             } catch (error) {
-                console.error('Error reading from localStorage:', error);
-                return cookieManager.get(name);
+                set({error: "Error POST cartProducts"})
             }
-        },
-        setItem: (name: string, value: string): void => {
-            if (typeof window === 'undefined') return;
-            try {
-                localStorage.setItem(name, value);
-            } catch (error) {
-                console.error('Error writing to localStorage:', error);
-            }
-        },
-        removeItem: (name: string): void => {
-            if (typeof window === 'undefined') return;
-            try {
-                localStorage.removeItem(name);
-            } catch (error) {
-                console.error('Error removing from localStorage:', error);
-            }
-        },
-    };
-};
-
-export const useDataStore = create<DataStore>()(
-    persist(
-        (set, get) => ({
-            // Initial State
-            users: [],
-            carts: [],
-            products: [],
-            tags: [],
-            cartProducts: [],
-            orders: [],
-            images: [],
-            dict: initialDict,
-            isRTL: false,
-            error: '',
-            loading: false,
-            lang: 'en',
-            cartId: null,
-            isAuthenticated: false,
-
-            // Basic Setters
-            setUsers: (users) => set({ users }),
-            setCarts: (carts) => set({ carts }),
-            setProducts: (products) => set({ products }),
-            setTags: (tags) => set({ tags }),
-            setCartProducts: async(lang, cartProducts, productId ,cartId) => {
-                set({loading: true})
-                /* const updatedCartProducts: CartProduct[] = []
-                if(get().cartId) {
-                    try {
-                        {cartProducts.map(async(cartProduct)=> {
-                            const { data: updatedCartProduct } = await axios.post(`/${lang}/api/carts?cartId${cartId}&productId=${productId}`, cartProduct)
-                            updatedCartProducts.push(updatedCartProduct)
-                        })}
-                    } catch (error) {
-                        set({error: "Error POST cartProducts"})
-                    }
-                }
-                set({ cartProducts: get().cartId ? updatedCartProducts : cartProducts }) */
-                set({ cartProducts: [...cartProducts] })
-                set({loading: false})
-            },
-            setOrders: (orders) => set({ orders }),
-            setImages: (images) => set({ images }),
-            setDict: (dict) => set({ dict }),
-            setError: (error) => set({ error }),
-            setLoading: (loading) => set({ loading }),
-            setLang: (lang) => {
-                set({ lang, isRTL: lang === 'fa' || lang === 'ar' });
-                get().fetchDict(lang);
-            },
-            setCartId: (cartId) => set({ cartId }),
-            setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-
-            // API Actions
-            fetchTags: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/tags`);
-                    set({ tags: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchUsers: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/users`);
-                    set({ users: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchCarts: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/carts`);
-                    set({ carts: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchProducts: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/products`);
-                    set({ products: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchOrders: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/orders`);
-                    set({ orders: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchImages: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/images`);
-                    set({ images: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchCartProducts: async (lang: string, isAuthenticated, cartId?: number | null) => {
-                try {
-                    set({ loading: true });
-                    if (isAuthenticated) {
-                        const parsedCookieCartProducts = cookieManager.get('cartProducts');
-                        if (parsedCookieCartProducts) {
-                            const cookieProducts: CartProduct[] = JSON.parse(parsedCookieCartProducts);
-                            for (const cartProduct of cookieProducts) {
-                                await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartProduct.productId}`, cartProduct);
-                            }
-                            cookieManager.delete('cartProducts');
-                        }
-                        const { data } = await axios.get(`/${lang}/api/cartProducts?cartId=${cartId}`);
-                        set({ cartProducts: [...(data.cartProducts || [])], loading: false });
-                    } else {
-                        const cookieData = cookieManager.get('cartProducts');
-                        const cartProducts = cookieData ? JSON.parse(cookieData) : [];
-                        set({ cartProducts: [...cartProducts], loading: false });
-                    }
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            fetchDict: async (lang: string) => {
-                try {
-                    set({ loading: true });
-                    const { data } = await axios.get(`/${lang}/api/dictionary?locale=${lang}`);
-                    set({ dict: data, loading: false });
-                } catch (err) {
-                    set({ error: err as string, loading: false });
-                }
-            },
-
-            // Initialize Store (replaces your useEffect logic)
-            initializeStore: async (lang: string, isAuthenticated ,cartId?: number | null) => {
-                set({ lang, cartId, isRTL: lang === 'fa' || lang === 'ar' });
-                
-                // Fetch all data in parallel
-                const promises = [
-                    get().fetchTags(lang),
-                    get().fetchUsers(lang),
-                    get().fetchCarts(lang),
-                    get().fetchProducts(lang),
-                    get().fetchOrders(lang),
-                    get().fetchImages(lang),
-                    get().fetchDict(lang),
-                    get().fetchCartProducts(lang, isAuthenticated, cartId),
-                ];
-
-                try {
-                    await Promise.all(promises);
-                } catch (error) {
-                    console.error('Error initializing store:', error);
-                    set({ error: 'Failed to initialize store', loading: false });
-                }
-            },
-
-            // Utility Actions
-            clearError: () => set({ error: '' }),
-
-            getProduct: (productId: number) => {
-                const { products } = get();
-                return products.find(p => p.id === productId) || null;
-            }
-        }),
-        {
-            name: 'data-store',
-            storage: createJSONStorage(() => createSSRStorage()),
-            partialize: (state) => ({
-                lang: state.lang,
-                cartId: state.cartId
-            }),
-            // Skip hydration to avoid SSR issues
-            skipHydration: true,
         }
-    )
-);
+        set({ cartProducts: get().cartId ? updatedCartProducts : cartProducts }) */
+        set({ cartProducts: [...cartProducts] })
+        set({loading: false})
+    },
+    setOrders: (orders) => set({ orders }),
+    setImages: (images) => set({ images }),
+    setDict: (dict) => set({ dict }),
+    setError: (error) => set({ error }),
+    setLoading: (loading) => set({ loading }),
+    setLang: (lang) => {
+        set({ lang, isRTL: lang === 'fa' || lang === 'ar' });
+        get().fetchDict(lang);
+    },
+    setCartId: (cartId) => set({ cartId }),
+    setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+
+    // API Actions
+    fetchTags: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/tags`);
+            set({ tags: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchUsers: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/users`);
+            set({ users: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchCarts: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/carts`);
+            set({ carts: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchProducts: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/products`);
+            set({ products: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchOrders: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/orders`);
+            set({ orders: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchImages: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/images`);
+            set({ images: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchCartProducts: async (lang: string, isAuthenticated, cartId?: number | null) => {
+        try {
+            set({ loading: true });
+            if (isAuthenticated) {
+                if (cookieManager.get('cartProducts')) {
+                    const parsedCookieCartProducts = cookieManager.get('cartProducts');
+                    const cookieProducts: CartProduct[] = JSON.parse(parsedCookieCartProducts!);
+                    for (const cartProduct of cookieProducts) {
+                        await axios.post(`/${lang}/api/cartProducts?cartId=${cartId}&productId=${cartProduct.productId}`, cartProduct);
+                    }
+                    cookieManager.delete('cartProducts');
+                }
+                const { data } = await axios.get(`/${lang}/api/cartProducts?cartId=${cartId}`);
+                set({ cartProducts: [...(data.cartProducts || [])] });
+            } else {
+                const cookieData = cookieManager.get('cartProducts');
+                const cartProducts = cookieData ? JSON.parse(cookieData) : [];
+                set({ cartProducts: [...cartProducts] });
+            }
+        } catch (err) {
+            set({ error: err as string });
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    fetchDict: async (lang: string) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/dictionary?locale=${lang}`);
+            set({ dict: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    // Initialize Store (replaces your useEffect logic)
+    initializeStore: async (lang: string, isAuthenticated ,cartId?: number | null) => {
+        set({ lang, cartId, isRTL: lang === 'fa' || lang === 'ar' });
+        
+        // Fetch all data in parallel
+        const promises = [
+            get().fetchTags(lang),
+            get().fetchUsers(lang),
+            get().fetchCarts(lang),
+            get().fetchProducts(lang),
+            get().fetchOrders(lang),
+            get().fetchImages(lang),
+            get().fetchDict(lang),
+            get().fetchCartProducts(lang, isAuthenticated, cartId),
+        ];
+
+        try {
+            await Promise.all(promises);
+        } catch (error) {
+            console.error('Error initializing store:', error);
+            set({ error: 'Failed to initialize store', loading: false });
+        }
+    },
+
+    // Utility Actions
+    clearError: () => set({ error: '' }),
+
+    getProduct: (productId: number) => {
+        const { products } = get();
+        return products.find(p => p.id === productId) || null;
+    },
+
+    // Reset function - restores all state to initial values (no localStorage clearing)
+    reset: () => {
+        set(initialState);
+        // Only clear cookies related to cart
+        cookieManager.delete('cartProducts');
+    }
+}));
 
 // Export individual selectors for better performance
 export const selectProducts = (state: DataStore) => state.products;

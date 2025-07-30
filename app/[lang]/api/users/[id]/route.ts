@@ -38,8 +38,6 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
             id: user.id
         },
         data: {
-            postalCode: body.postalCode,
-            address: body.address,
             firstName: body.firstName,
             lastName: body.lastName,
             role: body.role

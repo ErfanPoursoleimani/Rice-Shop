@@ -22,7 +22,7 @@ const page = () => {
           <h2 className='font-bold text-[20px]'>{dict.product.categories[tags[0].label as keyof typeof dict.product.categories]}</h2>
           <div className='flex flex-wrap justify-center items-center gap-1'>
               {tags[0].products.map((product) => (
-                  <ProductCard key={product.id} product={product}/>
+                  <ProductCard buttonBg='--theme' key={product.id} product={product}/>
               ))}
           </div>
         </div>
@@ -32,7 +32,7 @@ const page = () => {
                 <h2 className='font-bold text-[20px]'>{dict.product.categories[category.label as keyof typeof dict.product.categories]}</h2>
                 <div className='flex justify-center items-center gap-1'>
                     {category.products.map((product) => (
-                        <ProductCard key={product.id} product={product}/>
+                        <ProductCard buttonBg='--theme' key={product.id} product={product}/>
                     ))}
                 </div>
             </div>

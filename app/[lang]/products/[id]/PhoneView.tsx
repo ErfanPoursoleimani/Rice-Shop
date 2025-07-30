@@ -21,7 +21,7 @@ const PhoneView = () => {
         notFound()
     }
 
-    const { priceAr, priceFa, description, label, stock } = product!
+    const { priceFa, description, label, stock } = product!
 
   return (
     <div className='md:hidden w-full relative top-[103px] -z-2'>
@@ -93,7 +93,7 @@ const PhoneView = () => {
               {tags.find((tag) => tag.id === product.tagId)!.products.filter((p) => p.id !== product.id).length === 0
               ?  <p className='self-center mb-4 text-[15px] text-neutral-400'>no similar product exists</p>
               : tags.find((tag) => tag.id === product.tagId)!.products.filter((p) => p.id !== product.id).map((product) => (
-                  <ProductCard key={product.id} product={product}/>
+                  <ProductCard buttonBg='--theme' key={product.id} product={product}/>
                 ))
               }
           </div>
@@ -104,7 +104,7 @@ const PhoneView = () => {
             {tags.filter((tag) => tag.id !== product.tagId).map((tag) => (
               <React.Fragment key={tag.id}>
                 {tag.products.filter((p) => p.id !== product.id).map((product) => (
-                  <ProductCard key={product.id} product={product}/>
+                  <ProductCard buttonBg='--theme' key={product.id} product={product}/>
                 ))}
               </React.Fragment>
             ))}
@@ -112,7 +112,7 @@ const PhoneView = () => {
         </div>
       </div>
       <div className='fixed bottom-14 bg-white px-4 py-3 w-full flex justify-between'>
-        <PricingAndButton product={product}/>
+        <ProductCard buttonBg='--theme' product={product}/>
       </div>
     </div>
   )

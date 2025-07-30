@@ -53,11 +53,11 @@ const page = () => {
 
   return (
     <div className={`bottom-to-top-animation min-h-100 max-md:fixed max-md:min-h-full max-md:w-full max-md:bg-white max-md:p-5 flex flex-col flex-1 justify-stretch md:border-1 border-neutral-300 rounded-[10px]`}>
-      <div className={`md:mx-5 md:my-5 flex justify-between items-end h-10 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
+      <div className={`md:mx-5 md:my-5 flex justify-between items-center h-10 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
             <p className='font-medium md:border-b-3 border-yellow-400 md:pb-4'>Orders History</p>
             {isRTL 
-              ? <MdArrowBackIos className='self-start md:hidden' onClick={handleBackAction} /> 
-              : <MdArrowForwardIos className='self-start md:hidden' onClick={handleBackAction} /> }
+              ? <MdArrowBackIos className='md:hidden' onClick={handleBackAction} /> 
+              : <MdArrowForwardIos className='md:hidden' onClick={handleBackAction} /> }
       </div>
       <div className={`flex text-[13px] justify-stretch border-b-1 border-neutral-200 ${isRTL ? "flex-row-reverse" : "flex-row"}`}>
         {navLinks.map((link) => (

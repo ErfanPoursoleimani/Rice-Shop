@@ -8,68 +8,45 @@ const PricingAndButton = ({ product, buttonBg }: { product: Product, buttonBg: s
 
     const { lang } = useParams()
     const { dict, cartProducts, isRTL } = useDataStore()
-    const { id, priceFa, description, label, stock } = product
-
-    let productPrice = priceFa
+    const { id, priceFa, originalPriceFa, description, label, stock } = product
 
   const { deleteFromCart, addToCart, price, currency, massUnit, perkg, products } = dict.product
-
-    if(!product.stock) {
-    return (
-      <>
-      <div 
-        className={`
-          inline-flex flex-col-reverse gap-1 justify-center items-center
-          ${isRTL ? "justify-end" : "justify-start"}
-        `}
-      >
-        <div className={`
-          ${isRTL ? 'items-start' : 'items-end'} 
-          'flex justify-center md:text-[11px] text-[9px] gap-[2px]'
-        `}
-        >
-          <span>{currency} </span>
-          <span>/</span>
-          <span>{massUnit}</span>
-        </div>
-        <span className={`md:text-[18px] text-[14px]`}>
-          {productPrice} 
-        </span>
-      </div>
-      <p 
-        className={`
-          w-[50%] md:w-[55%] min-md:h-12 h-10  py-1 md:py-3 select-none flex justify-center items-center rounded-[7px] md:text-[12px] text-[8px]
-          bg-[var(${buttonBg})] text-[var(--theme)] px-1 border-b-2
-        `}
-      > 
-        Out of stock
-      </p>
-    </>
-    );
-  }
 
   return (
     <>
       <div 
         className={`
-          inline-flex flex-col-reverse gap-1 justify-center items-center
-          ${isRTL ? "justify-end" : "justify-start"}
+          flex flex-col gap-1 justify-center
+          ${isRTL ? "items-end" : "items-start"}
         `}
       >
-        <div className={`
-          ${isRTL ? 'items-start' : 'items-end'} 
-          'flex justify-center md:text-[11px] text-[9px] gap-[2px]'
-        `}
-        >
-          <span>{currency} </span>
-          <span>/</span>
-          <span>{massUnit}</span>
+        <p className={`md:text-[19px] text-[13px]`}>{priceFa}</p>
+        <div className={`flex items-center gap-[2px] ${isRTL ? "flex-row-reverse" : ""}`}>
+          <span className={`md:text-[12px] text-[10px] line-through text-neutral-100 decoration-red-500`}>
+            {`${originalPriceFa}`}
+            {/* {`${originalPriceFa} (${Math.floor(priceFa/(originalPriceFa-priceFa))}%)`} */}
+          </span>
+          <div className={`
+            ${isRTL ? 'items-start' : 'items-end'} 
+            flex justify-center md:text-[9px] text-[6px]`}
+          >
+            <span>{currency} </span>
+            {/* <span>/</span>
+            <span>{massUnit}</span> */}
+          </div>
         </div>
-        <span className={`md:text-[18px] text-[14px]`}>
-          {productPrice} 
-        </span>
       </div>
-      <CartButton product={product} buttonBg={buttonBg}/>
+      {!product.stock
+      ? <p 
+          className={`
+            w-[50%] md:w-[50%] min-md:h-12 h-10  py-1 md:py-3 select-none flex justify-center items-center rounded-[7px] md:text-[12px] text-[8px]
+            bg-[var(${buttonBg})] text-[var(--theme)] px-1 border-b-2
+          `}
+        > 
+          Out of stock
+        </p>
+      : <CartButton product={product} buttonBg={buttonBg}/>
+      }
     </>
   )
 }

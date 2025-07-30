@@ -73,7 +73,7 @@ const ProductCard =  ({ product, buttonBg = "--theme" }: { product: Product, but
             transition: isHovered ? 'none' : 'transform 2s ease-out'
           }}
         >
-          <div className='md:p-4 p-3 z-3 w-full h-[50%] fixed bottom-0 flex flex-col justify-between  bg-[#051e3393] backdrop-blur-[4px] text-[var(--light-text)]'>
+          <div className={`md:p-4 p-3 z-3 w-full h-[50%] fixed bottom-0 flex flex-col justify-between bg-[#00000075] backdrop-blur-[4px] text-[var(--light-text)]`}>
             <h2 className="truncate md:text-[22px] text-[17px]">{products[label as keyof typeof products]}</h2>
             <div
               className={`

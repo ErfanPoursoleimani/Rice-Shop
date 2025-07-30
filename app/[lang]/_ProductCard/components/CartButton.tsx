@@ -56,7 +56,7 @@ const CartButton = ({ product, buttonBg, className }: { product: Product, button
       <div
         className={`
           ${className}
-          w-[50%] md:w-[55%] min-md:h-12 h-10 md:py-2 select-none flex justify-stretch items-center rounded-[7px] md:text-[22px] text-[20px]
+          w-[50%] md:w-[50%] min-md:h-12 h-10 md:py-2 select-none flex justify-stretch items-center rounded-[7px] md:text-[22px] text-[20px]
           ${ isAddedToCart ? "px-2 py-1" : null}
         `}
         style={{

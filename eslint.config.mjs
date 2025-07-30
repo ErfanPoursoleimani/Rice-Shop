@@ -9,7 +9,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-/* const eslintConfig = [
+const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...compat.config({
     extends: ['next'],
@@ -26,6 +26,6 @@ const compat = new FlatCompat({
       'react/jsx-key': 'off',
     },
   }),
-]; */
+];
 
 export default eslintConfig;

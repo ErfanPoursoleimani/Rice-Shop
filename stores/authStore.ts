@@ -238,7 +238,6 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      // Clear error
       clearError: () => {
         set((state) => {
           state.error = null

@@ -38,8 +38,8 @@ const PricingAndButton = ({ product, buttonBg }: { product: Product, buttonBg: s
       </div>
       <p 
         className={`
-          w-[50%] md:w-[55%] min-md:h-12 h-10  py-1 md:py-3 select-none text-center flex items-center rounded-[7px] md:text-[10px] text-[8px]
-          bg-[var(--theme2)] text-[var(--theme)] px-1 f border-b-2
+          w-[50%] md:w-[55%] min-md:h-12 h-10  py-1 md:py-3 select-none flex justify-center items-center rounded-[7px] md:text-[12px] text-[8px]
+          bg-[var(${buttonBg})] text-[var(--theme)] px-1 border-b-2
         `}
       > 
         Out of stock

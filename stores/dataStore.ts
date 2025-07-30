@@ -1,7 +1,10 @@
-import { CartProduct, Dict, Product, Tag, User } from '@/types/types';
+import { Address, CartProduct, Dict, Product, Review, Notification ,Tag, User } from '@/types/types';
 import { Cart, Image, Order } from '@prisma/client';
 import axios from 'axios';
 import { create } from 'zustand';
+
+// Add these interfaces if they don't exist in your types
+
 
 interface DataStore {
     // State
@@ -12,6 +15,9 @@ interface DataStore {
     cartProducts: CartProduct[];
     orders: Order[];
     images: Image[];
+    notifications: Notification[];
+    addresses: Address[];
+    reviews: Review[];
     dict: Dict;
     isRTL: boolean;
     error: string;
@@ -30,6 +36,9 @@ interface DataStore {
     setCartProducts: (lang: string, cartProducts: CartProduct[], productId: number, cartId: number | null) => void;
     setOrders: (orders: Order[]) => void;
     setImages: (images: Image[]) => void;
+    setNotifications: (notifications: Notification[]) => void;
+    setAddresses: (addresses: Address[]) => void;
+    setReviews: (reviews: Review[]) => void;
     setDict: (dict: Dict) => void;
     setError: (error: string) => void;
     setLoading: (loading: boolean) => void;
@@ -44,11 +53,14 @@ interface DataStore {
     fetchProducts: (lang: string) => Promise<void>;
     fetchOrders: (lang: string) => Promise<void>;
     fetchImages: (lang: string) => Promise<void>;
+    fetchNotifications: (lang: string, userId?: number | null) => Promise<void>;
+    fetchAddresses: (lang: string, userId?: number | null) => Promise<void>;
+    fetchReviews: (lang: string, userId?: number | null) => Promise<void>;
     fetchCartProducts: (lang: string, isAuthenticated: boolean, cartId?: number | null) => Promise<void>;
     fetchDict: (lang: string) => Promise<void>;
     
     // Utility Actions
-    initializeStore: (lang: string, isAuthenticated: boolean, cartId?: number | null) => Promise<void>;
+    initializeStore: (lang: string, isAuthenticated: boolean, cartId?: number | null, userId?: number | null) => Promise<void>;
     clearError: () => void;
     getProduct: (productId: number) => Product | null;
     reset: () => void;
@@ -171,6 +183,9 @@ const initialState = {
     cartProducts: [],
     orders: [],
     images: [],
+    notifications: [],
+    addresses: [],
+    reviews: [],
     dict: initialDict,
     isRTL: false,
     error: '',
@@ -242,6 +257,9 @@ export const useDataStore = create<DataStore>()((set, get) => ({
     },
     setOrders: (orders) => set({ orders }),
     setImages: (images) => set({ images }),
+    setNotifications: (notifications) => set({ notifications }),
+    setAddresses: (addresses) => set({ addresses }),
+    setReviews: (reviews) => set({ reviews }),
     setDict: (dict) => set({ dict }),
     setError: (error) => set({ error }),
     setLoading: (loading) => set({ loading }),
@@ -313,6 +331,36 @@ export const useDataStore = create<DataStore>()((set, get) => ({
         }
     },
 
+    fetchNotifications: async (lang: string, userId?: number | null) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/notifications?userId=${userId}`);
+            set({ notifications: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchAddresses: async (lang: string, userId?: number | null) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/addresses?userId=${userId}`);
+            set({ addresses: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
+    fetchReviews: async (lang: string, userId?: number | null) => {
+        try {
+            set({ loading: true });
+            const { data } = await axios.get(`/${lang}/api/reviews?userId=${userId}`);
+            set({ reviews: data, loading: false });
+        } catch (err) {
+            set({ error: err as string, loading: false });
+        }
+    },
+
     fetchCartProducts: async (lang: string, isAuthenticated, cartId?: number | null) => {
         try {
             set({ loading: true });
@@ -350,7 +398,7 @@ export const useDataStore = create<DataStore>()((set, get) => ({
     },
 
     // Initialize Store (replaces your useEffect logic)
-    initializeStore: async (lang: string, isAuthenticated ,cartId?: number | null) => {
+    initializeStore: async (lang: string, isAuthenticated ,cartId?: number | null, userId?: number | null) => {
         set({ lang, cartId, isRTL: lang === 'fa' || lang === 'ar' });
         
         // Fetch all data in parallel
@@ -361,6 +409,9 @@ export const useDataStore = create<DataStore>()((set, get) => ({
             get().fetchProducts(lang),
             get().fetchOrders(lang),
             get().fetchImages(lang),
+            get().fetchNotifications(lang, userId),
+            get().fetchAddresses(lang, userId),
+            get().fetchReviews(lang, userId),
             get().fetchDict(lang),
             get().fetchCartProducts(lang, isAuthenticated, cartId),
         ];
@@ -392,6 +443,9 @@ export const useDataStore = create<DataStore>()((set, get) => ({
 // Export individual selectors for better performance
 export const selectProducts = (state: DataStore) => state.products;
 export const selectCartProducts = (state: DataStore) => state.cartProducts;
+export const selectNotifications = (state: DataStore) => state.notifications;
+export const selectAddresses = (state: DataStore) => state.addresses;
+export const selectReviews = (state: DataStore) => state.reviews;
 export const selectDict = (state: DataStore) => state.dict;
 export const selectIsRTL = (state: DataStore) => state.isRTL;
 export const selectError = (state: DataStore) => state.error;

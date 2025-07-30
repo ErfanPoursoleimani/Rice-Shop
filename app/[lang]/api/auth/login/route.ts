@@ -22,7 +22,7 @@ export async function POST(request: NextRequest, { params }: {params: Promise<{l
         const token = await new SignJWT({ userId, cartId })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('1h')
+        .setExpirationTime('168h')
         .sign(secret)
 
         const response = NextResponse.json({ user });

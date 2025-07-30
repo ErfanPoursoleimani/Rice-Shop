@@ -69,7 +69,7 @@ export const DataInitializer: React.FC<DataInitializerProps> = ({
                     }
 
                     // Initialize/reinitialize the store
-                    await initializeStore(lang, isAuthenticated, cartId);
+                    await initializeStore(lang, isAuthenticated, cartId, userId);
                     
                     // Update refs after successful initialization
                     prevAuthRef.current = currentAuth;

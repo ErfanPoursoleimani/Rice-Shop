@@ -11,7 +11,7 @@ interface Props {
 export default function RootLayout({ children, contentSeg, navSeg }: Props) {
 
   return (
-    <div className={`md:p-10 py-3 relative md:top-[105px] flex flex-col items-center justify-center`}>
+    <div className={`md:p-10 relative md:top-[105px] flex flex-col items-center justify-center`}>
       <ClientLayoutWrapper contentSeg={contentSeg} navSeg={navSeg}>
         {children}
       </ClientLayoutWrapper>

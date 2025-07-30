@@ -47,7 +47,7 @@ export default async function RootLayout({children, params}: {children: React.Re
   return (
     <html lang={lang}>
       <body
-        className={`overflow-x-hidden ${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
+        className={`overflow-x-hidden select-none ${geistSans.variable} ${rubik.variable} ${geistMono.variable} ${roboto.variable} ${noto_sans_arabic.variable} antialiased`}
         style={{fontFamily: "Rubik", color: "var(--text)"}}
       >
         <CookiesProvider>

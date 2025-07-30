@@ -6,7 +6,8 @@ export async function GET(req: NextRequest){
     const users = await prisma.user.findMany({
         include: {
             order: true,
-            reviews: true
+            reviews: true,
+            addresses: true
         }
     })
     return NextResponse.json(users)

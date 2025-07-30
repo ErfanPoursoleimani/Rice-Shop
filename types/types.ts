@@ -22,6 +22,9 @@ export type Tag = ({products: ({images: PrismaImage[]} & {reviews: PrismaReview[
 export type CartProduct = ({product: {images: PrismaImage[]} & {reviews: PrismaReview[]} & PrismaProduct} & CartProductCartIdNullable)
 export type User = ({orders: PrismaOrder[]} & {addresses: PrismaAddress[]} & {notifications: PrismaNotification[]} & {reviews: PrismaReview[]} & PrismaUser)
 export type Cart = ({products: PrismaProduct[]} & PrismaCart)
+export type Address = ({user: PrismaUser} & PrismaAddress)
+export type Review = ({product: PrismaProduct} & {user: PrismaUser} & PrismaReview)
+export type Notification = ({user: PrismaUser} & PrismaNotification)
 
 
 

@@ -5,9 +5,9 @@ const { PHONE_NUMBER, PHONE_NUMBER_AND_EMAIL, POSTAL_CODE, FIRST_NAME, LAST_NAME
 
 
 export const productSchema = z.object({
-    label: z.string().min(1, ).max(255),
-    price: z.number().min(1, ),
-    quantity: z.number().min(1, )
+    label: z.string().min(1, REQUIRED).max(255),
+    price: z.number().min(1, REQUIRED),
+    quantity: z.number().min(1, REQUIRED)
 })
 
 export const userLoginSchema = z.object({
@@ -96,8 +96,6 @@ export const userSchema = z.object({
     email: z.string().email(EMAIL).nullish().transform((value) => value || null),
     firstName: z.string().min(3, FIRST_NAME).nullish().transform((value) => value || null),
     lastName: z.string().min(3, LAST_NAME).nullish().transform((value) => value || null),
-    postalCode: z.string().min(10, POSTAL_CODE).nullish().transform((value) => value || null),
-    address: z.string().min(1, REQUIRED).nullish().transform((value) => value || null),
 })
 
 export const cartSchema = z.object({
@@ -114,6 +112,21 @@ export const cartProductSchema = z.object({
 
 export const orderSchema = z.object({
 
+})
+export const reviewSchema = z.object({
+
+})
+export const notificationSchema = z.object({
+
+})
+
+export const addressSchema = z.object({
+  province: z.string().min(1, REQUIRED),
+  city: z.string().min(1, REQUIRED),
+  address: z.string().min(1, REQUIRED),
+  plaque: z.string().min(1, REQUIRED),
+  unit: z.string().min(1, REQUIRED),
+  postalCode: z.string().min(10, POSTAL_CODE),
 })
 
 export const tagSchema = z.object({

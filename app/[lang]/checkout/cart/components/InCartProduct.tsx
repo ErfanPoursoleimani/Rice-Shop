@@ -15,37 +15,95 @@ const InCartProduct = ({ cartProduct }: {cartProduct: CartProduct}) => {
     const massUnit = dict.product.massUnit
 
   return (
-    <div className={`flex gap-5 ${isRTL ? 'justify-end flex-row-reverse' : null} items-stretch`}>
-        <Image className='rounded-xl' src={cartProduct.product.images[0].url} alt={cartProduct.product.label} width={130} height={50} />
+    <div className='space-y-5'>
+      <div className={`flex gap-5 ${isRTL ? 'justify-end flex-row-reverse' : null} items-stretch`}>
+        <Image className='rounded-xl' src={cartProduct.product.images[0].url} alt={cartProduct.product.label} width={110} height={50} />
         <div className={`flex flex-1 gap-4 flex-col justify-between ${isRTL ? "items-end" : null}`}>
           <h1 className='text-xl'>{dict.product.products[cartProduct.product.label as keyof typeof dict.product.products]}</h1>
-          <div>
-            <h2>{cartProduct.product.priceFa}</h2>
-            <div 
-              className={`
-                inline-flex flex-col-reverse gap-1 justify-center items-center
-                ${isRTL ? "justify-end" : "justify-start"}
-              `}
+          <div className={`flex items-end gap-5 max-sm:hidden ${isRTL ? "flex-row-reverse" : ""}`}>
+            <div
+              className={`flex justify-stretch w-30 gap-3
+                ${ isRTL ? "items-end" : "items-start" }
+                `}
             >
-              <div className={`
-                ${isRTL ? 'items-start' : 'items-end'} 
-                'flex justify-center md:text-[11px] text-[9px] gap-[2px]'
-              `}
-              >
-                <span>{currency} </span>
-                <span>/</span>
-                <span>{massUnit}</span>
+              <CartButton className={"flex-1 border-1 border-neutral-300"} product={cartProduct.product} buttonBg={'--theme'}/>
+            </div>
+            <div className={`flex flex-col ${isRTL ? "items-end" : ""}`}>
+              <div
+                className={` 
+                  flex justify-center items-center text-red-600 text-[13px]
+                  ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
+                  `}
+                  >
+                <h2>{cartProduct.product.originalPriceFa - cartProduct.product.priceFa}</h2>
+                <div className={`
+                  flex justify-center md:text-[11px] text-[10px] gap-[2px]
+                  ${isRTL ? 'items-start flex-row-reverse' : 'items-end'}
+                `}
+                >
+                  <span>{currency} </span>
+                  <span>discount</span>
+                </div>
+              </div>
+              <div
+                className={` 
+                  flex justify-center items-center
+                  ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
+                  `}
+                  >
+                <h2>{cartProduct.product.priceFa}</h2>
+                <div className={`
+                  flex justify-center md:text-[11px] text-[9px] gap-[5px]
+                  ${isRTL ? 'items-start flex-row-reverse' : 'items-end'}
+                `}
+                >
+                  <span>{currency} </span>
+                  <span>/</span>
+                  <span>{massUnit}</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className={`flex items-end gap-5 sm:hidden ${isRTL ? "mr-3 flex-row-reverse" : "ml-3"}`}>
+        <CartButton className={"flex-1 border-1 border-neutral-300"} product={cartProduct.product} buttonBg={'--theme'}/>
+        <div className={`flex flex-col ${isRTL ? "items-end" : ""}`}>
           <div
-            className={`flex justify-stretch w-30 gap-3
-              ${ isRTL ? "items-end" : "items-start" }
+            className={` 
+              flex justify-center items-center text-red-600 text-[13px]
+              ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
+              `}
+              >
+            <h2>{cartProduct.product.originalPriceFa - cartProduct.product.priceFa}</h2>
+            <div className={`
+              flex justify-center md:text-[11px] text-[10px] gap-[5px]
+              ${isRTL ? 'items-start flex-row-reverse' : 'items-end'}
             `}
-          >
-            <CartButton className={"flex-1 border-1 border-neutral-300"} product={cartProduct.product} buttonBg={'--theme'}/>
+            >
+              <span>{currency} </span>
+              <span>discount</span>
+            </div>
+          </div>
+          <div
+            className={` 
+              flex justify-center items-center
+              ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
+              `}
+              >
+            <h2>{cartProduct.product.priceFa}</h2>
+            <div className={`
+              flex justify-center md:text-[11px] text-[9px] gap-[2px]
+              ${isRTL ? 'items-start flex-row-reverse' : 'items-end'}
+            `}
+            >
+              <span>{currency} </span>
+              <span>/</span>
+              <span>{massUnit}</span>
+            </div>
           </div>
         </div>
+      </div>
     </div>
   )
 }

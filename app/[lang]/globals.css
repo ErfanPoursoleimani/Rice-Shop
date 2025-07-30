@@ -2,7 +2,7 @@
 @plugin "daisyui";
 
 @theme {
-  --breakpoint-xs: 320px;    /* 480px - new breakpoint */
+  --breakpoint-xs: 340px;    /* 340px - new breakpoint */
   --breakpoint-sm: 40rem;    /* 640px - default, but you can override */
   --breakpoint-md: 56.25rem; /* 900px - your custom md breakpoint */
   --breakpoint-lg: 64rem;    /* 1024px - default, but you can override */
@@ -96,9 +96,9 @@ body {
 
 @keyframes bottom-to-top-animation {
   0% {
-    transform: translateY(100%);
+    /* transform: translateY(100%); */
   }
   100% {
-    transform: translateY(0);
+    /* transform: translateY(0); */
   }
 }

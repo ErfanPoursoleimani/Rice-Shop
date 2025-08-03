@@ -44,6 +44,7 @@ export async function middleware(request: NextRequest) {
   // Check authentication
   const token = request.cookies.get('auth-token')?.value
   let isAuthenticated = false
+  let isAdmin = false
   let response = NextResponse.next()
 
   if (token) {
@@ -51,13 +52,15 @@ export async function middleware(request: NextRequest) {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
       const { payload } = await jwtVerify(token, secret)
       isAuthenticated = true
+      if(payload.role === "ADMIN")
+        isAdmin = true
     } catch (error: any) {
       response.cookies.delete('auth-token')
     }
   }
 
   // Protected routes - need to account for locale prefix
-  const protectedPaths = ['/profile']
+  const protectedPaths = ['/profile', '/admin']
   const isProtectedPath = protectedPaths.some(path => 
     locales.some(locale => 
       pathname.startsWith(`/${locale}${path}`)
@@ -67,7 +70,19 @@ export async function middleware(request: NextRequest) {
   if (isProtectedPath && !isAuthenticated) {
     return NextResponse.redirect(new URL(`/${currentLocale}/users/login?returnUrl=${encodeURIComponent(pathname)}`, request.url))
   }
-
+  
+  // Protected routes - need to be admin for locale prefix
+  const adminProtectedPaths = ['/admin']
+  const isAdminProtectedPath = adminProtectedPaths.some(path => 
+    locales.some(locale => 
+      pathname.startsWith(`/${locale}${path}`)
+    )
+  )
+  
+  if (isAdminProtectedPath && !isAdmin && isAuthenticated) {
+    return NextResponse.redirect(new URL(`/${currentLocale}/users/login?returnUrl=${encodeURIComponent(pathname)}`, request.url))
+  }
+  
   // Redirect authenticated users away from auth pages
   const authPaths = ['/users/login']
   const isAuthPath = authPaths.some(path => 

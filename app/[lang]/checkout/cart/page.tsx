@@ -46,7 +46,7 @@ const Shoppingcart = () => {
   }
 
   return (
-    <div className={`relative p-3 xs:p-5 sm:p-10 top-[120px] flex items-center justify-center w-[100vw] min-h-max`}>
+    <div className={`relative p-3 xs:p-5 sm:p-10 top-[120px] flex flex-col items-center justify-center w-[100vw] min-h-max`}>
       <div className={`max-w-250 w-full flex justify-stretch gap-10
         ${isRTL ? "flex-row-reverse" : null}
         `}
@@ -99,6 +99,7 @@ const Shoppingcart = () => {
           </button>
         </div>
       </div>
+      <div className="max-md:h-40 w-full"></div>
     </div>
   )
 }

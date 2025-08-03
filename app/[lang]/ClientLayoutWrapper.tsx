@@ -24,7 +24,7 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
         currentPath.startsWith(`/${lang}/profile`)   */
         ? null 
         : <TopNavBar 
-          className={`
+        className={`
             ${currentPath.startsWith(`/${lang}/profile`) ? "hidden md:flex" : null}
           `}/>
         }
@@ -32,6 +32,7 @@ export default function ClientLayoutWrapper({ children, lang }: ClientLayoutWrap
             {children}
           </main>
         {currentPath.startsWith(`/${lang}/users/login`) ? null : <BottomNavBar />}
+        <div className='md:hidden min-w-full min-h-640'></div>
     </>
   );
 }

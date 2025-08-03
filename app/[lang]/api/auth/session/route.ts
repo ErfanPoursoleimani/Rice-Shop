@@ -9,9 +9,10 @@ export async function GET(req: NextRequest){
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwt.JwtPayload
         const userId = decoded.userId
         const cartId = decoded.cartId
-        return NextResponse.json({ userId, cartId })
+        const role = decoded.role
+        return NextResponse.json({ userId, cartId, role })
     } catch (error) {
-        return NextResponse.json({ userId: null, cartId: null })
+        return NextResponse.json({ userId: null, cartId: null, role: null })
     }
 }
 

@@ -20,18 +20,12 @@ const DesktopNavBar = ({ className }: { className: string }) => {
   const currentPath = usePathname()
 
   const { lang } = useParams()
-  const { user, isAuthenticated } = useAuthStore()
+  const { isAuthenticated, role } = useAuthStore()
   const { dict, isRTL } = useDataStore()
   const { logo, selectYourRegion } = dict
 
   const isBodyVisible = useScrollDirection(100);
   const isFooterVisible = useScrollDirection(100);
-
-
-  let role
-  if(user){
-    role = user.role!
-  }
   
   const navLinks: {id: number, label: string, href: string}[] = [
     {id: 1, label: "home", href: `/${lang}#home`},
@@ -111,7 +105,7 @@ const DesktopNavBar = ({ className }: { className: string }) => {
         flex flex-col top-[54px] justify-center items-between fixed w-[100vw] border-b-1 border-[#7979793f] text-[var(--dark-text)] bg-[var(--background)] z-101 ${isFooterVisible ? 'translate-y-0' : '-translate-y-full'}
         `}
       >
-        <Footer />
+        <Footer/>
       </nav>
     </>
   )

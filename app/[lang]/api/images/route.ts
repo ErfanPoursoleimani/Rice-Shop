@@ -2,8 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { imageSchema } from '@/validation/validationSchemas'
 import { prisma } from "@/prisma/client";
 
-export async function GET(){
-    const images = await prisma.image.findMany()
+export async function GET(req: NextRequest){
+    const { searchParams } = new URL(req.url)
+    const productId = searchParams.get("productId")
+
+    let images
+    
+    if(productId){
+        images = await prisma.image.findMany({
+            where: {
+                productId: parseInt(productId)
+              }
+        })
+    }else {
+        images = await prisma.image.findMany()
+    }
+
     return NextResponse.json(images)
 }
 

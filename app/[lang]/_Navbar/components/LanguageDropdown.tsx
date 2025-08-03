@@ -98,7 +98,7 @@ const LanguageDropdown: React.FC = () => {
   };
 
   return (
-        <div className={`select-none relative w-full`} ref={dropdownRef}>
+        <div className={`select-none relative`} ref={dropdownRef}>
           <button
             type="button"
             onClick={() => !disabled && setIsOpen(!isOpen)}

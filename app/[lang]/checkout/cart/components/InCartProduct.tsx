@@ -15,7 +15,7 @@ const InCartProduct = ({ cartProduct }: {cartProduct: CartProduct}) => {
     const massUnit = dict.product.massUnit
 
   return (
-    <div className='space-y-5'>
+    <div className='space-y-3'>
       <div className={`flex gap-5 ${isRTL ? 'justify-end flex-row-reverse' : null} items-stretch`}>
         <Image className='rounded-xl' src={cartProduct.product.images[0].url} alt={cartProduct.product.label} width={110} height={50} />
         <div className={`flex flex-1 gap-4 flex-col justify-between ${isRTL ? "items-end" : null}`}>
@@ -31,7 +31,7 @@ const InCartProduct = ({ cartProduct }: {cartProduct: CartProduct}) => {
             <div className={`flex flex-col ${isRTL ? "items-end" : ""}`}>
               <div
                 className={` 
-                  flex justify-center items-center text-red-600 text-[13px]
+                  flex justify-center items-center text-[var(--theme)] text-[13px]
                   ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
                   `}
                   >
@@ -66,12 +66,11 @@ const InCartProduct = ({ cartProduct }: {cartProduct: CartProduct}) => {
           </div>
         </div>
       </div>
-      <div className={`flex items-end gap-5 sm:hidden ${isRTL ? "mr-3 flex-row-reverse" : "ml-3"}`}>
-        <CartButton className={"flex-1 border-1 border-neutral-300"} product={cartProduct.product} buttonBg={'--theme'}/>
+      <div className={`flex items-center gap-5 sm:hidden ${isRTL ? "" : "flex-row-reverse"}`}>
         <div className={`flex flex-col ${isRTL ? "items-end" : ""}`}>
           <div
             className={` 
-              flex justify-center items-center text-red-600 text-[13px]
+              flex justify-center items-center text-[var(--theme)] text-[13px]
               ${isRTL ? "justify-end flex-row-reverse" : "justify-start"}
               `}
               >
@@ -103,6 +102,7 @@ const InCartProduct = ({ cartProduct }: {cartProduct: CartProduct}) => {
             </div>
           </div>
         </div>
+        <CartButton className={"border-1 max-w-25 min-w-25 border-neutral-300"} product={cartProduct.product} buttonBg={'--theme'}/>
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import { immer } from 'zustand/middleware/immer'
 import { devtools } from 'zustand/middleware'
 import { User } from '@/types/types'
 import useDataStore from './dataStore'
+import { Role } from '@prisma/client'
 
 // Types
 
@@ -12,6 +13,7 @@ interface AuthState {
   // State
   userId: number | null
   cartId: number | null
+  role: Role | null
   user: User | null
   isLoading: boolean
   isInitialized: boolean
@@ -23,7 +25,6 @@ interface AuthState {
   
   // Actions
   initialize: (lang: string) => Promise<void>
-  setUserId: (userId: number | null) => void
   setUser: (user: User | null) => void
   login: (credentials: LoginCredentials, lang: string) => Promise<void>
   logout: (lang: string) => Promise<void>
@@ -38,13 +39,13 @@ interface LoginCredentials {
 
 // API functions (can be moved to separate file)
 const authApi = {
-  getSession: async (lang: string): Promise<{ userId: number | null, cartId: number | null }> => {
+  getSession: async (lang: string): Promise<{ userId: number | null, cartId: number | null, role: Role | null }> => {
     try {
       const { data } = await axios.get(`/${lang}/api/auth/session`)
       return data
     } catch (error) {
       console.error('Session fetch error:', error)
-      return { userId: null, cartId: null }
+      return { userId: null, cartId: null, role: null }
     }
   },
 
@@ -68,6 +69,7 @@ const authApi = {
 const initialState = {
   userId: null,
   cartId: null,
+  role: null,
   user: null,
   isLoading: false,
   isInitialized: false,
@@ -93,11 +95,12 @@ export const useAuthStore = create<AuthState>()(
         })
 
         try {
-          const { userId, cartId } = await authApi.getSession(lang)
+          const { userId, cartId, role } = await authApi.getSession(lang)
           
           set((state) => {
             state.userId = userId
             state.cartId = cartId
+            state.role = role
             state.isInitialized = true
             state.isLoading = false
           })
@@ -117,22 +120,14 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set((state) => {
             state.userId = null
+            state.cartId = null
+            state.role = null
             state.user = null
             state.error = error instanceof Error ? error.message : 'Failed to initialize auth'
             state.isLoading = false
             state.isInitialized = true
           })
         }
-      },
-
-      // Set user ID
-      setUserId: (userId) => {
-        set((state) => {
-          state.userId = userId
-          if (!userId) {
-            state.user = null
-          }
-        })
       },
 
       // Set user data
@@ -158,6 +153,8 @@ export const useAuthStore = create<AuthState>()(
           set((state) => {
             state.user = user
             state.userId = user.id
+            state.cartId = user.id
+            state.role = user.role
             state.isLoading = false
             state.isAuthenticated = true
             state.error = null
@@ -184,6 +181,7 @@ export const useAuthStore = create<AuthState>()(
           set((state) => {
             state.userId = null
             state.cartId = null
+            state.role = null
             state.user = null
             state.isAuthenticated = false
             state.isLoading = false
@@ -197,6 +195,8 @@ export const useAuthStore = create<AuthState>()(
           // Still clear the local state even if API call fails
           set((state) => {
             state.userId = null
+            state.cartId = null
+            state.role = null
             state.user = null
           })
         }
@@ -210,11 +210,12 @@ export const useAuthStore = create<AuthState>()(
         })
 
         try {
-          const { userId, cartId } = await authApi.getSession(lang)
+          const { userId, cartId, role } = await authApi.getSession(lang)
           
           set((state) => {
             state.userId = userId
             state.cartId = cartId
+            state.role = role
             state.isLoading = false
           })
 
@@ -231,6 +232,8 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set((state) => {
             state.userId = null
+            state.cartId = null
+            state.role = null
             state.user = null
             state.error = error instanceof Error ? error.message : 'Session refresh failed'
             state.isLoading = false

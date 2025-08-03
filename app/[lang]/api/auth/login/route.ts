@@ -16,10 +16,11 @@ export async function POST(request: NextRequest, { params }: {params: Promise<{l
         const { data } = await axios.post(`http://localhost:3000/${lang}/api/users`, body)
         const userId = data.user.id
         const cartId = data.user.cartId
+        const role = data.user.role
         const user = data.user
 
         const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
-        const token = await new SignJWT({ userId, cartId })
+        const token = await new SignJWT({ userId, cartId, role })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('168h')

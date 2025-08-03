@@ -8,9 +8,13 @@ export async function GET(req: NextRequest){
     let addresses 
     if(userId){
         addresses = await prisma.address.findMany({
-            where: userId
-            ? { userId: parseInt(userId) }
-            : {},
+            where: { userId: parseInt(userId) },
+            include: {
+                user: true
+            }
+        })
+    } else {
+        addresses = await prisma.address.findMany({
             include: {
                 user: true
             }

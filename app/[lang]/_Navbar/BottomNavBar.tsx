@@ -17,14 +17,9 @@ const PhoneNavBar = () => {
     const currentPath = usePathname()
 
     const { lang } = useParams()
-    const { user } = useAuthStore()
+    const { user, role } = useAuthStore()
     const { dict, isRTL } = useDataStore()
-
-    let role = undefined
-    if(user){
-    role = user.role!
-    }
-  
+    
     const navLinks = useMemo(() => {
         const baseNavLinks = [
             {id: 1, label: "home", selectedIcon: <RiHome9Fill className='text-[#555] text-2xl' />, unselectedIcon: <RiHome9Line className='text-2xl' />, href: `/${lang}`},
@@ -49,9 +44,10 @@ const PhoneNavBar = () => {
 
     const adminNavLinks = useMemo(() => {
         const baseAdminLinks = [
-            {id: 1, label: "home", href: `/${lang}#home`},
-            {id: 3, label: "products", href: `/${lang}#products`},
-            {id: 2, label: "orders", href: `/${lang}#orders`},
+            {id: 1, label: "home", selectedIcon: <RiHome9Fill className='text-[#555] text-2xl' />, unselectedIcon: <RiHome9Line className='text-2xl' />, href: `/${lang}/admin/dashboard`},
+            {id: 2, label: "products", selectedIcon:  <PiShoppingBagFill className='text-[#555] text-2xl' />, unselectedIcon: <PiShoppingBagLight className='text-2xl' />, href: `/${lang}/admin/dashboard/products`},
+            {id: 3, label: "users", selectedIcon:<FaUser className='text-[#555] text-2xl' />, unselectedIcon: <FaRegUser className='text-2xl' /> , href: `/${lang}/admin/dashboard/users`},
+            {id: 4, label: "categories", selectedIcon: <BiSolidCategory className='text-[#555] text-2xl' />, unselectedIcon: <BiCategory className='text-2xl' />, href: `/${lang}/admin/dashboard/tags` },
         ]
 
         // Create new array with translated labels
@@ -71,9 +67,10 @@ const PhoneNavBar = () => {
   return (
     
     <nav className='fixed w-[100%] border-t-1 border-[#d4d4d4] text-[var(--dark-text)] bg-[var(--background)] bottom-0 h-14 z-102 flex md:hidden justify-between items-center'>
-      {role === 'ADMIN' ? adminNavLinks.map((elem) => (
-        <Link key={elem.id} className='w-[calc(100%/3)] text-[#9e9e9e] flex flex-col items-center justify-center gap-2' href={elem.href}>
-            <span className='text-[13px]'>{elem.label}</span>
+      {role === 'ADMIN' && currentPath.startsWith(`/${lang}/admin`) ? adminNavLinks.map((elem) => (
+        <Link key={elem.id} className='w-[calc(100%/3)] text-[#9e9e9e] flex flex-col items-center justify-center gap-1' href={elem.href}>
+            {currentPath === elem.href ? elem.selectedIcon : elem.unselectedIcon}
+            <span className='text-[11px]'>{elem.label}</span>
         </Link>
       )) : navLinks.map((elem) => (
         <Link key={elem.id} className='w-[calc(100%/3)] text-[#9e9e9e] flex flex-col items-center justify-center gap-1' href={elem.href}>

@@ -3,13 +3,6 @@ import { ERROR_MESSAGES } from './validationErrors';
 
 const { PHONE_NUMBER, PHONE_NUMBER_AND_EMAIL, POSTAL_CODE, FIRST_NAME, LAST_NAME, EMAIL, URL, REQUIRED } = ERROR_MESSAGES
 
-
-export const productSchema = z.object({
-    label: z.string().min(1, REQUIRED).max(255),
-    price: z.number().min(1, REQUIRED),
-    quantity: z.number().min(1, REQUIRED)
-})
-
 export const userLoginSchema = z.object({
     emailOrPhone: z.string()
     .min(1, REQUIRED)
@@ -113,6 +106,16 @@ export const cartProductSchema = z.object({
 export const orderSchema = z.object({
 
 })
+
+export const productSchema = z.object({
+    label: z.string().min(1, REQUIRED).max(255),
+    originalPriceFa: z.number().min(1, REQUIRED),
+    priceFa: z.number().min(1, REQUIRED),
+    stock: z.number().min(1, REQUIRED),
+    description: z.string().min(1, REQUIRED)
+})
+
+
 export const reviewSchema = z.object({
 
 })

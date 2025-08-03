@@ -165,7 +165,7 @@ const initialDict: Dict = {
             میوه_خشک: "Dried Fruits"
         },
         categories: {
-            برنج_و_غلات: "Rice and Grains",
+            برنج_و_غلات: "Rice",
             روغن_ها: "Oils",
             حبوبات: "Legumes",
             محصولات_برنجی: "Rice Products",
@@ -344,7 +344,9 @@ export const useDataStore = create<DataStore>()((set, get) => ({
     fetchAddresses: async (lang: string, userId?: number | null) => {
         try {
             set({ loading: true });
-            const { data } = await axios.get(`/${lang}/api/addresses?userId=${userId}`);
+            const { data } = await axios.get(`${userId 
+                                                    ? `/${lang}/api/addresses?userId=${userId}` 
+                                                    : `/${lang}/api/addresses`}`);
             set({ addresses: data, loading: false });
         } catch (err) {
             set({ error: err as string, loading: false });
